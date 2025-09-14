@@ -1,7 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import Layout from "../layout/Layout.vue";
+</script>
 
 <template>
-  <h1>About</h1>
-  <p><strong>Current route path:</strong> {{ $route.fullPath }}</p>
-  <nav><RouterLink to="/">Go to Home</RouterLink><br /></nav>
+  <Layout>
+    <h1>About</h1>
+    <p><strong>Current route path:</strong> {{ $route.fullPath }}</p>
+  </Layout>
 </template>
