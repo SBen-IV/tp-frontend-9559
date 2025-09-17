@@ -1,17 +1,27 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, reactive } from "vue";
 import Layout from "../layout/Layout.vue";
+import type { BackendVersion } from "../models/version";
 import { getVersion } from "../services/utils";
 
-const version = ref();
+const version: BackendVersion = reactive({ version: "" });
 
-onMounted(async () => (version.value = await getVersion()));
+onMounted(async () => {
+  getVersion().then((value) => {
+    if (value) {
+      version.version = value.version;
+    }
+  });
+});
 </script>
 
 <template>
   <Layout>
     <h1>About</h1>
     <p><strong>Current route path:</strong> {{ $route.fullPath }}</p>
-    {{ version?.value?.version }}
+    <p v-if="version.version">
+      {{ version.version }}
+    </p>
+    <p v-else>Loading...</p>
   </Layout>
 </template>
