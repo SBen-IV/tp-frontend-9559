@@ -103,7 +103,7 @@ const onSubmit = handleSubmit((values) => {
       </FormItem>
     </FormField>
 
-    <Button type="submit">
+    <Button type="submit" class="block mx-auto bold" size="lg">
       Registrar
     </Button>
 
