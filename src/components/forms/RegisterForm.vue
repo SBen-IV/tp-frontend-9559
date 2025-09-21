@@ -5,6 +5,7 @@ import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button'
+import { toast } from "vue-sonner"
 import { Input } from '@/components/ui/input'
 import {
   FormControl,
@@ -22,15 +23,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { ref } from "vue";
 
-const { errors, values, handleSubmit } = useForm({
+const { values, handleSubmit } = useForm({
   validationSchema: toTypedSchema(usuarioCrearSchema)
 });
 
-const onSubmit = handleSubmit((values) => {
-  console.log('Form submitted!', values)
-  createUser(values)
+const onSubmit = handleSubmit(async (values) => {
+  try {
+    await createUser(values)
+    toast.success('Te registraste correctamente')
+  } catch (err: any) {
+    toast.error(err.message)
+  }
 })
+
 
 </script>
 
@@ -106,6 +113,7 @@ const onSubmit = handleSubmit((values) => {
     <Button type="submit" class="block mx-auto bold" size="lg">
       Registrar
     </Button>
-
   </form>
+
+  
 </template>
