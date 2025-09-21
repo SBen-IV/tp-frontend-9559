@@ -26,6 +26,12 @@ axiosInstance.interceptors.response.use(
       // Handle logout or redirect to login
       alert("Unauthorized, you don't have the right credentials")
     }
+    if (error.response?.status === 422) {
+      const details = error.response.data.detail[0]
+      const error_message = 'Error in ' + details.loc[1] + ' : ' + details.msg
+      console.log(error_message)
+      alert(error_message)
+    }
     // Show error message
     return Promise.reject(error)
   }
