@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import Header from "./Header.vue";
-import Footer from "./Footer.vue";
 import { usuarioCrearSchema } from "../../models/users";
 import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -24,7 +23,7 @@ import {
 } from "@/components/ui/select"
 
 const { errors, values, handleSubmit } = useForm({
-  validationSchema: usuarioCrearSchema
+  validationSchema: toTypedSchema(usuarioCrearSchema)
 });
 
 const onSubmit = handleSubmit((values) => {
