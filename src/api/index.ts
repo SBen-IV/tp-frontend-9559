@@ -2,7 +2,7 @@ import axios from 'axios'
 import router from '../router'
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.BASE_URL, // from .env files
+  baseURL: import.meta.env.VITE_BASE_URL, // from .env files
 })
 
 axiosInstance.interceptors.request.use((config) => {
@@ -24,8 +24,7 @@ axiosInstance.interceptors.response.use(
     }
     if (error.response?.status === 403) {
       // Handle logout or redirect to login
-      console.error("Unauthorized, you don't have the right credentials")
-      router.push('/')
+      alert("Unauthorized, you don't have the right credentials")
     }
     // Show error message
     return Promise.reject(error)

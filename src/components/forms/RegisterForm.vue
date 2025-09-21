@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { usuarioCrearSchema } from "../../models/users";
+import { createUser } from "@/api/users";
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
@@ -28,6 +29,7 @@ const { errors, values, handleSubmit } = useForm({
 
 const onSubmit = handleSubmit((values) => {
   console.log('Form submitted!', values)
+  createUser(values)
 })
 
 </script>
