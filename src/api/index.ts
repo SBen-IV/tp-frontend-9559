@@ -27,10 +27,10 @@ axiosInstance.interceptors.response.use(
       alert("Unauthorized, you don't have the right credentials")
     }
     if (error.response?.status === 422) {
-      const details = error.response.data.detail[0]
-      const error_message = 'Error in ' + details.loc[1] + ' : ' + details.msg
-      console.log(error_message)
-      alert(error_message)
+      // Handle backend validation error 
+      const detail = error.response.data.detail[0]
+      console.log(detail.msg)
+      error.message = detail.msg
     }
     // Show error message
     return Promise.reject(error)
