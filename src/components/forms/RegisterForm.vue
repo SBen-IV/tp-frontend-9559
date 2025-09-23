@@ -5,6 +5,7 @@ import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button'
+import { Loader2 } from "lucide-vue-next"
 import { toast } from "vue-sonner"
 import { Input } from '@/components/ui/input'
 import {
@@ -25,7 +26,7 @@ import {
 } from "@/components/ui/select"
 import { ref } from "vue";
 
-const { values, handleSubmit } = useForm({
+const { values, handleSubmit, isSubmitting } = useForm({
   validationSchema: toTypedSchema(usuarioCrearSchema)
 });
 
@@ -110,7 +111,8 @@ const onSubmit = handleSubmit(async (values) => {
       </FormItem>
     </FormField>
 
-    <Button type="submit" class="block mx-auto bold" size="lg">
+    <Button :disabled="isSubmitting" type="submit" class="flex mx-auto bold" size="lg">
+      <Loader2 v-if="isSubmitting" class="w-4 h-4 mr-2 animate-spin" />
       Registrar
     </Button>
   </form>
