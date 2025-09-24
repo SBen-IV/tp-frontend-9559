@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { usuarioCrearSchema } from "../../models/users";
+import { userCreateSchema } from "../../models/users";
 import { createUser } from "@/api/users";
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -27,7 +27,7 @@ import {
 import { ref } from "vue";
 
 const { values, handleSubmit, isSubmitting } = useForm({
-  validationSchema: toTypedSchema(usuarioCrearSchema)
+  validationSchema: toTypedSchema(userCreateSchema)
 });
 
 const onSubmit = handleSubmit(async (values) => {

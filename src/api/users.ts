@@ -1,6 +1,6 @@
-import type { UsuarioCrear } from '../models/users'
+import type { UserCreate } from '../models/users'
 import axiosInstance from './index'
 
-export async function createUser(user: UsuarioCrear) {
+export async function createUser(user: UserCreate) {
   await axiosInstance.post('/api/v1/users/signup', user)
 } 
