@@ -28,9 +28,15 @@ axiosInstance.interceptors.response.use(
     }
     if (error.response?.status === 422) {
       // Handle backend validation error 
-      const detail = error.response.data.detail[0]
-      console.log(detail.msg)
-      error.message = detail.msg
+      const details = error.response.data.details
+      console.log('Details: ', details)
+      const errors = details.map(detail => detail.field + ': ' + detail.message).join("\r\n")
+      error.message = errors
+      console.log('Errors: ', errors)
+    }
+    if (error.response?.data?.detail) {
+      // Handle custom HTTPException from backend (e.g. same email)
+      error.message = error.response.data.detail
     }
     // Show error message
     return Promise.reject(error)
