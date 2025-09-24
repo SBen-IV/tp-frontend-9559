@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import Header from "./Header.vue";
-import Footer from "./Footer.vue";
 import { usuarioCrearSchema } from "../../models/users";
+import { createUser } from "@/api/users";
 import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button'
+import { Loader2 } from "lucide-vue-next"
+import { toast } from "vue-sonner"
 import { Input } from '@/components/ui/input'
 import {
   FormControl,
@@ -22,14 +24,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { ref } from "vue";
 
-const { errors, values, handleSubmit } = useForm({
-  validationSchema: usuarioCrearSchema
+const { values, handleSubmit, isSubmitting } = useForm({
+  validationSchema: toTypedSchema(usuarioCrearSchema)
 });
 
-const onSubmit = handleSubmit((values) => {
-  console.log('Form submitted!', values)
+const onSubmit = handleSubmit(async (values) => {
+  try {
+    await createUser(values)
+    toast.success('Te registraste correctamente')
+  } catch (err: any) {
+    toast.error(err.message)
+  }
 })
+
 
 </script>
 
@@ -102,9 +111,11 @@ const onSubmit = handleSubmit((values) => {
       </FormItem>
     </FormField>
 
-    <Button type="submit">
+    <Button :disabled="isSubmitting" type="submit" class="flex mx-auto bold" size="lg">
+      <Loader2 v-if="isSubmitting" class="w-4 h-4 mr-2 animate-spin" />
       Registrar
     </Button>
-
   </form>
+
+  
 </template>
