@@ -1,5 +1,6 @@
 <script setup lang='ts'>
 import { Button } from '@/components/ui/button'
+import  ModeToggle  from '@/components/ModeToggle.vue'
 </script>
 
 <template>
@@ -22,6 +23,7 @@ import { Button } from '@/components/ui/button'
           <a href="/register" >Registrarse</a>
         </Button>
         </li>
+      <ModeToggle/>
       </ul>
     </nav>
   </header>
