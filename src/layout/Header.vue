@@ -3,9 +3,15 @@ import { Button } from '@/components/ui/button'
 import ModeToggle from '@/components/ModeToggle.vue'
 import NavLink from '@/components/NavLink.vue';
 import { useAuthStore } from '@/stores/auth';
+import router from '@/router/index';
 
 const authStore = useAuthStore()
-console.log(authStore.isLoggedIn)
+console.log('is user logged in? ', authStore.isLoggedIn)
+
+const handleLogout = async () => {
+  authStore.logout()
+  router.push('/')
+}
 
 </script>
 
@@ -17,16 +23,16 @@ console.log(authStore.isLoggedIn)
     <title>ITIL</title>
   </head>
   <header class="bg-base text-foreground border-b">
-    <nav v-once class="flex justify-between items-center p-4">
+    <nav class="flex justify-between items-center p-4">
       <a href="/" class="text-2xl font-bold">ITIL</a>
       <div class="flex space-x-4">
         <NavLink href="/">Home</NavLink>
         <NavLink v-if="!authStore.isLoggedIn" href="/login">Ingresar</NavLink>
         <Button v-if="!authStore.isLoggedIn">
-          <a href="/register">Registrarse</a>
+          <RouterLink to="/register">Registrarse</RouterLink>
         </Button>
-        <Button v-else>
-          <a href="/home" @click="authStore.logout()">Cerrar sesión</a>
+        <Button v-else @click="handleLogout">
+          Cerrar sesión
         </Button>
         <ModeToggle />
       </div>
