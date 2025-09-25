@@ -10,4 +10,10 @@ export const userCreateSchema = z.object({
   rol: z.enum(roles),
 });
 
+export const userLoginSchema = z.object({
+  email: z.string({required_error: 'Ingrese su email'}).email("Mail inválido"),
+  contraseña: z.string({required_error: 'Ingrese una contraseña'}).min(8, "Demasiado corta"),
+});
+
 export type UserCreate = z.infer<typeof userCreateSchema>;
+export type UserLogin = z.infer<typeof userLoginSchema>;
