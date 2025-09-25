@@ -17,7 +17,7 @@ console.log(authStore.isLoggedIn)
     <title>ITIL</title>
   </head>
   <header class="bg-base text-foreground border-b">
-    <nav class="flex justify-between items-center p-4">
+    <nav v-once class="flex justify-between items-center p-4">
       <a href="/" class="text-2xl font-bold">ITIL</a>
       <div class="flex space-x-4">
         <NavLink href="/">Home</NavLink>
