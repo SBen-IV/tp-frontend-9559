@@ -17,38 +17,14 @@ const { cookies } = useCookies();
   <header class="bg-base text-foreground border-b">
     <nav class="flex justify-between items-center p-4">
       <a href="/" class="text-2xl font-bold">ITIL</a>
-      <ul class="flex space-x-4">
-        <Button variant='link' class='hover:no-underline'>
-          <li>
-            <a href="/" class="text-foreground hover:text-primary">Home</a>
-          </li>
+      <div class="flex space-x-4">
+        <NavLink href="/">Home</NavLink>
+        <NavLink href="/login">Ingresar</NavLink>
+        <Button>
+          <a href="/register">Registrarse</a>
         </Button>
-
-        <NavLink href="/register">Hola?</NavLink>
-
-        <li>
-          <Button variant='link' class='hover:no-underline'>
-            <RouterLink to="/register">
-              RegisterTesting
-            </RouterLink>
-          </Button>
-        </li>
-
-
-
-        <Button variant='link' class='hover:no-underline'>
-          <li>
-            <a href="/login" class="text-foreground hover:text-primary">Ingresar</a>
-          </li>
-        </Button>
-
-        <li>
-          <Button>
-            <a href="/register">Registrarse</a>
-          </Button>
-        </li>
         <ModeToggle />
-      </ul>
+      </div>
     </nav>
   </header>
 </template>
