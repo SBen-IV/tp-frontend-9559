@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Loader2 } from "lucide-vue-next"
 import { toast } from "vue-sonner"
 import { Input } from '@/components/ui/input'
+import router from "@/router/index";
 import {
   FormControl,
   FormField,
@@ -14,15 +15,18 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { loginUser } from "@/api/users";
 
 const { values, handleSubmit, isSubmitting } = useForm({
   validationSchema: toTypedSchema(userLoginSchema)
 });
 
+
 const onSubmit = handleSubmit(async (values) => {
   try {
-    // await loginUser(values)
+    await loginUser(values)
     toast.success('Bienvenido')
+    router.push('/home')
   } catch (err: any) {
     toast.error(err.message)
   }

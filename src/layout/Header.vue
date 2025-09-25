@@ -1,6 +1,9 @@
 <script setup lang='ts'>
 import { Button } from '@/components/ui/button'
 import  ModeToggle  from '@/components/ModeToggle.vue'
+import { useCookies } from "vue3-cookies";
+
+const { cookies } = useCookies();
 </script>
 
 <template>
@@ -18,6 +21,13 @@ import  ModeToggle  from '@/components/ModeToggle.vue'
           <a href="/" class="text-foreground hover:text-primary">Home</a>
         </li>
         </Button>
+
+        <Button variant='link' class='hover:no-underline'>
+        <li>
+          <a href="/login" class="text-foreground hover:text-primary">Ingresar</a>
+        </li>
+        </Button>
+
         <li>
         <Button>
           <a href="/register" >Registrarse</a>
