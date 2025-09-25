@@ -26,7 +26,7 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     await loginUser(values)
     toast.success('Bienvenido')
-    router.push('/home')
+    router.push('/')
   } catch (err: any) {
     toast.error(err.message)
   }
