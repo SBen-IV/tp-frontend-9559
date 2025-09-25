@@ -1,5 +1,6 @@
 import type { UserCreate } from '../models/users'
 import type { UserLogin } from '../models/users'
+import { useAuthStore } from '@/stores/auth';
 import axiosInstance from './index'
 import { useCookies } from "vue3-cookies";
 
@@ -8,7 +9,7 @@ export async function createUser(user: UserCreate) {
 } 
 
 export async function loginUser(user: UserLogin) {
-  const { cookies } = useCookies();
+  const authStore = useAuthStore();
 	const formData = new FormData();
 
 	formData.append('username', user.email);
@@ -20,7 +21,7 @@ export async function loginUser(user: UserLogin) {
   
   console.log(response)
 
-  cookies.set("token", token);
+  authStore.login(token)
 
   return token
 }

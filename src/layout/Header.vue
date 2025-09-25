@@ -1,10 +1,12 @@
 <script setup lang='ts'>
 import { Button } from '@/components/ui/button'
 import ModeToggle from '@/components/ModeToggle.vue'
-import { useCookies } from "vue3-cookies";
 import NavLink from '@/components/NavLink.vue';
+import { useAuthStore } from '@/stores/auth';
 
-const { cookies } = useCookies();
+const authStore = useAuthStore()
+console.log(authStore.isLoggedIn)
+
 </script>
 
 <template>
@@ -19,9 +21,12 @@ const { cookies } = useCookies();
       <a href="/" class="text-2xl font-bold">ITIL</a>
       <div class="flex space-x-4">
         <NavLink href="/">Home</NavLink>
-        <NavLink href="/login">Ingresar</NavLink>
-        <Button>
+        <NavLink v-if="!authStore.isLoggedIn" href="/login">Ingresar</NavLink>
+        <Button v-if="!authStore.isLoggedIn">
           <a href="/register">Registrarse</a>
+        </Button>
+        <Button v-else>
+          <a href="/home" @click="authStore.logout()">Cerrar sesión</a>
         </Button>
         <ModeToggle />
       </div>
