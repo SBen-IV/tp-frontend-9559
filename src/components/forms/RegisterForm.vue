@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { usuarioCrearSchema } from "../../models/users";
+import { userCreateSchema } from "../../models/users";
 import { createUser } from "@/api/users";
+import { loginUser } from "@/api/users";
+import router from "@/router/index";
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
-import { z } from 'zod';
 import { Button } from '@/components/ui/button'
 import { Loader2 } from "lucide-vue-next"
 import { toast } from "vue-sonner"
@@ -24,16 +25,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { ref } from "vue";
 
 const { values, handleSubmit, isSubmitting } = useForm({
-  validationSchema: toTypedSchema(usuarioCrearSchema)
+  validationSchema: toTypedSchema(userCreateSchema)
 });
 
 const onSubmit = handleSubmit(async (values) => {
   try {
     await createUser(values)
     toast.success('Te registraste correctamente')
+    loginUser(values)
+    router.push('/')
   } catch (err: any) {
     toast.error(err.message)
   }
