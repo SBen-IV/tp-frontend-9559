@@ -12,6 +12,9 @@ import {
   PieChart,
   Settings2,
   SquareTerminal,
+  Bug,
+  Cog,
+  RefreshCcw,
 } from "lucide-vue-next";
 import NavMain from "@/components/NavMain.vue";
 import NavProjects from "@/components/NavProjects.vue";
@@ -24,6 +27,13 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  SidebarGroup,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 
 const props = withDefaults(defineProps<SidebarProps>(), {
@@ -37,125 +47,70 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
   navMain: [
     {
-      title: "Playground",
+      title: "Items de Configuración",
       url: "#",
-      icon: SquareTerminal,
+      icon: Cog,
       isActive: true,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "Crear",
+          url: "/config-items/new",
         },
         {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
+          title: "Consultar",
+          url: "/config-items",
         },
       ],
     },
     {
-      title: "Models",
+      title: "Incidencias",
       url: "#",
       icon: Bot,
+      isActive: true,
       items: [
         {
-          title: "Genesis",
+          title: "Crear",
           url: "#",
         },
         {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
+          title: "Consultar",
           url: "#",
         },
       ],
     },
     {
-      title: "Documentation",
+      title: "Problemas",
       url: "#",
-      icon: BookOpen,
+      icon: Bug,
+      isActive: true,
       items: [
         {
-          title: "Introduction",
+          title: "Crear",
           url: "#",
         },
         {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
+          title: "Consultar",
           url: "#",
         },
       ],
     },
     {
-      title: "Settings",
+      title: "Cambios",
       url: "#",
-      icon: Settings2,
+      icon: RefreshCcw,
+      isActive: true,
       items: [
         {
-          title: "General",
+          title: "Crear",
           url: "#",
         },
         {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
+          title: "Consultar",
           url: "#",
         },
       ],
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
     },
   ],
 };
@@ -184,10 +139,9 @@ const data = {
     </SidebarHeader>
     <SidebarContent>
       <NavMain :items="data.navMain" />
-      <NavProjects :projects="data.projects" />
     </SidebarContent>
     <SidebarFooter>
-      <NavUser :user="data.user" />
+      <!-- <NavUser :user="data.user" /> -->
     </SidebarFooter>
     <SidebarRail />
   </Sidebar>
