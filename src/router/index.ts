@@ -12,7 +12,7 @@ const routes = [
   { path: "/about", component: About },
   { path: "/register", component: Register },
   { path: "/login", component: Login },
-  { path: "/config-item/new", component: NewConfigurationItem },
+  { path: "/config-items/new", component: NewConfigurationItem },
   { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },
 ];
 

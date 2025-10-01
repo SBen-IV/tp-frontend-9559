@@ -34,9 +34,12 @@ const { values, handleSubmit, isSubmitting } = useForm({
 
 const onSubmit = handleSubmit(async (values) => {
   try {
-    await createConfigItem(values);
-    toast.success("Item de configuración creado correctamente.");
-    // router.push("/config-item/{id}");
+    const configItem = await createConfigItem(values);
+    console.log(configItem);
+    toast.success("Item de configuración creado correctamente");
+    // TODO: on next ticket
+    // It should redirect to the view of the config item,
+    // router.push(`/config-item/${configItem.data.id}`);
   } catch (err: any) {
     toast.error(err.message);
   }
