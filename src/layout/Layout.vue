@@ -1,10 +1,35 @@
 <script setup lang="ts">
-import Header from "./Header.vue";
-import Footer from "./Footer.vue";
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import AppSidebar from "@/components/AppSidebar.vue";
 </script>
 
 <template>
-  <Header />
-  <slot class='bg-black'/>
-  <Footer />
+  <SidebarProvider>
+    <AppSidebar />
+    <SidebarInset>
+      <header
+        class="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12"
+      >
+        <div class="flex items-center gap-2 px-4">
+          <SidebarTrigger class="-ml-1" />
+        </div>
+      </header>
+      <div class="px-4">
+        <slot class="bg-black" />
+      </div>
+      <!--
+<div class="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <div class="grid auto-rows-min gap-4 md:grid-cols-3">
+          <div class="aspect-video rounded-xl bg-muted/50" />
+          <div class="aspect-video rounded-xl bg-muted/50" />
+          <div class="aspect-video rounded-xl bg-muted/50" />
+        </div>
+      </div> 
+-->
+    </SidebarInset>
+  </SidebarProvider>
 </template>

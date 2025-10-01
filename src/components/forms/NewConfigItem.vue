@@ -1,18 +1,13 @@
 <script setup lang="ts">
-import { userCreateSchema } from "../../models/users";
 import { configItemCreateSchema } from "../../models/config_items.ts";
-import { createUser } from "@/api/users";
-import { loginUser } from "@/api/users";
-import router from "@/router/index";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-vue-next";
 import { toast } from "vue-sonner";
-import { Input, TextArea } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
 import {
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -27,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createConfigItem } from "@/api/config_items.ts";
+import { Textarea } from "@/components/ui/textarea/index.ts";
 
 const { values, handleSubmit, isSubmitting } = useForm({
   validationSchema: toTypedSchema(configItemCreateSchema),
@@ -66,7 +62,7 @@ const onSubmit = handleSubmit(async (values) => {
       <FormItem>
         <FormLabel>Descripción</FormLabel>
         <FormControl>
-          <TextArea
+          <Textarea
             type="text"
             placeholder="Sistema operativo..."
             v-bind="componentField"
