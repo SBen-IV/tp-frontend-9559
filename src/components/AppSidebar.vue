@@ -1,25 +1,8 @@
 <script setup lang="ts">
 import type { SidebarProps } from "@/components/ui/sidebar";
 
-import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-  Bug,
-  Cog,
-  RefreshCcw,
-} from "lucide-vue-next";
+import { Bot, Command, Bug, Cog, RefreshCcw } from "lucide-vue-next";
 import NavMain from "@/components/NavMain.vue";
-import NavProjects from "@/components/NavProjects.vue";
-import NavUser from "@/components/NavUser.vue";
-import TeamSwitcher from "@/components/TeamSwitcher.vue";
 
 import {
   Sidebar,
@@ -27,13 +10,9 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-  SidebarGroup,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 
 const props = withDefaults(defineProps<SidebarProps>(), {
@@ -50,67 +29,24 @@ const data = {
   navMain: [
     {
       title: "Items de Configuración",
-      url: "#",
+      url: "/config-items",
       icon: Cog,
-      isActive: true,
-      items: [
-        {
-          title: "Crear",
-          url: "/config-items/new",
-        },
-        {
-          title: "Consultar",
-          url: "/config-items",
-        },
-      ],
     },
     {
       title: "Incidencias",
-      url: "#",
+      url: "/incidents",
+      // TODO: Choose a better icon?
       icon: Bot,
-      isActive: true,
-      items: [
-        {
-          title: "Crear",
-          url: "#",
-        },
-        {
-          title: "Consultar",
-          url: "#",
-        },
-      ],
     },
     {
       title: "Problemas",
-      url: "#",
+      url: "/problems",
       icon: Bug,
-      isActive: true,
-      items: [
-        {
-          title: "Crear",
-          url: "#",
-        },
-        {
-          title: "Consultar",
-          url: "#",
-        },
-      ],
     },
     {
       title: "Cambios",
-      url: "#",
+      url: "/changes",
       icon: RefreshCcw,
-      isActive: true,
-      items: [
-        {
-          title: "Crear",
-          url: "#",
-        },
-        {
-          title: "Consultar",
-          url: "#",
-        },
-      ],
     },
   ],
 };
