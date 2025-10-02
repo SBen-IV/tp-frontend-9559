@@ -42,6 +42,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { createChange } from "@/api/changes";
 
 const items = ref<ConfigItem[]>([]);
 const open = ref(false);
@@ -107,15 +108,14 @@ const handleItemSelect = (event: { detail: { value: string } }) => {
   }
 };
 
-const onSuccess = () => {
-  toast.success("Se solicitó el cambio correctamente");
-};
-
-const onInvalidSubmit = ({ values, errors, results }: any) => {
-  console.log("Form validation failed:", { values, errors, results });
-};
-
-const onSubmit = handleSubmit(onSuccess, onInvalidSubmit);
+const onSubmit = handleSubmit(async (values) => {
+  try {
+    await createChange(values);
+    toast.success('Se solicitó el cambio correctamente');
+  } catch (err: any) {
+    toast.error(err.message);
+  }
+});
 
 onMounted(() => {
   fetchItems();
