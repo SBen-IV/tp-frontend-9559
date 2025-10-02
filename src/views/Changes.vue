@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import Layout from "../layout/Layout.vue";
 import CreateChangeForm from "../components/forms/CreateChangeForm.vue";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 
 </script>
 

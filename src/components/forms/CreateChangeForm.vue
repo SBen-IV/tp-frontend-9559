@@ -1,11 +1,17 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
-import { changeCreateSchema } from "../../models/changes";
-import { changePriority } from "../../models/changes";
+import { computed, ref, onMounted } from "vue";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
+import { useFilter } from "reka-ui";
+import { Loader2 } from "lucide-vue-next";
+import { toast } from "vue-sonner";
+import type { ConfigItem } from "@/models/config_items";
+import { changeCreateSchema, changePriority } from "../../models/changes";
+import { getAllConfigItems } from "@/api/config_items";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import ItemOption from "@/components/ItemOption.vue";
 import {
   Combobox,
   ComboboxAnchor,
@@ -20,12 +26,7 @@ import {
   TagsInputInput,
   TagsInputItem,
   TagsInputItemDelete,
-  TagsInputItemText,
 } from "@/components/ui/tags-input";
-import { Loader2 } from "lucide-vue-next";
-import { toast } from "vue-sonner";
-import { Input } from "@/components/ui/input";
-import router from "@/router/index";
 import {
   FormControl,
   FormField,
@@ -41,9 +42,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { loginUser } from "@/api/users";
-import { useFilter } from "reka-ui";
-import ItemOption from "@/components/ItemOption.vue";
+
+const items = ref<ConfigItem[]>([]);
+const open = ref(false);
+const searchTerm = ref("");
+const isLoading = ref(false);
 
 const { values, handleSubmit, isSubmitting, setFieldValue } = useForm({
   validationSchema: toTypedSchema(changeCreateSchema),
@@ -52,67 +55,39 @@ const { values, handleSubmit, isSubmitting, setFieldValue } = useForm({
   },
 });
 
-function onSuccess(values: any) {
-  console.log("values", values);
-}
-
-function onInvalidSubmit({ values, errors, results }) {
-  console.log(values);
-  console.log(errors);
-  console.log(results);
-}
-
-const onSubmit = handleSubmit(onSuccess, onInvalidSubmit);
-
-const formattedPriorities = computed(() => {
-  return changePriority.map((priority) => ({
+const formattedPriorities = computed(() =>
+  changePriority.map((priority) => ({
     value: priority,
     label: priority.charAt(0).toUpperCase() + priority.slice(1).toLowerCase(),
-  }));
-});
+  }))
+);
 
-const items = [
-  {
-    id: "5df45a8a-46e1-472f-8dbc-74c7c15b32b6",
-    categoria: "HARDWARE",
-    nombre: "Teclado",
-    version: "1",
-  },
-  {
-    id: "93b5251b-640c-4402-876b-3f8492cdc610",
-    categoria: "HARDWARE",
-    nombre: "Monitor",
-    version: "12",
-  },
-  {
-    id: "7bcb154c-8be9-47bb-932e-9edffd1e0864",
-    categoria: "SOFTWARE",
-    nombre: "OS",
-    version: "5",
-  },
-  {
-    id: "f2bbd459-4cf8-4c44-b463-0e3e3955909c",
-    categoria: "DOCUMENTACION",
-    nombre: "Manual de Uso",
-    version: "LLY",
-  },
-];
-
-const open = ref(false);
-const searchTerm = ref("");
-
-const { contains } = useFilter({ sensitivity: "base" });
 const filteredItems = computed(() => {
   const currentItems = values.config_items || [];
-  const options = items.filter((i) => !currentItems.includes(i.id));
+  const { contains } = useFilter({ sensitivity: "base" });
+
+  const availableItems = items.value.filter(
+    (i) => !currentItems.includes(i.id)
+  );
+
   return searchTerm.value
-    ? options.filter((option) => contains(option.nombre, searchTerm.value))
-    : options;
+    ? availableItems.filter((item) => contains(item.nombre, searchTerm.value))
+    : availableItems;
 });
 
-const getItemByID = (id: string) => {
-  return items.find((item) => item.id === id);
+const fetchItems = async () => {
+  isLoading.value = true;
+  try {
+    items.value = await getAllConfigItems();
+  } catch (error: any) {
+    toast.error(error.message || "Error al cargar los ítems");
+    items.value = [];
+  } finally {
+    isLoading.value = false;
+  }
 };
+
+const getItemById = (id: string) => items.value.find((item) => item.id === id);
 
 const addItemToForm = (itemId: string) => {
   const currentItems = values.config_items || [];
@@ -120,10 +95,31 @@ const addItemToForm = (itemId: string) => {
     setFieldValue("config_items", [...currentItems, itemId]);
   }
   searchTerm.value = "";
+
   if (filteredItems.value.length === 0) {
     open.value = false;
   }
 };
+
+const handleItemSelect = (event: { detail: { value: string } }) => {
+  if (typeof event.detail.value === "string") {
+    addItemToForm(event.detail.value);
+  }
+};
+
+const onSuccess = () => {
+  toast.success("Se solicitó el cambio correctamente");
+};
+
+const onInvalidSubmit = ({ values, errors, results }: any) => {
+  console.log("Form validation failed:", { values, errors, results });
+};
+
+const onSubmit = handleSubmit(onSuccess, onInvalidSubmit);
+
+onMounted(() => {
+  fetchItems();
+});
 </script>
 
 <template>
@@ -158,7 +154,6 @@ const addItemToForm = (itemId: string) => {
     <FormField v-slot="{ componentField }" name="prioridad">
       <FormItem>
         <FormLabel>Prioridad</FormLabel>
-
         <Select v-bind="componentField">
           <FormControl>
             <SelectTrigger>
@@ -169,6 +164,7 @@ const addItemToForm = (itemId: string) => {
             <SelectGroup>
               <SelectItem
                 v-for="priority in formattedPriorities"
+                :key="priority.value"
                 :value="priority.value"
               >
                 {{ priority.label }}
@@ -183,7 +179,6 @@ const addItemToForm = (itemId: string) => {
     <FormField v-slot="{ componentField }" name="config_items">
       <FormItem>
         <FormLabel>Items afectados</FormLabel>
-
         <Combobox v-model:open="open" :ignore-filter="true">
           <ComboboxAnchor as-child>
             <TagsInput
@@ -198,16 +193,12 @@ const addItemToForm = (itemId: string) => {
                   :value="itemID"
                   class="h-full"
                 >
-                  <ItemOption :item="getItemByID(itemID)" />
+                  <ItemOption :item="getItemById(itemID)" />
                   <TagsInputItemDelete />
                 </TagsInputItem>
               </div>
 
-              <ComboboxInput
-                v-model="searchTerm"
-                as-child
-                @click="() => (open = true)"
-              >
+              <ComboboxInput v-model="searchTerm" as-child @click="open = true">
                 <TagsInputInput
                   placeholder="Items..."
                   class="min-w-[200px] w-full p-0 border-none focus-visible:ring-0 h-auto"
@@ -223,11 +214,7 @@ const addItemToForm = (itemId: string) => {
                   v-for="item in filteredItems"
                   :key="item.id"
                   :value="item.id"
-                  @select.prevent="(ev: { detail: { value: string } }) => {
-                    if (typeof ev.detail.value === 'string') {
-                      addItemToForm(ev.detail.value)
-                    }
-                  }"
+                  @select.prevent="handleItemSelect"
                 >
                   <ItemOption :item="item" />
                 </ComboboxItem>
