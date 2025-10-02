@@ -14,7 +14,6 @@ import { Button } from '@/components/ui/button'
 </script>
 
 <template>
-  <Layout>
     <Card class="mx-auto mt-6 max-w-md" >
       <CardHeader class="text-center text-xl" >
         <CardTitle>
@@ -25,5 +24,4 @@ import { Button } from '@/components/ui/button'
         <CreateChangeForm/>
       </CardContent>
     </Card>
-  </Layout>
 </template>
