@@ -3,7 +3,7 @@ import { createRouter, createWebHistory, type Router } from "vue-router";
 import Home from "../views/Home.vue";
 import About from "../views/About.vue";
 import Register from "../views/Register.vue";
-import Changes from "../views/Changes.vue";
+import NewChange from "../views/NewChange.vue";
 import Login from "../views/Login.vue";
 import NotFound from "../views/NotFound.vue";
 import NewConfigurationItem from "../views/NewConfigurationItem.vue";
@@ -17,7 +17,7 @@ const routes = [
   { path: "/login", component: Login },
   { path: "/config-items", component: ConfigurationItem },
   { path: "/config-items/new", component: NewConfigurationItem },
-  { path: "/changes", component: Changes },
+  { path: "/changes/new", component: NewChange },
   { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },
 ];
 
