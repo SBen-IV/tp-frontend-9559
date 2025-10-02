@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import type { SidebarProps } from "@/components/ui/sidebar";
+import ModeToggle from "./ModeToggle.vue";
 
 import { Bot, Command, Bug, Cog, RefreshCcw } from "lucide-vue-next";
 import NavMain from "@/components/NavMain.vue";
+import router from "@/router/index";
 
+import NavLink from "@/components/NavLink.vue";
+import { RouterLink } from "vue-router";
+import { Button } from "./ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -14,6 +19,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useAuthStore } from "@/stores/auth";
 
 const props = withDefaults(defineProps<SidebarProps>(), {
   collapsible: "icon",
@@ -50,6 +56,12 @@ const data = {
     },
   ],
 };
+
+const authStore = useAuthStore();
+const handleLogout = async () => {
+  authStore.logout();
+  router.push("/login");
+};
 </script>
 
 <template>
@@ -77,6 +89,15 @@ const data = {
       <NavMain :items="data.navMain" />
     </SidebarContent>
     <SidebarFooter>
+      <!--
+      <NavLink v-if="!authStore.isLoggedIn" href="/login">Ingresar</NavLink>
+      <Button v-if="!authStore.isLoggedIn">
+        <RouterLink to="/register">Registrarse</RouterLink>
+      </Button> -->
+      <Button v-if="authStore.isLoggedIn" @click="handleLogout">
+        Cerrar sesión</Button
+      >
+      <ModeToggle />
       <!-- <NavUser :user="data.user" /> -->
     </SidebarFooter>
     <SidebarRail />

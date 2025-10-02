@@ -1,11 +1,13 @@
 import { defineStore } from "pinia";
 import { useCookies } from "vue3-cookies";
+import router from "@/router/index";
 
 export const useAuthStore = defineStore("auth", {
   state: () => {
     const { cookies } = useCookies();
     return {
       token: cookies.get("token") || null,
+      returnUrl: null,
     };
   },
   getters: {
@@ -19,6 +21,8 @@ export const useAuthStore = defineStore("auth", {
       const { cookies } = useCookies();
       cookies.set("token", token);
       this.token = token;
+
+      router.push(this.returnUrl || "/");
     },
     logout() {
       const { cookies } = useCookies();

@@ -7,6 +7,7 @@ import Login from "../views/Login.vue";
 import NotFound from "../views/NotFound.vue";
 import NewConfigurationItem from "../views/NewConfigurationItem.vue";
 import ConfigurationItem from "@/views/ConfigurationItem.vue";
+import { useAuthStore } from "@/stores/auth";
 
 const routes = [
   { path: "/", component: Home },
@@ -21,6 +22,17 @@ const routes = [
 const router: Router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach(async (to) => {
+  const publicPages = ["/login", "/register"];
+  const authRequired = !publicPages.includes(to.path);
+  const auth = useAuthStore();
+
+  if (authRequired && !auth.isLoggedIn) {
+    auth.returnUrl = to.fullPath;
+    return "/login";
+  }
 });
 
 export default router;
