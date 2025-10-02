@@ -1,22 +1,21 @@
-<script setup lang='ts'>
-import { Button } from '@/components/ui/button'
-import ModeToggle from '@/components/ModeToggle.vue'
-import NavLink from '@/components/NavLink.vue';
-import { useAuthStore } from '@/stores/auth';
-import router from '@/router/index';
+<script setup lang="ts">
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import ModeToggle from "@/components/ModeToggle.vue";
+import NavLink from "@/components/NavLink.vue";
+import { useAuthStore } from "@/stores/auth";
+import router from "@/router/index";
 
-const authStore = useAuthStore()
-console.log('is user logged in? ', authStore.isLoggedIn)
+const authStore = useAuthStore();
+console.log("is user logged in? ", authStore.isLoggedIn);
 
 const handleLogout = async () => {
-  authStore.logout()
-  router.push('/')
-}
-
+  authStore.logout();
+  router.push("/");
+};
 </script>
 
 <template>
-
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -31,9 +30,7 @@ const handleLogout = async () => {
         <Button v-if="!authStore.isLoggedIn">
           <RouterLink to="/register">Registrarse</RouterLink>
         </Button>
-        <Button v-else @click="handleLogout">
-          Cerrar sesión
-        </Button>
+        <Button v-else @click="handleLogout"> Cerrar sesión </Button>
         <ModeToggle />
       </div>
     </nav>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import Layout from "../layout/Layout.vue";
+import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/stores/auth";
+const authStore = useAuthStore();
 </script>
 
 <template>
-  <Layout>
-    <h1>Home</h1>
-    <p><strong>Current route path:</strong> {{ $route.fullPath }}</p>
-  </Layout>
+  <h1 v-if="!authStore.isLoggedIn">Home page</h1>
+  <h1 v-else>Bienvenido/a</h1>
 </template>
