@@ -48,7 +48,7 @@ import ItemOption from "@/components/ItemOption.vue";
 const { values, handleSubmit, isSubmitting, setFieldValue } = useForm({
   validationSchema: toTypedSchema(changeCreateSchema),
   initialValues: {
-    items: [],
+    config_items: [],
   },
 });
 
@@ -103,7 +103,7 @@ const searchTerm = ref("");
 
 const { contains } = useFilter({ sensitivity: "base" });
 const filteredItems = computed(() => {
-  const currentItems = values.items || [];
+  const currentItems = values.config_items || [];
   const options = items.filter((i) => !currentItems.includes(i.id));
   return searchTerm.value
     ? options.filter((option) => contains(option.nombre, searchTerm.value))
@@ -115,9 +115,9 @@ const getItemByID = (id: string) => {
 };
 
 const addItemToForm = (itemId: string) => {
-  const currentItems = values.items || [];
+  const currentItems = values.config_items || [];
   if (!currentItems.includes(itemId)) {
-    setFieldValue("items", [...currentItems, itemId]);
+    setFieldValue("config_items", [...currentItems, itemId]);
   }
   searchTerm.value = "";
   if (filteredItems.value.length === 0) {
@@ -180,7 +180,7 @@ const addItemToForm = (itemId: string) => {
       </FormItem>
     </FormField>
 
-    <FormField v-slot="{ componentField }" name="items">
+    <FormField v-slot="{ componentField }" name="config_items">
       <FormItem>
         <FormLabel>Items afectados</FormLabel>
 

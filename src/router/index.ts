@@ -17,7 +17,7 @@ const routes = [
   { path: "/login", component: Login },
   { path: "/config-items", component: ConfigurationItem },
   { path: "/config-items/new", component: NewConfigurationItem },
-  { path: "/cambios", component: Changes },
+  { path: "/changes", component: Changes },
   { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },
 ];
 
