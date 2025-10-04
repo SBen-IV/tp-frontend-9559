@@ -2,7 +2,7 @@
 import type { SidebarProps } from "@/components/ui/sidebar";
 import ModeToggle from "./ModeToggle.vue";
 
-import { Bot, Command, Bug, Cog, RefreshCcw } from "lucide-vue-next";
+import { Bot, Command, Bug, Cog, RefreshCcw, LogOut } from "lucide-vue-next";
 import NavMain from "@/components/NavMain.vue";
 import router from "@/router/index";
 
@@ -20,6 +20,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useAuthStore } from "@/stores/auth";
+import { useSidebar } from "@/components/ui/sidebar";
 
 const props = withDefaults(defineProps<SidebarProps>(), {
   collapsible: "icon",
@@ -62,6 +63,8 @@ const handleLogout = async () => {
   authStore.logout();
   router.push("/login");
 };
+
+const { open } = useSidebar();
 </script>
 
 <template>
@@ -95,7 +98,8 @@ const handleLogout = async () => {
         <RouterLink to="/register">Registrarse</RouterLink>
       </Button> -->
       <Button v-if="authStore.isLoggedIn" @click="handleLogout">
-        Cerrar sesión</Button
+        <!-- Manually handle collapsible sidebar -->
+        <LogOut /> {{ open ? "Cerrar sesión" : "" }}</Button
       >
       <ModeToggle />
       <!-- <NavUser :user="data.user" /> -->

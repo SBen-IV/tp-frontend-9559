@@ -51,7 +51,7 @@ const itemIcon = computed(() => {
 </script>
 
 <template>
-  <Card class="py-6 max-h-50" key="item.id">
+  <Card class="py-6" key="item.id">
     <CardHeader>
       <div class="flex">
         <CardTitle class="mr-2">{{ item.nombre }}</CardTitle>
@@ -61,6 +61,7 @@ const itemIcon = computed(() => {
         <component :is="itemIcon" class="w-3 h-3 flex-shrink-0" />
         {{ item.categoria }}</Badge
       >
+      <Badge variant="secondary">{{ item.estado }}</Badge>
     </CardHeader>
     <CardContent class="overflow-hidden text-ellipsis text-wrap max-h-30">
       <p class="italic text-xs">
@@ -89,6 +90,10 @@ const itemIcon = computed(() => {
                 {{ item.categoria }}</Badge
               >
             </p>
+            <p>
+              Estado:
+              <Badge variant="secondary">{{ item.estado }}</Badge>
+            </p>
             <p class="italic text-xs">
               Fecha creación: {{ dateToString(item.fecha_creacion) }}
             </p>
@@ -100,6 +105,7 @@ const itemIcon = computed(() => {
           </div>
           <DialogFooter class="">
             <div class="flex gap-2 pb-4 px-4">
+              <!-- TODO: These buttons should have actions associated -->
               <Button> <Pencil class="w-2 h-4" />Edit</Button>
               <Button variant="destructive">
                 <Trash2 class="w-2 h-4" />Delete</Button
