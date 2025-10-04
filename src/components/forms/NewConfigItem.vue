@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { createConfigItem } from "@/api/config_items.ts";
 import { Textarea } from "@/components/ui/textarea/index.ts";
+import router from "@/router/index";
 
 const { values, handleSubmit, isSubmitting } = useForm({
   validationSchema: toTypedSchema(configItemCreateSchema),
@@ -35,7 +36,7 @@ const onSubmit = handleSubmit(async (values) => {
     toast.success("Item de configuración creado correctamente");
     // TODO: on next ticket
     // It should redirect to the view of the config item,
-    // router.push(`/config-item/${configItem.data.id}`);
+    router.push(`/config-items`);
   } catch (err: any) {
     toast.error(err.message);
   }
