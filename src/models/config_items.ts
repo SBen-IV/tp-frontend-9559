@@ -1,6 +1,15 @@
 import * as z from "zod";
 
-const categorias = ["SOFTWARE", "HARDWARE", "DOCUMENTACION"] as const;
+export const categorias = ["SOFTWARE", "HARDWARE", "DOCUMENTACION"] as const;
+export const estados = [
+  "PLANEADO",
+  "ENCARGADO",
+  "EN_CREACION",
+  "EN_PRUEBA",
+  "EN_ALMACEN",
+  "EN_PRODUCCION",
+  "EN_MANTENIMIENTO",
+] as const;
 
 const configItemBaseSchema = z.object({
   nombre: z
@@ -18,6 +27,7 @@ const configItemBaseSchema = z.object({
 export const configItemCreateSchema = configItemBaseSchema.extend({});
 
 export const configItemSchema = configItemBaseSchema.extend({
+  estado: z.enum(estados),
   fecha_creacion: z.date(),
   id: z.string().uuid(),
   owner_id: z.string().uuid(),

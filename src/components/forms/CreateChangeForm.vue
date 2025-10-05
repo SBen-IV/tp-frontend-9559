@@ -60,7 +60,7 @@ const formattedPriorities = computed(() =>
   changePriority.map((priority) => ({
     value: priority,
     label: priority.charAt(0).toUpperCase() + priority.slice(1).toLowerCase(),
-  }))
+  })),
 );
 
 const filteredItems = computed(() => {
@@ -68,7 +68,7 @@ const filteredItems = computed(() => {
   const { contains } = useFilter({ sensitivity: "base" });
 
   const availableItems = items.value.filter(
-    (i) => !currentItems.includes(i.id)
+    (i) => !currentItems.includes(i.id),
   );
 
   return searchTerm.value
@@ -111,7 +111,7 @@ const handleItemSelect = (event: { detail: { value: string } }) => {
 const onSubmit = handleSubmit(async (values) => {
   try {
     await createChange(values);
-    toast.success('Se solicitó el cambio correctamente');
+    toast.success("Se solicitó el cambio correctamente");
   } catch (err: any) {
     toast.error(err.message);
   }
