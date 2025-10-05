@@ -9,6 +9,7 @@ import NotFound from "../views/NotFound.vue";
 import NewConfigurationItem from "../views/NewConfigurationItem.vue";
 import ConfigurationItem from "@/views/ConfigurationItem.vue";
 import { useAuthStore } from "@/stores/auth";
+import Change from "@/views/Change.vue";
 
 const routes = [
   { path: "/", component: Home },
@@ -17,6 +18,7 @@ const routes = [
   { path: "/login", component: Login },
   { path: "/config-items", component: ConfigurationItem },
   { path: "/config-items/new", component: NewConfigurationItem },
+  { path: "/changes", component: Change },
   { path: "/changes/new", component: NewChange },
   { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },
 ];
