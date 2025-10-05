@@ -52,7 +52,7 @@ const isLoading = ref(false);
 const { values, handleSubmit, isSubmitting, setFieldValue } = useForm({
   validationSchema: toTypedSchema(changeCreateSchema),
   initialValues: {
-    config_items: [],
+    id_config_items: [],
   },
 });
 
@@ -64,7 +64,7 @@ const formattedPriorities = computed(() =>
 );
 
 const filteredItems = computed(() => {
-  const currentItems = values.config_items || [];
+  const currentItems = values.id_config_items || [];
   const { contains } = useFilter({ sensitivity: "base" });
 
   const availableItems = items.value.filter(
@@ -91,9 +91,9 @@ const fetchItems = async () => {
 const getItemById = (id: string) => items.value.find((item) => item.id === id);
 
 const addItemToForm = (itemId: string) => {
-  const currentItems = values.config_items || [];
+  const currentItems = values.id_config_items || [];
   if (!currentItems.includes(itemId)) {
-    setFieldValue("config_items", [...currentItems, itemId]);
+    setFieldValue("id_config_items", [...currentItems, itemId]);
   }
   searchTerm.value = "";
 
@@ -176,7 +176,7 @@ onMounted(() => {
       </FormItem>
     </FormField>
 
-    <FormField v-slot="{ componentField }" name="config_items">
+    <FormField v-slot="{ componentField }" name="id_config_items">
       <FormItem>
         <FormLabel>Items afectados</FormLabel>
         <Combobox v-model:open="open" :ignore-filter="true">
