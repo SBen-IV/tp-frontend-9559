@@ -52,6 +52,7 @@ const dateToString = (date: Date): String => {
           </p>
         </CardTitle>
       </div>
+      <Badge variant="default">{{ change.prioridad }}</Badge>
       <Badge variant="secondary">{{ change.estado }}</Badge>
     </CardHeader>
     <CardContent class="overflow-hidden text-ellipsis text-wrap max-h-30">
