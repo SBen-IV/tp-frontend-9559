@@ -85,12 +85,12 @@ const dateToString = (date: Date): String => {
               <TabsTrigger value="descripcion">Descripción</TabsTrigger>
               <TabsTrigger value="config_items">Ítems afectados</TabsTrigger>
             </TabsList>
-            <TabsContent value="descripcion">
+            <TabsContent value="descripcion" class="overflow-y-auto">
               <p class="pt-4">
                 {{ change.descripcion }}
               </p>
             </TabsContent>
-            <TabsContent value="config_items">
+            <TabsContent value="config_items" class="overflow-y-auto">
               <!-- TODO: Should link to the CI -->
               <ItemOption
                 v-for="item in change.config_items"
