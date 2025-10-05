@@ -18,6 +18,7 @@ import {
   SelectContent,
 } from "@/components/ui/select";
 import { categorias, estados } from "@/models/config_items";
+import { sortByDate, sortByName } from "@/lib/utils";
 
 const data = shallowRef<ConfigItem[]>([]);
 const isLoading = ref(false);
@@ -26,42 +27,14 @@ const searchVersion = ref("");
 const searchCategoria = ref("");
 const searchEstado = ref("");
 
-// This should probably be moved to a common or utils
-const sortByDate = (fecha1: Date, fecha2: Date) => {
-  if (fecha1 < fecha2) {
-    return 1;
-  }
-
-  if (fecha1 > fecha2) {
-    return -1;
-  }
-
-  return 0;
-};
-
-const sortByName = (nombre1: string, nombre2: string) => {
-  if (nombre1 < nombre2) {
-    return 1;
-  }
-
-  if (nombre1 > nombre2) {
-    return -1;
-  }
-
-  return 0;
-};
-
 const fetchItems = async () => {
   isLoading.value = true;
   try {
     const items: ConfigItem[] = await getAllConfigItems();
     data.value = items.sort((item1, item2) => {
       const res = sortByDate(item1.fecha_creacion, item2.fecha_creacion);
-      if (res == 0) {
-        return sortByName(item1.nombre, item2.nombre);
-      }
 
-      return res;
+      return res != 0 ? res : sortByName(item1.nombre, item2.nombre);
     });
   } catch (error: any) {
     toast.error(error.message || "Error al cargar los ítems");
