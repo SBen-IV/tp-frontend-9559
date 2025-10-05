@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
-import { Search, ChevronsUpDown, Check } from "lucide-vue-next";
+import { BrushCleaning } from "lucide-vue-next";
 import { Input } from "@/components/ui/input";
 import { computed, onMounted, ref, shallowRef } from "vue";
 import { RouterLink } from "vue-router";
@@ -10,25 +10,6 @@ import { toast } from "vue-sonner";
 import { Plus } from "lucide-vue-next";
 import ConfigItemPreview from "@/components/ConfigItemPreview.vue";
 import {
-  Combobox,
-  ComboboxAnchor,
-  ComboboxEmpty,
-  ComboboxGroup,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxItemIndicator,
-  ComboboxList,
-  ComboboxTrigger,
-} from "@/components/ui/combobox";
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
   SelectValue,
   Select,
   SelectTrigger,
@@ -36,15 +17,14 @@ import {
   SelectGroup,
   SelectContent,
 } from "@/components/ui/select";
-import { useForm } from "vee-validate";
-import { cn } from "../lib/utils.ts";
 import { categorias, estados } from "@/models/config_items";
 
 const data = shallowRef<ConfigItem[]>([]);
 const isLoading = ref(false);
-const searchTerms = ref<{ nombre: String }>();
 const searchNombre = ref("");
 const searchVersion = ref("");
+const searchCategoria = ref("");
+const searchEstado = ref("");
 
 // This should probably be moved to a common or utils
 const sortByDate = (fecha1: Date, fecha2: Date) => {
@@ -94,7 +74,6 @@ const fetchItems = async () => {
 const formattedCategorias = computed(() =>
   categorias.map((categoria) => ({
     value: categoria,
-    // label: categoria.charAt(0).toUpperCase() + categoria.slice(1).toLowerCase(),
     label: categoria,
   })),
 );
@@ -109,9 +88,10 @@ const formattedEstados = computed(() =>
 );
 
 const filteredItems = computed(() => {
-  let items: ConfigItem[] = data.value;
+  let filters: ((item: ConfigItem) => boolean)[] = [];
+
   if (searchNombre.value !== "") {
-    items = items.filter((item: ConfigItem) => {
+    filters.push((item: ConfigItem) => {
       return item.nombre
         .toLowerCase()
         .includes(searchNombre.value.toLowerCase());
@@ -119,15 +99,41 @@ const filteredItems = computed(() => {
   }
 
   if (searchVersion.value !== "") {
-    items = items.filter((item: ConfigItem) => {
+    filters.push((item: ConfigItem) => {
       return item.version
         .toLowerCase()
         .includes(searchVersion.value.toLowerCase());
     });
   }
 
-  return items;
+  if (searchCategoria.value !== "") {
+    filters.push((item: ConfigItem) => {
+      return item.categoria == searchCategoria.value;
+    });
+  }
+
+  if (searchEstado.value !== "") {
+    filters.push((item: ConfigItem) => {
+      return item.estado == searchEstado.value;
+    });
+  }
+
+  return data.value.filter((item: ConfigItem) => {
+    let isItemFiltered = true;
+    for (let i = 0; i < filters.length; i++) {
+      isItemFiltered = isItemFiltered && filters[i](item);
+    }
+
+    return isItemFiltered;
+  });
 });
+
+const resetSearch = () => {
+  searchNombre.value = "";
+  searchVersion.value = "";
+  searchCategoria.value = "";
+  searchEstado.value = "";
+};
 
 onMounted(() => {
   fetchItems();
@@ -144,141 +150,6 @@ onMounted(() => {
       >
     </Button>
   </div>
-  <!--
-  <form
-    @submit="onSubmit"
-    class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 flex py-6"
-  >
-    <FormField v-slot="{ componentField }" name="nombre">
-      <FormItem>
-        <FormLabel>Nombre</FormLabel>
-        <Input
-          id="search-nombre"
-          type="text"
-          placeholder="Buscar por nombre..."
-          v-bind="componentField"
-        />
-      </FormItem>
-    </FormField>
-    <FormField v-slot="{ componentField }" name="version">
-      <FormItem>
-        <FormLabel>Versión</FormLabel>
-        <Input
-          id="search-version"
-          type="text"
-          placeholder="Buscar por versión..."
-          v-bind="componentField"
-        />
-      </FormItem>
-    </FormField>
-    <FormField v-slot="{ componentField }" name="categoria">
-      <FormItem>
-        <FormLabel>Categoría</FormLabel>
-        <Select v-bind="componentField">
-          <FormControl>
-            <SelectTrigger>
-              <SelectValue placeholder="Seleccione la categoría..." />
-            </SelectTrigger>
-          </FormControl>
-          <SelectContent class="capitalize">
-            <SelectGroup>
-              <SelectItem
-                v-for="categoria in formattedCategorias"
-                :key="categoria.value"
-                :value="categoria.value"
-              >
-                {{ categoria.label }}
-              </SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <FormMessage />
--->
-  <!--
-        <Combobox by="label">
-          <FormControl>
-            <ComboboxAnchor>
-              <div class="relative w-full max-w-sm items-center">
-                <ComboboxInput
-                  :display-value="(val) => val?.label ?? ''"
-                  placeholder="Seleccione categoría..."
-                />
-                <ComboboxTrigger
-                  class="absolute end-0 inset-y-0 flex items-center justify-center px-3"
-                >
-                  <ChevronsUpDown class="size-4 text-muted-foreground" />
-                </ComboboxTrigger>
-              </div>
-            </ComboboxAnchor>
-          </FormControl>
-          <ComboboxList>
-            <ComboboxEmpty> No hay categorías. </ComboboxEmpty>
-
-            <ComboboxGroup>
-              <ComboboxItem
-                v-for="categoria in categorias"
-                :key="categoria.value"
-                :value="categoria"
-                @select="
-                  () => {
-                    setFieldValue('categoria', categoria.value);
-                  }
-                "
-              >
-                {{ categoria.label }}
-                <ComboboxItemIndicator>
-                  <Check :class="cn('ml-auto h-4 w-4')" />
-                </ComboboxItemIndicator>
-              </ComboboxItem>
-            </ComboboxGroup>
-          </ComboboxList>
-        </Combobox>
-      </FormItem>
-    </FormField>
-    <FormField name="estado">
-      <FormItem>
-        <FormLabel>Estado</FormLabel>
-        <Combobox by="label">
-          <FormControl>
-            <ComboboxAnchor>
-              <div class="relative w-full max-w-sm items-center">
-                <ComboboxInput
-                  :display-value="(val) => val?.label ?? ''"
-                  placeholder="Seleccione estado..."
-                />
-                <ComboboxTrigger
-                  class="absolute end-0 inset-y-0 flex items-center justify-center px-3"
-                >
-                  <ChevronsUpDown class="size-4 text-muted-foreground" />
-                </ComboboxTrigger>
-              </div>
-            </ComboboxAnchor>
-          </FormControl>
-          <ComboboxList>
-            <ComboboxEmpty> No hay estados. </ComboboxEmpty>
-
-            <ComboboxGroup>
-              <ComboboxItem
-                v-for="estado in estados"
-                :key="estado.value"
-                :value="estado"
-                @select="
-                  () => {
-                    setFieldValue('estado', estado.value);
-                  }
-                "
-              >
-                {{ estado.label }}
-                <ComboboxItemIndicator>
-                  <Check :class="cn('ml-auto h-4 w-4')" />
-                </ComboboxItemIndicator>
-              </ComboboxItem>
-            </ComboboxGroup>
-          </ComboboxList>
-        </Combobox>
-      </FormItem>
-    </FormField>
--->
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 flex py-6">
     <div>
       <b>Nombre</b>
@@ -300,7 +171,7 @@ onMounted(() => {
     </div>
     <div>
       <b>Categoría</b>
-      <Select>
+      <Select v-model="searchCategoria">
         <SelectTrigger>
           <SelectValue placeholder="Buscar por categoría..." />
         </SelectTrigger>
@@ -318,7 +189,7 @@ onMounted(() => {
     </div>
     <div>
       <b>Estado</b>
-      <Select>
+      <Select v-model="searchEstado">
         <SelectTrigger>
           <SelectValue placeholder="Buscar por estado..." />
         </SelectTrigger>
@@ -334,17 +205,10 @@ onMounted(() => {
         </SelectContent>
       </Select>
     </div>
+    <div class="pt-6">
+      <Button @click="resetSearch()"><BrushCleaning /> Limpiar filtro</Button>
+    </div>
   </div>
-  <!--
-    <Button
-      :disabled="isSubmitting"
-      type="submit"
-      class="flex mx-auto bold"
-      size="lg"
-      >Buscar</Button
-    >
-  </form>
-  -->
   <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
     <div v-for="item in filteredItems" class="grid">
       <li class="grid gap-4">
