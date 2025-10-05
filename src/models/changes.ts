@@ -1,3 +1,4 @@
+import { configItemSchema } from "./config_items";
 import * as z from "zod";
 
 export const changePriority = ["BAJA", "MEDIA", "ALTA", "URGENTE"] as const;
@@ -10,4 +11,13 @@ export const changeCreateSchema = z.object({
   id_config_items:  z.array(z.string().uuid())
 });
 
+export const changeSchema = changeCreateSchema.extend({
+  estado: z.enum(changeStatus),
+  fecha_creacion: z.date(),
+  id: z.string().uuid(),
+  owner_id: z.string().uuid(),
+  config_items: z.array(configItemSchema)
+})
+
 export type ChangeCreate = z.infer<typeof changeCreateSchema>;
+export type Change = z.infer<typeof changeSchema>;
