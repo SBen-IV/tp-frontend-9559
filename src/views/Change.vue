@@ -49,7 +49,7 @@ const fetchItems = async () => {
 const formattedStatus = computed(() =>
   changeStatus.map((status) => ({
     value: status,
-    label: status.charAt(0).toUpperCase() + status.slice(1).toLowerCase(),
+    label: status.charAt(0).toUpperCase() + status.slice(1).toLowerCase().split('_').join(' '),
   })),
 );
 
@@ -73,7 +73,7 @@ const filteredItems = computed(() => {
 
   if (searchDescripcion.value !== "") {
     filters.push((item: Change) => {
-      return item.titulo
+      return item.descripcion
         .toLowerCase()
         .includes(searchDescripcion.value.toLowerCase());
     });
