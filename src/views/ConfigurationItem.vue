@@ -44,7 +44,9 @@ const data = shallowRef<ConfigItem[]>([]);
 const isLoading = ref(false);
 const searchTerms = ref<{ nombre: String }>();
 const searchNombre = ref("");
+const searchVersion = ref("");
 
+// This should probably be moved to a common or utils
 const sortByDate = (fecha1: Date, fecha2: Date) => {
   if (fecha1 < fecha2) {
     return 1;
@@ -89,34 +91,43 @@ const fetchItems = async () => {
   }
 };
 
-// const formattedCategorias = computed(() =>
-//   categorias.map((categoria) => ({
-//     value: categoria,
-//     // label: categoria.charAt(0).toUpperCase() + categoria.slice(1).toLowerCase(),
-//     label: categoria,
-//   })),
-// );
+const formattedCategorias = computed(() =>
+  categorias.map((categoria) => ({
+    value: categoria,
+    // label: categoria.charAt(0).toUpperCase() + categoria.slice(1).toLowerCase(),
+    label: categoria,
+  })),
+);
 
-// const { handleSubmit, isSubmitting, setFieldValue } = useForm({
-//   validationSchema: searchTerms,
-//   initialValues: {
-//     nombre: "",
-//     version: "",
-//     categoria: "",
-//     estado: "",
-//   },
-// });
+const formattedEstados = computed(() =>
+  estados.map((estado) => ({
+    value: estado,
+    label:
+      estado.charAt(0).toUpperCase() +
+      estado.replace("_", " ").slice(1).toLowerCase(),
+  })),
+);
 
-// const onSubmit = handleSubmit(async (values) => {
-//   console.log(values);
-//   toast.success(values);
-// });
+const filteredItems = computed(() => {
+  let items: ConfigItem[] = data.value;
+  if (searchNombre.value !== "") {
+    items = items.filter((item: ConfigItem) => {
+      return item.nombre
+        .toLowerCase()
+        .includes(searchNombre.value.toLowerCase());
+    });
+  }
 
-const filteredItems = async () => {
-  return data.value.filter((item) => {
-    item.nombre.toLowerCase().includes(searchNombre.value.toLowerCase());
-  });
-};
+  if (searchVersion.value !== "") {
+    items = items.filter((item: ConfigItem) => {
+      return item.version
+        .toLowerCase()
+        .includes(searchVersion.value.toLowerCase());
+    });
+  }
+
+  return items;
+});
 
 onMounted(() => {
   fetchItems();
@@ -280,15 +291,48 @@ onMounted(() => {
     </div>
     <div>
       <b>Versión</b>
-      <Input id="search" type="text" placeholder="Buscar por versión..." />
+      <Input
+        id="search"
+        type="text"
+        placeholder="Buscar por versión..."
+        v-model="searchVersion"
+      />
     </div>
     <div>
       <b>Categoría</b>
-      <Combobox by="label"></Combobox>
+      <Select>
+        <SelectTrigger>
+          <SelectValue placeholder="Buscar por categoría..." />
+        </SelectTrigger>
+        <SelectContent class="capitalize">
+          <SelectGroup>
+            <SelectItem
+              v-for="categoria in formattedCategorias"
+              :key="categoria.value"
+              :value="categoria.value"
+              >{{ categoria.label }}</SelectItem
+            >
+          </SelectGroup>
+        </SelectContent>
+      </Select>
     </div>
     <div>
       <b>Estado</b>
-      <Combobox by="label"></Combobox>
+      <Select>
+        <SelectTrigger>
+          <SelectValue placeholder="Buscar por estado..." />
+        </SelectTrigger>
+        <SelectContent class="capitalize">
+          <SelectGroup>
+            <SelectItem
+              v-for="estado in formattedEstados"
+              :key="estado.value"
+              :value="estado.value"
+              >{{ estado.label }}</SelectItem
+            >
+          </SelectGroup>
+        </SelectContent>
+      </Select>
     </div>
   </div>
   <!--
@@ -302,7 +346,7 @@ onMounted(() => {
   </form>
   -->
   <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-    <div v-for="item in data" class="grid">
+    <div v-for="item in filteredItems" class="grid">
       <li class="grid gap-4">
         <ConfigItemPreview :item="item" />
       </li>
