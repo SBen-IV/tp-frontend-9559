@@ -10,6 +10,8 @@ import NewConfigurationItem from "../views/NewConfigurationItem.vue";
 import ConfigurationItem from "@/views/ConfigurationItem.vue";
 import { useAuthStore } from "@/stores/auth";
 import Change from "@/views/Change.vue";
+import Incident from "@/views/Incident.vue";
+import NewIncident from "@/views/NewIncident.vue";
 
 const routes = [
   { path: "/", component: Home },
@@ -19,6 +21,8 @@ const routes = [
   { path: "/config-items", component: ConfigurationItem },
   { path: "/config-items/new", component: NewConfigurationItem },
   { path: "/changes", component: Change },
+  { path: "/incidents", component: Incident },
+  { path: "/incidents/new", component: NewIncident },
   { path: "/changes/new", component: NewChange },
   { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },
 ];
