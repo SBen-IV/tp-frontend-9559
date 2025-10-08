@@ -1,14 +1,24 @@
+import { priorities } from "./commons";
 import { configItemSchema } from "./config_items";
 import * as z from "zod";
 
-export const changePriority = ["BAJA", "MEDIA", "ALTA", "URGENTE"] as const;
-export const changeStatus = ["RECIBIDO", "ACEPTADO", "RECHAZADO", "EN_PROGRESO", "CERRADO"] as const;
+export const changeStatus = [
+  "RECIBIDO",
+  "ACEPTADO",
+  "RECHAZADO",
+  "EN_PROGRESO",
+  "CERRADO",
+] as const;
 
 export const changeCreateSchema = z.object({
-  titulo: z.string({required_error: 'Ingrese un titulo'}).min(1, "Ingrese un titulo"),
-  descripcion: z.string({required_error: 'Ingrese una descripción'}).min(1, "Ingrese una descripción"),
-  prioridad: z.enum(changePriority),
-  id_config_items:  z.array(z.string().uuid())
+  titulo: z
+    .string({ required_error: "Ingrese un titulo" })
+    .min(1, "Ingrese un titulo"),
+  descripcion: z
+    .string({ required_error: "Ingrese una descripción" })
+    .min(1, "Ingrese una descripción"),
+  prioridad: z.enum(priorities),
+  id_config_items: z.array(z.string().uuid()),
 });
 
 export const changeSchema = changeCreateSchema.extend({
@@ -16,8 +26,8 @@ export const changeSchema = changeCreateSchema.extend({
   fecha_creacion: z.date(),
   id: z.string().uuid(),
   owner_id: z.string().uuid(),
-  config_items: z.array(configItemSchema)
-})
+  config_items: z.array(configItemSchema),
+});
 
 export type ChangeCreate = z.infer<typeof changeCreateSchema>;
 export type Change = z.infer<typeof changeSchema>;

@@ -6,7 +6,6 @@ import { useFilter } from "reka-ui";
 import { Loader2 } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import type { ConfigItem } from "@/models/config_items";
-import { changeCreateSchema } from "../../models/changes";
 import { getAllConfigItems } from "@/api/config_items";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -42,8 +41,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { createChange } from "@/api/changes";
+import { createProblem } from "@/api/problems";
+import { problemCreateSchema } from "@/models/problems";
 import { priorities } from "@/models/commons";
+import router from "@/router";
 
 const items = ref<ConfigItem[]>([]);
 const open = ref(false);
@@ -51,7 +52,7 @@ const searchTerm = ref("");
 const isLoading = ref(false);
 
 const { values, handleSubmit, isSubmitting, setFieldValue } = useForm({
-  validationSchema: toTypedSchema(changeCreateSchema),
+  validationSchema: toTypedSchema(problemCreateSchema),
   initialValues: {
     id_config_items: [],
   },
@@ -111,8 +112,9 @@ const handleItemSelect = (event: { detail: { value: string } }) => {
 
 const onSubmit = handleSubmit(async (values) => {
   try {
-    await createChange(values);
-    toast.success("Se solicitó el cambio correctamente");
+    await createProblem(values);
+    toast.success("Se registró problema correctamente");
+    router.push("/problems");
   } catch (err: any) {
     toast.error(err.message);
   }
@@ -124,14 +126,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <form @submit="onSubmit" class="space-y-6">
+  <form class="space-y-6" @submit="onSubmit">
     <FormField v-slot="{ componentField }" name="titulo">
       <FormItem>
         <FormLabel>Título</FormLabel>
         <FormControl>
           <Input
             type="text"
-            placeholder="Aumentar almacenamiento"
+            placeholder="VPN no conecta"
             v-bind="componentField"
           />
         </FormControl>
@@ -143,10 +145,7 @@ onMounted(() => {
       <FormItem>
         <FormLabel>Descripción</FormLabel>
         <FormControl>
-          <Textarea
-            placeholder="Detalle el cambio solicitado"
-            v-bind="componentField"
-          />
+          <Textarea placeholder="Detalle el problema" v-bind="componentField" />
         </FormControl>
         <FormMessage />
       </FormItem>
@@ -158,7 +157,7 @@ onMounted(() => {
         <Select v-bind="componentField">
           <FormControl>
             <SelectTrigger>
-              <SelectValue placeholder="Seleccione la prioridad del cambio" />
+              <SelectValue placeholder="Seleccione la prioridad del problema" />
             </SelectTrigger>
           </FormControl>
           <SelectContent class="capitalize">
@@ -184,10 +183,12 @@ onMounted(() => {
           <ComboboxAnchor as-child>
             <TagsInput
               :model-value="componentField.modelValue"
-              @update:model-value="componentField['onUpdate:modelValue']"
               class="px-2 gap-2 w-80"
+              @update:model-value="componentField['onUpdate:modelValue']"
             >
-              <div class="flex gap-2 flex-wrap items-center">
+              <div
+                class="flex gap-2 flex-wrap items-center overflow-y-auto max-h-40"
+              >
                 <TagsInputItem
                   v-for="itemID in componentField.modelValue"
                   :key="itemID"
@@ -210,7 +211,7 @@ onMounted(() => {
 
             <ComboboxList class="w-[--reka-popper-anchor-width]">
               <ComboboxEmpty />
-              <ComboboxGroup>
+              <ComboboxGroup class="max-h-60 overflow-y-auto">
                 <ComboboxItem
                   v-for="item in filteredItems"
                   :key="item.id"

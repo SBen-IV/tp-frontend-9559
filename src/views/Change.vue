@@ -4,8 +4,6 @@ import { BrushCleaning } from "lucide-vue-next";
 import { Input } from "@/components/ui/input";
 import { computed, onMounted, ref, shallowRef } from "vue";
 import { RouterLink } from "vue-router";
-import type { ConfigItem } from "@/models/config_items";
-import { getAllConfigItems } from "@/api/config_items";
 import { toast } from "vue-sonner";
 import { Plus } from "lucide-vue-next";
 import ChangePreview from "@/components/ChangePreview.vue";
@@ -17,10 +15,11 @@ import {
   SelectGroup,
   SelectContent,
 } from "@/components/ui/select";
-import { changePriority, changeStatus } from "@/models/changes";
+import { changeStatus } from "@/models/changes";
 import { sortByDate, sortByName } from "@/lib/utils";
 import type { Change } from "@/models/changes";
 import { getAllChanges } from "@/api/changes";
+import { priorities } from "@/models/commons";
 
 const data = shallowRef<Change[]>([]);
 const isLoading = ref(false);
@@ -49,12 +48,14 @@ const fetchItems = async () => {
 const formattedStatus = computed(() =>
   changeStatus.map((status) => ({
     value: status,
-    label: status.charAt(0).toUpperCase() + status.slice(1).toLowerCase().split('_').join(' '),
+    label:
+      status.charAt(0).toUpperCase() +
+      status.slice(1).toLowerCase().split("_").join(" "),
   })),
 );
 
 const formattedPriorities = computed(() =>
-  changePriority.map((priority) => ({
+  priorities.map((priority) => ({
     value: priority,
     label: priority.charAt(0).toUpperCase() + priority.slice(1).toLowerCase(),
   })),

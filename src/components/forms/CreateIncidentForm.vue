@@ -6,7 +6,6 @@ import { useFilter } from "reka-ui";
 import { Loader2 } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import type { ConfigItem } from "@/models/config_items";
-import { changeCreateSchema, changePriority } from "../../models/changes";
 import { getAllConfigItems } from "@/api/config_items";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -43,7 +42,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createIncident } from "@/api/incidents";
-import { incidentCategory, incidentCreateSchema, incidentPriority } from "@/models/incidents";
+import { incidentCategory, incidentCreateSchema } from "@/models/incidents";
+import { priorities } from "@/models/commons";
+import router from "@/router";
 
 const items = ref<ConfigItem[]>([]);
 const open = ref(false);
@@ -58,7 +59,7 @@ const { values, handleSubmit, isSubmitting, setFieldValue } = useForm({
 });
 
 const formattedPriorities = computed(() =>
-  incidentPriority.map((priority) => ({
+  priorities.map((priority) => ({
     value: priority,
     label: priority.charAt(0).toUpperCase() + priority.slice(1).toLowerCase(),
   })),
@@ -67,7 +68,9 @@ const formattedPriorities = computed(() =>
 const formattedCategories = computed(() =>
   incidentCategory.map((priority) => ({
     value: priority,
-    label: priority.charAt(0).toUpperCase() + priority.slice(1).toLowerCase().split('_').join(' '),
+    label:
+      priority.charAt(0).toUpperCase() +
+      priority.slice(1).toLowerCase().split("_").join(" "),
   })),
 );
 
@@ -120,6 +123,7 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     await createIncident(values);
     toast.success("Se registró incidente correctamente");
+    router.push("/incidents");
   } catch (err: any) {
     toast.error(err.message);
   }
@@ -165,7 +169,9 @@ onMounted(() => {
         <Select v-bind="componentField">
           <FormControl>
             <SelectTrigger>
-              <SelectValue placeholder="Seleccione la categoría del incidente" />
+              <SelectValue
+                placeholder="Seleccione la categoría del incidente"
+              />
             </SelectTrigger>
           </FormControl>
           <SelectContent class="capitalize">
@@ -190,7 +196,9 @@ onMounted(() => {
         <Select v-bind="componentField">
           <FormControl>
             <SelectTrigger>
-              <SelectValue placeholder="Seleccione la prioridad del incidente" />
+              <SelectValue
+                placeholder="Seleccione la prioridad del incidente"
+              />
             </SelectTrigger>
           </FormControl>
           <SelectContent class="capitalize">
@@ -213,13 +221,15 @@ onMounted(() => {
       <FormItem>
         <FormLabel>Items afectados</FormLabel>
         <Combobox v-model:open="open" :ignore-filter="true">
-          <ComboboxAnchor as-child >
+          <ComboboxAnchor as-child>
             <TagsInput
               :model-value="componentField.modelValue"
               class="px-2 gap-2 w-80"
               @update:model-value="componentField['onUpdate:modelValue']"
             >
-              <div class="flex gap-2 flex-wrap items-center overflow-y-auto max-h-40">
+              <div
+                class="flex gap-2 flex-wrap items-center overflow-y-auto max-h-40"
+              >
                 <TagsInputItem
                   v-for="itemID in componentField.modelValue"
                   :key="itemID"
