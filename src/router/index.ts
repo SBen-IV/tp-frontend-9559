@@ -12,6 +12,8 @@ import { useAuthStore } from "@/stores/auth";
 import Change from "@/views/Change.vue";
 import Incident from "@/views/Incident.vue";
 import NewIncident from "@/views/NewIncident.vue";
+import NewProblem from "@/views/NewProblem.vue";
+import Problem from "@/views/Problem.vue";
 
 const routes = [
   { path: "/", component: Home },
@@ -24,6 +26,8 @@ const routes = [
   { path: "/incidents", component: Incident },
   { path: "/incidents/new", component: NewIncident },
   { path: "/changes/new", component: NewChange },
+  { path: "/problems", component: Problem },
+  { path: "/problems/new", component: NewProblem },
   { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },
 ];
 
