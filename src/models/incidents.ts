@@ -1,6 +1,6 @@
 import * as z from "zod";
+import { priorities } from "./commons";
 
-export const incidentPriority = ["BAJA", "MEDIA", "ALTA", "URGENTE"] as const;
 export const incidentStatus = [
   "NUEVO",
   "RESUELTO",
@@ -21,7 +21,7 @@ export const incidentCreateSchema = z.object({
   descripcion: z
     .string({ required_error: "Ingrese una descripción" })
     .min(1, "Ingrese una descripción"),
-  prioridad: z.enum(incidentPriority),
+  prioridad: z.enum(priorities),
   categoria: z.enum(incidentCategory),
   id_config_items: z.array(z.string().uuid()),
 });

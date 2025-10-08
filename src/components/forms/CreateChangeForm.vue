@@ -6,7 +6,7 @@ import { useFilter } from "reka-ui";
 import { Loader2 } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import type { ConfigItem } from "@/models/config_items";
-import { changeCreateSchema, changePriority } from "../../models/changes";
+import { changeCreateSchema } from "../../models/changes";
 import { getAllConfigItems } from "@/api/config_items";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -43,6 +43,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createChange } from "@/api/changes";
+import { priorities } from "@/models/commons";
 
 const items = ref<ConfigItem[]>([]);
 const open = ref(false);
@@ -57,7 +58,7 @@ const { values, handleSubmit, isSubmitting, setFieldValue } = useForm({
 });
 
 const formattedPriorities = computed(() =>
-  changePriority.map((priority) => ({
+  priorities.map((priority) => ({
     value: priority,
     label: priority.charAt(0).toUpperCase() + priority.slice(1).toLowerCase(),
   })),
