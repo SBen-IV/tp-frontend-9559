@@ -14,7 +14,7 @@ import type { Incident as Incident } from "@/models/incidents";
 import { Button } from "@/components/ui/button";
 import { sortByDate, sortByName } from "@/lib/utils";
 import { Plus } from "lucide-vue-next";
-import { estados } from "@/models/problems";
+import { incidentStatus as estados } from "@/models/incidents";
 import { shallowRef, ref, computed, onMounted } from "vue";
 import { toast } from "vue-sonner";
 import { getAllIncidents } from "@/api/incidents";
