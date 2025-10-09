@@ -19,11 +19,15 @@ import {
 } from "./ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "./ui/button";
-import type { Change } from "@/models/changes";
 import ItemOption from "./ItemOption.vue";
-import { prettyDate, getPrioridadColor } from "@/lib/utils";
+import type { Problem } from "@/models/problems";
+import { getPrioridadColor, prettyDate } from "@/lib/utils";
 
-defineProps<{ change: Change }>();
+defineProps<{ problem: Problem }>();
+
+const prettyEstado = (estado: String): String => {
+  return estado.replace("_", " ");
+};
 </script>
 
 <template>
@@ -31,21 +35,17 @@ defineProps<{ change: Change }>();
     <CardHeader>
       <div class="flex">
         <CardTitle class="flex justify-between mr-2 gap-2">
-          <p>{{ change.titulo }}</p>
-
-          <p class="italic text-xs font-light">
-            Fecha creación: {{ prettyDate(change.fecha_creacion) }}
-          </p>
+          <p>{{ problem.titulo }}</p>
         </CardTitle>
       </div>
-      <Badge variant="default" :class="getPrioridadColor(change.prioridad)">{{
-        change.prioridad
+      <Badge variant="default" :class="getPrioridadColor(problem.prioridad)">{{
+        problem.prioridad
       }}</Badge>
-      <Badge variant="secondary">{{ change.estado }}</Badge>
+      <Badge variant="secondary">{{ prettyEstado(problem.estado) }}</Badge>
     </CardHeader>
     <CardContent class="overflow-hidden text-ellipsis text-wrap max-h-30">
-      <p class="text-sm">
-        {{ change.descripcion }}
+      <p class="italic text-xs">
+        Fecha creación: {{ prettyDate(problem.fecha_creacion) }}
       </p>
     </CardContent>
     <CardFooter>
@@ -58,13 +58,15 @@ defineProps<{ change: Change }>();
         >
           <DialogHeader class="p-6 pb-0">
             <DialogTitle class="flex justify-between">
-              <p>{{ change.titulo }}</p>
+              <p>{{ problem.titulo }}</p>
               <p class="italic text-xs font-light mr-2">
-                Fecha creación: {{ prettyDate(change.fecha_creacion) }}
+                Fecha creación: {{ prettyDate(problem.fecha_creacion) }}
               </p>
             </DialogTitle>
             <DialogDescription>
-              <Badge variant="secondary">{{ change.estado }}</Badge>
+              <Badge variant="secondary">{{
+                prettyEstado(problem.estado)
+              }}</Badge>
             </DialogDescription>
           </DialogHeader>
 
@@ -75,13 +77,13 @@ defineProps<{ change: Change }>();
             </TabsList>
             <TabsContent value="descripcion" class="overflow-y-auto">
               <p class="pt-4">
-                {{ change.descripcion }}
+                {{ problem.descripcion }}
               </p>
             </TabsContent>
             <TabsContent value="config_items" class="overflow-y-auto">
               <!-- TODO: Should link to the CI -->
               <ItemOption
-                v-for="item in change.config_items"
+                v-for="item in problem.config_items"
                 :key="item.id"
                 :item="item"
                 class="hover:bg-accent rounded-md mb-2 pt-4"
