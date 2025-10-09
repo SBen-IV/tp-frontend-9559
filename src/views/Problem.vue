@@ -114,7 +114,7 @@ onMounted(() => {
     </Button>
   </div>
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 flex py-6">
-    <div>
+    <div class="">
       <b>Titulo</b>
       <Input
         id="search"
@@ -126,7 +126,7 @@ onMounted(() => {
     <div>
       <b>Prioridad</b>
       <Select v-model="searchPrioridad">
-        <SelectTrigger>
+        <SelectTrigger class="w-[180px]">
           <SelectValue placeholder="Buscar por prioridad..." />
         </SelectTrigger>
         <SelectContent class="capitalize">
@@ -159,9 +159,9 @@ onMounted(() => {
         </SelectContent>
       </Select>
     </div>
-  </div>
-  <div class="pb-4">
-    <Button @click="resetSearch()"><BrushCleaning /> Limpiar filtro</Button>
+    <div class="pt-6">
+      <Button @click="resetSearch()"><BrushCleaning /> Limpiar filtro</Button>
+    </div>
   </div>
   <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
     <div v-for="item in filteredProblemas" class="grid">

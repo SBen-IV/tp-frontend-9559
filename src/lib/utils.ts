@@ -28,3 +28,29 @@ export const sortByName = (nombre1: string, nombre2: string) => {
 
   return 0;
 };
+
+export const getPrioridadColor = (prioridad: string): string => {
+  switch (prioridad) {
+    case "BAJA":
+      return "bg-blue-400";
+    case "MEDIA":
+      return "bg-yellow-300";
+    case "ALTA":
+      return "bg-orange-500";
+    case "URGENTE":
+      return "bg-red-600";
+    default:
+      return "";
+  }
+};
+
+export const prettyDate = (date: Date): string => {
+  // For some reason `date` is not a `Date`
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = d.getMonth() + 1;
+  const day = d.getDate();
+  return `${day.toString().padStart(2, "0")}-${month
+    .toString()
+    .padStart(2, "0")}-${year}`;
+};

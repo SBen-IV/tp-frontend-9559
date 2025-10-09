@@ -21,19 +21,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "./ui/button";
 import ItemOption from "./ItemOption.vue";
 import type { Problem } from "@/models/problems";
+import { getPrioridadColor, prettyDate } from "@/lib/utils";
 
 defineProps<{ problem: Problem }>();
-
-const dateToString = (date: Date): String => {
-  // For some reason `date` is not a `Date`
-  const d = new Date(date);
-  const year = d.getFullYear();
-  const month = d.getMonth() + 1;
-  const day = d.getDate();
-  return `${day.toString().padStart(2, "0")}-${month
-    .toString()
-    .padStart(2, "0")}-${year}`;
-};
 
 const prettyEstado = (estado: String): String => {
   return estado.replace("_", " ");
@@ -48,12 +38,14 @@ const prettyEstado = (estado: String): String => {
           <p>{{ problem.titulo }}</p>
         </CardTitle>
       </div>
-      <Badge variant="default">{{ problem.prioridad }}</Badge>
+      <Badge variant="default" :class="getPrioridadColor(problem.prioridad)">{{
+        problem.prioridad
+      }}</Badge>
       <Badge variant="secondary">{{ prettyEstado(problem.estado) }}</Badge>
     </CardHeader>
     <CardContent class="overflow-hidden text-ellipsis text-wrap max-h-30">
       <p class="italic text-xs">
-        Fecha creación: {{ dateToString(problem.fecha_creacion) }}
+        Fecha creación: {{ prettyDate(problem.fecha_creacion) }}
       </p>
     </CardContent>
     <CardFooter>
@@ -68,7 +60,7 @@ const prettyEstado = (estado: String): String => {
             <DialogTitle class="flex justify-between">
               <p>{{ problem.titulo }}</p>
               <p class="italic text-xs font-light mr-2">
-                Fecha creación: {{ dateToString(problem.fecha_creacion) }}
+                Fecha creación: {{ prettyDate(problem.fecha_creacion) }}
               </p>
             </DialogTitle>
             <DialogDescription>

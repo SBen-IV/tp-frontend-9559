@@ -27,17 +27,9 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import { Button } from "./ui/button";
+import { prettyDate } from "@/lib/utils";
 
 const props = defineProps<{ item: ConfigItem }>();
-
-const dateToString = (date: Date): String => {
-  // For some reason `date` is not a `Date`
-  const d = new Date(date);
-  const year = d.getFullYear();
-  const month = d.getMonth() + 1;
-  const day = d.getDate();
-  return `${day.toString().padStart(2, "0")}-${month.toString().padStart(2, "0")}-${year}`;
-};
 
 const categoryIcons: Record<string, any> = {
   SOFTWARE: CodeXml,
@@ -65,7 +57,7 @@ const itemIcon = computed(() => {
     </CardHeader>
     <CardContent class="overflow-hidden text-ellipsis text-wrap max-h-30">
       <p class="italic text-xs">
-        Fecha creación: {{ dateToString(item.fecha_creacion) }}
+        Fecha creación: {{ prettyDate(item.fecha_creacion) }}
       </p>
       <Dialog>
         <DialogTrigger as-child>
@@ -95,7 +87,7 @@ const itemIcon = computed(() => {
               <Badge variant="secondary">{{ item.estado }}</Badge>
             </p>
             <p class="italic text-xs">
-              Fecha creación: {{ dateToString(item.fecha_creacion) }}
+              Fecha creación: {{ prettyDate(item.fecha_creacion) }}
             </p>
           </DialogHeader>
           <div class="grid gap-4 py-4 overflow-y-auto px-6">

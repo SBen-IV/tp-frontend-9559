@@ -7,11 +7,7 @@ import {
   CardFooter,
 } from "./ui/card";
 import { Badge } from "./ui/badge";
-import {
-  Eye,
-  Trash2,
-  Pencil,
-} from "lucide-vue-next";
+import { Eye, Trash2, Pencil } from "lucide-vue-next";
 import {
   Dialog,
   DialogTrigger,
@@ -25,19 +21,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "./ui/button";
 import type { Change } from "@/models/changes";
 import ItemOption from "./ItemOption.vue";
+import { prettyDate, getPrioridadColor } from "@/lib/utils";
 
-const props = defineProps<{ change: Change }>();
-
-const dateToString = (date: Date): String => {
-  // For some reason `date` is not a `Date`
-  const d = new Date(date);
-  const year = d.getFullYear();
-  const month = d.getMonth() + 1;
-  const day = d.getDate();
-  return `${day.toString().padStart(2, "0")}-${month
-    .toString()
-    .padStart(2, "0")}-${year}`;
-};
+defineProps<{ change: Change }>();
 </script>
 
 <template>
@@ -48,11 +34,13 @@ const dateToString = (date: Date): String => {
           <p>{{ change.titulo }}</p>
 
           <p class="italic text-xs font-light">
-            Fecha creación: {{ dateToString(change.fecha_creacion) }}
+            Fecha creación: {{ prettyDate(change.fecha_creacion) }}
           </p>
         </CardTitle>
       </div>
-      <Badge variant="default">{{ change.prioridad }}</Badge>
+      <Badge variant="default" :class="getPrioridadColor(change.prioridad)">{{
+        change.prioridad
+      }}</Badge>
       <Badge variant="secondary">{{ change.estado }}</Badge>
     </CardHeader>
     <CardContent class="overflow-hidden text-ellipsis text-wrap max-h-30">
@@ -72,7 +60,7 @@ const dateToString = (date: Date): String => {
             <DialogTitle class="flex justify-between">
               <p>{{ change.titulo }}</p>
               <p class="italic text-xs font-light mr-2">
-                Fecha creación: {{ dateToString(change.fecha_creacion) }}
+                Fecha creación: {{ prettyDate(change.fecha_creacion) }}
               </p>
             </DialogTitle>
             <DialogDescription>
