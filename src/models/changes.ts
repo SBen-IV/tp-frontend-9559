@@ -37,4 +37,5 @@ export const changeSchema = changeBaseSchema.extend({
 });
 
 export type ChangeCreate = z.infer<typeof changeCreateSchema>;
+export type ChangeEdit = z.infer<typeof changeEditSchema>;
 export type Change = z.infer<typeof changeSchema>;
