@@ -10,7 +10,7 @@ export const changeStatus = [
   "CERRADO",
 ] as const;
 
-export const changeCreateSchema = z.object({
+export const changeBaseSchema = z.object({
   titulo: z
     .string({ required_error: "Ingrese un titulo" })
     .min(1, "Ingrese un titulo"),
@@ -18,10 +18,13 @@ export const changeCreateSchema = z.object({
     .string({ required_error: "Ingrese una descripción" })
     .min(1, "Ingrese una descripción"),
   prioridad: z.enum(priorities),
+})
+
+export const changeCreateSchema = changeBaseSchema.extend({
   id_config_items: z.array(z.string().uuid()),
 });
 
-export const changeSchema = changeCreateSchema.extend({
+export const changeSchema = changeBaseSchema.extend({
   estado: z.enum(changeStatus),
   fecha_creacion: z.date(),
   id: z.string().uuid(),
