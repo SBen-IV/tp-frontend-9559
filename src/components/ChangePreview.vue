@@ -22,12 +22,22 @@ import { Button } from "./ui/button";
 import type { Change } from "@/models/changes";
 import ItemOption from "./ItemOption.vue";
 import { prettyDate, getPrioridadColor } from "@/lib/utils";
+import { ref } from "vue";
 
 defineProps<{ change: Change }>();
+
+// If it should show the form to edit the Change
+const editView = ref(false)
+
+const handleDialogClose = () => {
+  setTimeout(() => {
+    editView.value = false;
+  }, 200);
+};
 </script>
 
 <template>
-  <Card class="py-6" key="item.id">
+  <Card key="item.id" class="py-6">
     <CardHeader>
       <div class="flex">
         <CardTitle class="flex justify-between mr-2 gap-2">
@@ -49,13 +59,15 @@ defineProps<{ change: Change }>();
       </p>
     </CardContent>
     <CardFooter>
-      <Dialog>
+      <Dialog @update:open="handleDialogClose">
         <DialogTrigger as-child class="ml-auto">
           <Button variant="ghost"> <Eye class="w-4 h-4 mr-2" />Ver más </Button>
         </DialogTrigger>
+
         <DialogContent
           class="sm:max-w-[425px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[50dvh]"
         >
+        <div v-if="editView === false">
           <DialogHeader class="p-6 pb-0">
             <DialogTitle class="flex justify-between">
               <p>{{ change.titulo }}</p>
@@ -91,12 +103,22 @@ defineProps<{ change: Change }>();
           <DialogFooter class="">
             <div class="flex gap-2 pb-4 px-4">
               <!-- TODO: These buttons should have actions associated -->
-              <Button> <Pencil class="w-2 h-4" />Edit </Button>
+              <Button @click="editView=true"> <Pencil class="w-2 h-4" />Edit </Button>
               <Button variant="destructive">
                 <Trash2 class="w-2 h-4" />Delete
               </Button>
             </div>
           </DialogFooter>
+        </div>
+
+        <div v-if="editView === true">
+          <DialogHeader class="p-6 pb-0">
+            <DialogTitle class="flex justify-between">
+              <p>Editar Cambio</p>
+            </DialogTitle>
+            <DialogDescription></DialogDescription>
+          </DialogHeader>
+        </div>
         </DialogContent>
       </Dialog>
     </CardFooter>
