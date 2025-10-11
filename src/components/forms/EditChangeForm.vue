@@ -4,7 +4,7 @@ import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import { Loader2 } from "lucide-vue-next";
 import { toast } from "vue-sonner";
-import { changeCreateSchema, type Change } from "../../models/changes";
+import { changeCreateSchema, changeEditSchema, type Change } from "../../models/changes";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -25,11 +25,12 @@ import {
 } from "@/components/ui/select";
 import { changeStatus as status } from "@/models/changes";
 import { priorities } from "@/models/commons";
+import { updateChange } from "@/api/changes";
 
 const props = defineProps<{ change: Change }>();
 
-const { values, handleSubmit, isSubmitting, setFieldValue } = useForm({
-  validationSchema: toTypedSchema(changeCreateSchema),
+const { values, handleSubmit, isSubmitting } = useForm({
+  validationSchema: toTypedSchema(changeEditSchema),
   initialValues: props.change,
 });
 
@@ -49,6 +50,7 @@ const formattedStatus = computed(() =>
 
 const onSubmit = handleSubmit(async (values) => {
   try {
+    await updateChange(props.change.id, values)
     toast.success("Se modificó el cambio correctamente");
   } catch (err: any) {
     toast.error(err.message);
