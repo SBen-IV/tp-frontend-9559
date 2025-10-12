@@ -27,7 +27,7 @@ import EditChangeForm from "./forms/EditChangeForm.vue";
 
 defineProps<{ change: Change }>();
 
-// If it should show the form to edit the Change
+// Whether it should show the form to edit the Change or not
 const editView = ref(false)
 
 const handleDialogClose = () => {
@@ -35,6 +35,15 @@ const handleDialogClose = () => {
   setTimeout(() => {
     editView.value = false;
   }, 200);
+};
+
+const emit = defineEmits<{
+  changesUpdated: [];
+}>();
+
+const handleEditSubmitted = () => {
+  // Let parent know a Change was updated so it can re-fetch the Changes
+  emit('changesUpdated')
 };
 </script>
 
@@ -116,7 +125,7 @@ const handleDialogClose = () => {
               <DialogTitle>Editar Cambio</DialogTitle>
             </DialogHeader>
 
-            <EditChangeForm class="p-6 pb-0 flex-1 min-h-0 overflow-y-auto px-6" :change="change"/>
+            <EditChangeForm class="p-6 pb-0 flex-1 min-h-0 overflow-y-auto px-6" :change="change" @submitted="handleEditSubmitted"/>
           </div>
         </DialogContent>
       </Dialog>

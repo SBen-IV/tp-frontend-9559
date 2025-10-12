@@ -4,7 +4,7 @@ import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import { Loader2 } from "lucide-vue-next";
 import { toast } from "vue-sonner";
-import { changeCreateSchema, changeEditSchema, type Change } from "../../models/changes";
+import { changeEditSchema, type Change } from "../../models/changes";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -29,6 +29,11 @@ import { updateChange } from "@/api/changes";
 
 const props = defineProps<{ change: Change }>();
 
+const emit = defineEmits<{
+  // Let parent know the form was submitted
+  submitted: [];
+}>();
+
 const { values, handleSubmit, isSubmitting } = useForm({
   validationSchema: toTypedSchema(changeEditSchema),
   initialValues: props.change,
@@ -52,6 +57,7 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     await updateChange(props.change.id, values)
     toast.success("Se modificó el cambio correctamente");
+    emit('submitted');
   } catch (err: any) {
     toast.error(err.message);
   }
