@@ -23,6 +23,17 @@ import { DonutChart } from "@/components/ui/chart-donut";
 import type { ConfigItemMetric } from "@/models/metrics";
 import { CardContent, CardTitle, Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  BLUE,
+  GREEN,
+  LIGHT_BLUE,
+  LIGHT_GREEN,
+  PINK,
+  RED,
+  VIOLET,
+  YELLOW,
+  type Color,
+} from "@/models/colors";
 
 const data = shallowRef<ConfigItem[]>([]);
 const metricsData = reactive<ConfigItemMetric>({
@@ -35,6 +46,30 @@ const searchNombre = ref("");
 const searchVersion = ref("");
 const searchCategoria = ref("");
 const searchEstado = ref("");
+
+const colorsByCategoria: Record<string, Color> = {
+  SOFTWARE: PINK,
+  HARDWARE: VIOLET,
+  DOCUMENTACION: BLUE,
+};
+
+const colorsByEstado: Record<string, Color> = {
+  PLANEADO: PINK,
+  ENCARGADO: VIOLET,
+  EN_CREACION: BLUE,
+  EN_PRUEBA: LIGHT_BLUE,
+  EN_ALMACEN: GREEN,
+  EN_PRODUCCION: LIGHT_GREEN,
+  EN_MANTENIMIENTO: YELLOW,
+};
+
+const getItemCategoriaColor = (categoria: string): string => {
+  return colorsByCategoria[categoria].tw;
+};
+
+const getItemEstadoColor = (estado: string): string => {
+  return colorsByEstado[estado].tw;
+};
 
 const calculateMetrics = (items: ConfigItem[]) => {
   const byEstado: Map<string, number> = new Map();
@@ -165,8 +200,14 @@ onMounted(() => {
       <CardTitle class="text-2xl font-bold text-center">Por estados</CardTitle>
       <CardContent>
         <div class="flex">
-          <div class="flex text-nowrap" v-for="estado in metricsData.byEstado">
-            <p>{{ estado.name }} ({{ estado.total }})</p>
+          <div>
+            <Badge
+              class="flex text-nowrap"
+              v-for="estado in metricsData.byEstado"
+              :class="getItemEstadoColor(estado.name)"
+            >
+              {{ estado.name }} ({{ estado.total }})
+            </Badge>
           </div>
           <DonutChart
             index="name"
@@ -174,6 +215,11 @@ onMounted(() => {
             :data="metricsData.byEstado"
             :show-legend="true"
             :type="'pie'"
+            :colors="
+              Object.keys(colorsByEstado).map(
+                (key: string) => colorsByEstado[key].rgb,
+              )
+            "
           />
         </div>
       </CardContent>
@@ -184,20 +230,25 @@ onMounted(() => {
       >
       <CardContent>
         <div class="flex">
-          <div
-            class="grid grid-cols-1"
-            v-for="categoria in metricsData.byCategoria"
-          >
-            <!--<p class="text-justify">
+          <div>
+            <Badge
+              class="mb-2 mx-2"
+              v-for="categoria in metricsData.byCategoria"
+              :class="getItemCategoriaColor(categoria.name)"
+            >
               {{ categoria.name }} ({{ categoria.total }})
-            </p>-->
-            <Badge>{{ categoria.name }} ({{ categoria.total }})</Badge>
+            </Badge>
           </div>
           <DonutChart
             index="name"
             :category="'total'"
             :data="metricsData.byCategoria"
             :type="'pie'"
+            :colors="
+              Object.keys(colorsByCategoria).map(
+                (key: string) => colorsByCategoria[key].rgb,
+              )
+            "
           />
         </div>
       </CardContent>
