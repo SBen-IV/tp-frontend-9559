@@ -24,10 +24,10 @@ export const incidentBaseSchema = z.object({
     .min(1, "Ingrese una descripción"),
   prioridad: z.enum(priorities),
   categoria: z.enum(incidentCategory), 
-  id_config_items: z.array(z.string().uuid()), 
 })
 
 export const incidentCreateSchema = incidentBaseSchema.extend({
+  id_config_items: z.array(z.string().uuid()), 
 });
 
 export const incidentSchema = incidentBaseSchema.extend({
