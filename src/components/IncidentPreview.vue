@@ -7,7 +7,7 @@ import {
   CardFooter,
 } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { Eye, Trash2, Pencil, CodeXml, Wrench, ShieldAlert, MessageCircleQuestion } from "lucide-vue-next";
+import { Eye, Trash2, Pencil, CodeXml, Wrench, ShieldAlert, MessageCircleQuestion, ArrowLeft } from "lucide-vue-next";
 import {
   Dialog,
   DialogTrigger,
@@ -22,7 +22,8 @@ import { Button } from "./ui/button";
 import ItemOption from "./ItemOption.vue";
 import type { Incident } from "@/models/incidents";
 import { getPrioridadColor, prettyDate } from "@/lib/utils";
-import { computed } from "vue";
+import { computed, ref } from "vue";
+import EditIncidentForm from "./forms/EditIncidentForm.vue";
 
 const props = defineProps<{ incident: Incident }>();
 
@@ -31,6 +32,29 @@ const categoryIcons: Record<string, any> = {
   HARDWARE: Wrench,
   SEGURIDAD: ShieldAlert,
   SOLICITUD_DE_SERVICIO: MessageCircleQuestion,
+};
+
+// Whether it should show the form to edit the Incident or not
+const editView = ref(false)
+
+const handleDialogClose = () => {
+  // To prevent a minor visual glitch
+  setTimeout(() => {
+    editView.value = false;
+  }, 200);
+};
+
+const emit = defineEmits<{
+  incidentsUpdated: [];
+}>();
+
+const handleEditSubmitted = () => {
+  // Let parent know an Incident was updated so it can re-fetch the Incidents
+  emit('incidentsUpdated')
+};
+
+const cancelEdit = () => {
+  editView.value = false
 };
 
 const categoryIcon = computed(() => {
@@ -65,7 +89,7 @@ const prettyEstado = (estado: String): String => {
         Fecha creación: {{ prettyDate(incident.fecha_creacion) }}
       </p>
     </CardContent>
-    <CardFooter>
+    <CardFooter  @update:open="handleDialogClose">
       <Dialog>
         <DialogTrigger as-child class="ml-auto">
           <Button variant="ghost"> <Eye class="w-4 h-4 mr-2" />Ver más </Button>
@@ -73,6 +97,7 @@ const prettyEstado = (estado: String): String => {
         <DialogContent
           class="sm:max-w-[425px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[50dvh]"
         >
+        <div v-if="editView === false">
           <DialogHeader class="p-6 pb-0">
             <DialogTitle class="flex justify-between">
               <p>{{ incident.titulo }}</p>
@@ -110,12 +135,30 @@ const prettyEstado = (estado: String): String => {
           <DialogFooter class="">
             <div class="flex gap-2 pb-4 px-4">
               <!-- TODO: These buttons should have actions associated -->
-              <Button> <Pencil class="w-2 h-4" />Edit </Button>
+              <Button @click="editView = true"> <Pencil class="w-2 h-4" />Edit </Button>
               <Button variant="destructive">
                 <Trash2 class="w-2 h-4" />Delete
               </Button>
             </div>
           </DialogFooter>
+        </div>
+
+        <div v-else class="flex flex-col flex-1 min-h-0">
+            <DialogHeader class="p-6 pb-0 flex-shrink-0">
+               <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  class="h-6 w-6" 
+                  @click="cancelEdit"
+                >
+                  <ArrowLeft class="h-4 w-4" />
+                </Button>
+              <DialogTitle>Editar Incidente</DialogTitle>
+            </DialogHeader>
+
+            <EditIncidentForm class="p-6 pb-0 flex-1 min-h-0 overflow-y-auto px-6" :incident="incident" @submitted="handleEditSubmitted"/>
+        </div>
+
         </DialogContent>
       </Dialog>
     </CardFooter>
