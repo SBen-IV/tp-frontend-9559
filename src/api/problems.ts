@@ -1,5 +1,5 @@
 import axiosInstance from "./index";
-import type { Problem, ProblemCreate } from "@/models/problems";
+import type { Problem, ProblemCreate, ProblemEdit } from "@/models/problems";
 
 const BASE_URL: string = "/api/v1/problems";
 
@@ -9,6 +9,18 @@ export async function createProblem(problem: ProblemCreate) {
 
 export async function getAllProblems(): Promise<Problem[]> {
   const response = await axiosInstance.get(BASE_URL);
+
+  return response.data;
+}
+
+export async function updateProblem(
+  problemID: string,
+  problem: ProblemEdit,
+): Promise<Problem> {
+  const response = await axiosInstance.patch(
+    `${BASE_URL}/${problemID}`,
+    problem,
+  );
 
   return response.data;
 }
