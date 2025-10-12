@@ -81,7 +81,7 @@ const cancelEdit = () => {
           </Button>
         </DialogTrigger>
 
-        <DialogContent class="sm:max-w-[425px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[70dvh]">
+        <DialogContent class="sm:max-w-[425px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[70dvh] ">
           <div v-if="editView === false">
             <DialogHeader class="p-6 pb-0">
               <DialogTitle class="flex justify-between">
@@ -95,7 +95,7 @@ const cancelEdit = () => {
               </DialogDescription>
             </DialogHeader>
 
-            <Tabs default-value="descripcion" class="w-full px-6">
+            <Tabs default-value="descripcion" class="w-full px-6 max-h-[50dvh]">
               <TabsList class="grid w-full grid-cols-2">
                 <TabsTrigger value="descripcion">Descripción</TabsTrigger>
                 <TabsTrigger value="config_items">Ítems afectados</TabsTrigger>
@@ -112,7 +112,7 @@ const cancelEdit = () => {
               </TabsContent>
             </Tabs>
             <DialogFooter class="">
-              <div class="flex gap-2 pb-4 px-4">
+              <div class="flex gap-2 pb-4 px-4 pt-4">
                 <!-- TODO: These buttons should have actions associated -->
                 <Button @click="editView = true">
                   <Pencil class="w-2 h-4" />Edit
