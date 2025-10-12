@@ -16,7 +16,35 @@ const getBadgeColor = (key: string): string => {
 };
 
 const getDonutColor = (colors: Record<string, Color>) => {
-  return Object.keys(colors).map((key: string) => colors[key].rgb);
+  const metricNames = props.metrics
+    .map((m: Metric) => m.name)
+    .sort((a, b) => {
+      if (a < b) {
+        return -1;
+      }
+      return 1;
+    });
+  console.log(metricNames);
+
+  return Object.keys(colors)
+    .map((key: string) => {
+      return { key, rgb: colors[key].rgb };
+    })
+    .filter(({ key }) => metricNames.includes(key))
+    .sort((a, b) => {
+      if (a.key < b.key) {
+        return -1;
+      }
+      return 1;
+    })
+    .map(({ rgb }) => rgb);
+};
+
+const sortMetrics = (a: Metric, b: Metric): number => {
+  if (a.name < b.name) {
+    return -1;
+  }
+  return 1;
 };
 </script>
 
@@ -37,6 +65,7 @@ const getDonutColor = (colors: Record<string, Color>) => {
           :show-legend="true"
           :type="'pie'"
           :colors="getDonutColor(colors)"
+          :sort-function="sortMetrics"
         />
       </div>
     </CardContent>
