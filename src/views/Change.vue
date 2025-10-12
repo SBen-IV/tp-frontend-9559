@@ -109,6 +109,10 @@ const resetSearch = () => {
   searchPrioridad.value = "";
 };
 
+const handleChangesUpdated = () => {
+  fetchItems();
+};
+
 onMounted(() => {
   fetchItems();
 });
@@ -186,7 +190,7 @@ onMounted(() => {
   <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
     <div v-for="item in filteredItems" class="grid">
       <li class="grid gap-4">
-        <ChangePreview :change="item" />
+        <ChangePreview :change="item" @changes-updated="handleChangesUpdated"/>
       </li>
     </div>
   </ul>
