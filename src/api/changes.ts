@@ -17,7 +17,7 @@ export async function getAllChanges() : Promise<Change[]> {
   return response.data
 }
 
-export async function updateChange(changeID: string, change: ChangeEdit) : Promise<Change[]> {
+export async function updateChange(changeID: string, change: ChangeEdit) : Promise<Change> {
   const response =  await axiosInstance.patch(`${BASE_URL}/${changeID}`, change);
   
   return response.data
