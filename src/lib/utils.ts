@@ -1,3 +1,4 @@
+import type { Metric } from "@/models/metrics";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -53,4 +54,10 @@ export const prettyDate = (date: Date): string => {
   return `${day.toString().padStart(2, "0")}-${month
     .toString()
     .padStart(2, "0")}-${year}`;
+};
+
+export const mapToMetric = (data: Map<string, number>): Metric[] => {
+  return Array.from(data, ([k, v]: [string, number]): Metric => {
+    return { name: k, total: v };
+  });
 };

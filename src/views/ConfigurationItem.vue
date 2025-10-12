@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { BrushCleaning } from "lucide-vue-next";
 import { Input } from "@/components/ui/input";
-import { computed, onMounted, ref, shallowRef } from "vue";
+import { computed, onMounted, reactive, ref, shallowRef } from "vue";
 import { RouterLink } from "vue-router";
 import type { ConfigItem } from "@/models/config_items";
 import { getAllConfigItems } from "@/api/config_items";
@@ -18,19 +18,88 @@ import {
   SelectContent,
 } from "@/components/ui/select";
 import { categorias, estados } from "@/models/config_items";
-import { sortByDate, sortByName } from "@/lib/utils";
+import { mapToMetric, sortByDate, sortByName } from "@/lib/utils";
+import { DonutChart } from "@/components/ui/chart-donut";
+import type { ConfigItemMetric } from "@/models/metrics";
+import { CardContent, CardTitle, Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  BLUE,
+  GREEN,
+  LIGHT_BLUE,
+  LIGHT_GREEN,
+  PINK,
+  RED,
+  VIOLET,
+  YELLOW,
+  type Color,
+} from "@/models/colors";
+import CustomPieChart from "@/components/CustomPieChart.vue";
 
 const data = shallowRef<ConfigItem[]>([]);
+const metricsData = reactive<ConfigItemMetric>({
+  total: 0,
+  byEstado: [],
+  byCategoria: [],
+});
 const isLoading = ref(false);
 const searchNombre = ref("");
 const searchVersion = ref("");
 const searchCategoria = ref("");
 const searchEstado = ref("");
 
+const colorsByCategoria: Record<string, Color> = {
+  SOFTWARE: PINK,
+  HARDWARE: VIOLET,
+  DOCUMENTACION: BLUE,
+};
+
+const colorsByEstado: Record<string, Color> = {
+  PLANEADO: PINK,
+  ENCARGADO: VIOLET,
+  EN_CREACION: BLUE,
+  EN_PRUEBA: LIGHT_BLUE,
+  EN_ALMACEN: GREEN,
+  EN_PRODUCCION: LIGHT_GREEN,
+  EN_MANTENIMIENTO: YELLOW,
+};
+
+const getItemCategoriaColor = (categoria: string): string => {
+  return colorsByCategoria[categoria].tw;
+};
+
+const getItemEstadoColor = (estado: string): string => {
+  return colorsByEstado[estado].tw;
+};
+
+const calculateMetrics = (items: ConfigItem[]) => {
+  const byEstado: Map<string, number> = new Map();
+  const byCategoria: Map<string, number> = new Map();
+
+  items.forEach((item: ConfigItem) => {
+    const valueEstado: number | undefined = byEstado.get(item.estado)
+      ? byEstado.get(item.estado)! + 1
+      : 1;
+
+    byEstado.set(item.estado, valueEstado);
+
+    const valueCategoria: number | undefined = byCategoria.get(item.categoria)
+      ? byCategoria.get(item.categoria)! + 1
+      : 1;
+
+    byCategoria.set(item.categoria, valueCategoria);
+  });
+
+  metricsData.total = items.length;
+  metricsData.byEstado = mapToMetric(byEstado);
+  metricsData.byCategoria = mapToMetric(byCategoria);
+};
+
 const fetchItems = async () => {
   isLoading.value = true;
   try {
     const items: ConfigItem[] = await getAllConfigItems();
+    calculateMetrics(items);
     data.value = items.sort((item1, item2) => {
       const res = sortByDate(item1.fecha_creacion, item2.fecha_creacion);
 
@@ -114,20 +183,36 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- HACK: there's probably a better way to align this -->
+  <h1 class="text-6xl text-center font-bold mb-2">Items de configuración</h1>
   <div class="flex items-center my-2">
-    <h1 class="margin-0">Ítems de Configuración</h1>
     <Button class="ml-auto">
       <RouterLink to="/config-items/new" class="flex">
         <Plus class="w-2 h-4 mr-2" />Crear</RouterLink
       >
     </Button>
   </div>
+  <div class="grid grid-cols-3 gap-8 flex items-center">
+    <Card class="mx-6 max-w-3/4">
+      <div class="justify-items-center items-center">
+        <div class="text-4xl font-light">Total {{ metricsData.total }}</div>
+      </div>
+    </Card>
+    <CustomPieChart
+      :title="'Por estados'"
+      :metrics="metricsData.byEstado"
+      :colors="colorsByEstado"
+    />
+    <CustomPieChart
+      :title="'Por categorías'"
+      :metrics="metricsData.byCategoria"
+      :colors="colorsByCategoria"
+    />
+  </div>
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 flex py-6">
     <div>
       <b>Nombre</b>
       <Input
-        id="search"
+        id="searchNombre"
         type="text"
         placeholder="Buscar por nombre..."
         v-model="searchNombre"
@@ -136,7 +221,7 @@ onMounted(() => {
     <div>
       <b>Versión</b>
       <Input
-        id="search"
+        id="searchVersion"
         type="text"
         placeholder="Buscar por versión..."
         v-model="searchVersion"
