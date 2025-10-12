@@ -18,20 +18,18 @@ import {
   SelectContent,
 } from "@/components/ui/select";
 import { categorias, estados } from "@/models/config_items";
-import { sortByDate, sortByName } from "@/lib/utils";
+import { mapToMetric, sortByDate, sortByName } from "@/lib/utils";
 import { DonutChart } from "@/components/ui/chart-donut";
-
-interface Metric {
-  name: string;
-  total: number;
-}
+import type { ConfigItemMetric } from "@/models/metrics";
+import { CardContent, CardTitle, Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const data = shallowRef<ConfigItem[]>([]);
-const metricsData = reactive<{
-  total: number;
-  byEstado: Metric[];
-  byCategoria: Metric[];
-}>({ total: 0, byEstado: [], byCategoria: [] });
+const metricsData = reactive<ConfigItemMetric>({
+  total: 0,
+  byEstado: [],
+  byCategoria: [],
+});
 const isLoading = ref(false);
 const searchNombre = ref("");
 const searchVersion = ref("");
@@ -57,12 +55,8 @@ const calculateMetrics = (items: ConfigItem[]) => {
   });
 
   metricsData.total = items.length;
-  metricsData.byEstado = Array.from(byEstado, ([k, v]) => {
-    return { name: k, total: v };
-  });
-  metricsData.byCategoria = Array.from(byCategoria, ([k, v]) => {
-    return { name: k, total: v };
-  });
+  metricsData.byEstado = mapToMetric(byEstado);
+  metricsData.byCategoria = mapToMetric(byCategoria);
 };
 
 const fetchItems = async () => {
@@ -161,29 +155,53 @@ onMounted(() => {
       >
     </Button>
   </div>
-  <div class="grid grid-cols-3 flex items-center">
-    <div class="justify-items-center items-center">
-      <div class="text-4xl font-light">Total {{ metricsData.total }}</div>
-    </div>
-    <div class="items-center justify-items-center">
-      <p class="text-2xl font-bold mb-4">Por estados</p>
-      <DonutChart
-        index="name"
-        :category="'total'"
-        :data="metricsData.byEstado"
-        :show-legend="true"
-        :type="'pie'"
-      />
-    </div>
-    <div class="items-center justify-items-center">
-      <p class="text-2xl font-bold mb-4">Por categorias</p>
-      <DonutChart
-        index="name"
-        :category="'total'"
-        :data="metricsData.byCategoria"
-        :type="'pie'"
-      />
-    </div>
+  <div class="grid grid-cols-3 gap-8 flex items-center">
+    <Card class="mx-6 max-w-3/4">
+      <div class="justify-items-center items-center">
+        <div class="text-4xl font-light">Total {{ metricsData.total }}</div>
+      </div>
+    </Card>
+    <Card class="max-w-max">
+      <CardTitle class="text-2xl font-bold text-center">Por estados</CardTitle>
+      <CardContent>
+        <div class="flex">
+          <div class="flex text-nowrap" v-for="estado in metricsData.byEstado">
+            <p>{{ estado.name }} ({{ estado.total }})</p>
+          </div>
+          <DonutChart
+            index="name"
+            :category="'total'"
+            :data="metricsData.byEstado"
+            :show-legend="true"
+            :type="'pie'"
+          />
+        </div>
+      </CardContent>
+    </Card>
+    <Card class="max-w-max">
+      <CardTitle class="text-2xl font-bold text-center"
+        >Por categorias</CardTitle
+      >
+      <CardContent>
+        <div class="flex">
+          <div
+            class="grid grid-cols-1"
+            v-for="categoria in metricsData.byCategoria"
+          >
+            <!--<p class="text-justify">
+              {{ categoria.name }} ({{ categoria.total }})
+            </p>-->
+            <Badge>{{ categoria.name }} ({{ categoria.total }})</Badge>
+          </div>
+          <DonutChart
+            index="name"
+            :category="'total'"
+            :data="metricsData.byCategoria"
+            :type="'pie'"
+          />
+        </div>
+      </CardContent>
+    </Card>
   </div>
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 flex py-6">
     <div>
