@@ -21,11 +21,38 @@ import { categorias, estados } from "@/models/config_items";
 import { sortByDate, sortByName } from "@/lib/utils";
 
 const data = shallowRef<ConfigItem[]>([]);
+const metricsData = ref<
+  {
+    total: number;
+    byEstado: {
+      name: string;
+      total: number;
+    }[];
+    byCategoria: {
+      name: string;
+      total: number;
+    }[];
+  }[]
+>([]);
 const isLoading = ref(false);
 const searchNombre = ref("");
 const searchVersion = ref("");
 const searchCategoria = ref("");
 const searchEstado = ref("");
+
+const calculateMetrics = async (items: ConfigItem[]) => {
+  const byEstado = items.map((item: ConfigItem) => {
+    name: item.nombre;
+    estado: item.estado;
+  });
+
+  metricsData.value = [
+    {
+      total: items.length,
+      byEstado: byEstado,
+    },
+  ];
+};
 
 const fetchItems = async () => {
   isLoading.value = true;
@@ -110,6 +137,7 @@ const resetSearch = () => {
 
 onMounted(() => {
   fetchItems();
+  calculateMetrics(data.value);
 });
 </script>
 
