@@ -34,6 +34,7 @@ import {
   YELLOW,
   type Color,
 } from "@/models/colors";
+import CustomPieChart from "@/components/CustomPieChart.vue";
 
 const data = shallowRef<ConfigItem[]>([]);
 const metricsData = reactive<ConfigItemMetric>({
@@ -196,63 +197,16 @@ onMounted(() => {
         <div class="text-4xl font-light">Total {{ metricsData.total }}</div>
       </div>
     </Card>
-    <Card class="max-w-max">
-      <CardTitle class="text-2xl font-bold text-center">Por estados</CardTitle>
-      <CardContent>
-        <div class="flex">
-          <div>
-            <Badge
-              class="flex text-nowrap"
-              v-for="estado in metricsData.byEstado"
-              :class="getItemEstadoColor(estado.name)"
-            >
-              {{ estado.name }} ({{ estado.total }})
-            </Badge>
-          </div>
-          <DonutChart
-            index="name"
-            :category="'total'"
-            :data="metricsData.byEstado"
-            :show-legend="true"
-            :type="'pie'"
-            :colors="
-              Object.keys(colorsByEstado).map(
-                (key: string) => colorsByEstado[key].rgb,
-              )
-            "
-          />
-        </div>
-      </CardContent>
-    </Card>
-    <Card class="max-w-max">
-      <CardTitle class="text-2xl font-bold text-center"
-        >Por categorias</CardTitle
-      >
-      <CardContent>
-        <div class="flex">
-          <div>
-            <Badge
-              class="mb-2 mx-2"
-              v-for="categoria in metricsData.byCategoria"
-              :class="getItemCategoriaColor(categoria.name)"
-            >
-              {{ categoria.name }} ({{ categoria.total }})
-            </Badge>
-          </div>
-          <DonutChart
-            index="name"
-            :category="'total'"
-            :data="metricsData.byCategoria"
-            :type="'pie'"
-            :colors="
-              Object.keys(colorsByCategoria).map(
-                (key: string) => colorsByCategoria[key].rgb,
-              )
-            "
-          />
-        </div>
-      </CardContent>
-    </Card>
+    <CustomPieChart
+      :title="'Por estados'"
+      :metrics="metricsData.byEstado"
+      :colors="colorsByEstado"
+    />
+    <CustomPieChart
+      :title="'Por categorías'"
+      :metrics="metricsData.byCategoria"
+      :colors="colorsByCategoria"
+    />
   </div>
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 flex py-6">
     <div>
