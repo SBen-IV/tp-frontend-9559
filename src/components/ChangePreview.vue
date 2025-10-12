@@ -7,7 +7,7 @@ import {
   CardFooter,
 } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { Eye, Trash2, Pencil } from "lucide-vue-next";
+import { Eye, Trash2, Pencil, ArrowLeft } from "lucide-vue-next";
 import {
   Dialog,
   DialogTrigger,
@@ -44,6 +44,10 @@ const emit = defineEmits<{
 const handleEditSubmitted = () => {
   // Let parent know a Change was updated so it can re-fetch the Changes
   emit('changesUpdated')
+};
+
+const cancelEdit = () => {
+  editView.value = false
 };
 </script>
 
@@ -122,6 +126,14 @@ const handleEditSubmitted = () => {
 
           <div v-else class="flex flex-col flex-1 min-h-0">
             <DialogHeader class="p-6 pb-0 flex-shrink-0">
+               <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  class="h-6 w-6" 
+                  @click="cancelEdit"
+                >
+                  <ArrowLeft class="h-4 w-4" />
+                </Button>
               <DialogTitle>Editar Cambio</DialogTitle>
             </DialogHeader>
 
