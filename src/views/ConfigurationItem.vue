@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { BrushCleaning } from "lucide-vue-next";
 import { Input } from "@/components/ui/input";
-import { computed, onMounted, ref, shallowRef } from "vue";
+import { computed, onMounted, reactive, ref, shallowRef } from "vue";
 import { RouterLink } from "vue-router";
 import type { ConfigItem } from "@/models/config_items";
 import { getAllConfigItems } from "@/api/config_items";
@@ -19,45 +19,57 @@ import {
 } from "@/components/ui/select";
 import { categorias, estados } from "@/models/config_items";
 import { sortByDate, sortByName } from "@/lib/utils";
+import { DonutChart } from "@/components/ui/chart-donut";
+
+interface Metric {
+  name: string;
+  total: number;
+}
 
 const data = shallowRef<ConfigItem[]>([]);
-const metricsData = ref<
-  {
-    total: number;
-    byEstado: {
-      name: string;
-      total: number;
-    }[];
-    byCategoria: {
-      name: string;
-      total: number;
-    }[];
-  }[]
->([]);
+const metricsData = reactive<{
+  total: number;
+  byEstado: Metric[];
+  byCategoria: Metric[];
+}>({ total: 0, byEstado: [], byCategoria: [] });
 const isLoading = ref(false);
 const searchNombre = ref("");
 const searchVersion = ref("");
 const searchCategoria = ref("");
 const searchEstado = ref("");
 
-const calculateMetrics = async (items: ConfigItem[]) => {
-  const byEstado = items.map((item: ConfigItem) => {
-    name: item.nombre;
-    estado: item.estado;
+const calculateMetrics = (items: ConfigItem[]) => {
+  const byEstado: Map<string, number> = new Map();
+  const byCategoria: Map<string, number> = new Map();
+
+  items.forEach((item: ConfigItem) => {
+    const valueEstado: number | undefined = byEstado.get(item.estado)
+      ? byEstado.get(item.estado)! + 1
+      : 1;
+
+    byEstado.set(item.estado, valueEstado);
+
+    const valueCategoria: number | undefined = byCategoria.get(item.categoria)
+      ? byCategoria.get(item.categoria)! + 1
+      : 1;
+
+    byCategoria.set(item.categoria, valueCategoria);
   });
 
-  metricsData.value = [
-    {
-      total: items.length,
-      byEstado: byEstado,
-    },
-  ];
+  metricsData.total = items.length;
+  metricsData.byEstado = Array.from(byEstado, ([k, v]) => {
+    return { name: k, total: v };
+  });
+  metricsData.byCategoria = Array.from(byCategoria, ([k, v]) => {
+    return { name: k, total: v };
+  });
 };
 
 const fetchItems = async () => {
   isLoading.value = true;
   try {
     const items: ConfigItem[] = await getAllConfigItems();
+    calculateMetrics(items);
     data.value = items.sort((item1, item2) => {
       const res = sortByDate(item1.fecha_creacion, item2.fecha_creacion);
 
@@ -137,25 +149,47 @@ const resetSearch = () => {
 
 onMounted(() => {
   fetchItems();
-  calculateMetrics(data.value);
 });
 </script>
 
 <template>
-  <!-- HACK: there's probably a better way to align this -->
+  <h1 class="text-6xl text-center font-bold mb-2">Items de configuración</h1>
   <div class="flex items-center my-2">
-    <h1 class="margin-0">Ítems de Configuración</h1>
     <Button class="ml-auto">
       <RouterLink to="/config-items/new" class="flex">
         <Plus class="w-2 h-4 mr-2" />Crear</RouterLink
       >
     </Button>
   </div>
+  <div class="grid grid-cols-3 flex items-center">
+    <div class="justify-items-center items-center">
+      <div class="text-4xl font-light">Total {{ metricsData.total }}</div>
+    </div>
+    <div class="items-center justify-items-center">
+      <p class="text-2xl font-bold mb-4">Por estados</p>
+      <DonutChart
+        index="name"
+        :category="'total'"
+        :data="metricsData.byEstado"
+        :show-legend="true"
+        :type="'pie'"
+      />
+    </div>
+    <div class="items-center justify-items-center">
+      <p class="text-2xl font-bold mb-4">Por categorias</p>
+      <DonutChart
+        index="name"
+        :category="'total'"
+        :data="metricsData.byCategoria"
+        :type="'pie'"
+      />
+    </div>
+  </div>
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 flex py-6">
     <div>
       <b>Nombre</b>
       <Input
-        id="search"
+        id="searchNombre"
         type="text"
         placeholder="Buscar por nombre..."
         v-model="searchNombre"
@@ -164,7 +198,7 @@ onMounted(() => {
     <div>
       <b>Versión</b>
       <Input
-        id="search"
+        id="searchVersion"
         type="text"
         placeholder="Buscar por versión..."
         v-model="searchVersion"
