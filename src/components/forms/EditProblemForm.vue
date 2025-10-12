@@ -62,24 +62,7 @@ const formattedStatus = computed(() =>
 const fetchUsers = async () => {
   isLoading.value = true;
   try {
-    // users.value = await getAllUsers("EMPLEADO");
-    // As the endpoint does not exist yet, use some mocked data
-    users.value = [
-      {
-        nombre: "Bob",
-        apellido: "Smith",
-        email: "bob@company.com",
-        rol: "EMPLEADO",
-        id: "25a9468f-c18d-4d6b-993a-6719056437e9",
-      },
-      {
-        nombre: "Carl",
-        apellido: "Johnson",
-        email: "carl@company.com",
-        rol: "EMPLEADO",
-        id: "4070b8fd-6145-46aa-b0e5-26e2677e9c3d",
-      },
-    ];
+    users.value = await getAllUsers("EMPLEADO");
   } catch (error: any) {
     toast.error(error.message || "Error al cargar los ítems");
     users.value = [];
