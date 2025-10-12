@@ -46,3 +46,4 @@ export const incidentEditSchema = incidentBaseSchema.extend({
 
 export type IncidentCreate = z.infer<typeof incidentCreateSchema>;
 export type Incident = z.infer<typeof incidentSchema>;
+export type IncidentEdit = z.infer<typeof incidentEditSchema>;
