@@ -1,0 +1,195 @@
+<script setup lang="ts">
+import { computed, ref, onMounted } from "vue";
+import { useForm } from "vee-validate";
+import { toTypedSchema } from "@vee-validate/zod";
+import { Loader2 } from "lucide-vue-next";
+import { toast } from "vue-sonner";
+import { changeEditSchema, type Change } from "../../models/changes";
+import { problemEditSchema, type Problem } from "@/models/problems";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { estados as status } from "@/models/problems";
+import { priorities } from "@/models/commons";
+import { updateProblem } from "@/api/problems";
+import type { User } from "@/models/users";
+import { getAllUsers } from "@/api/users";
+
+const users = ref<User[]>([]);
+const isLoading = ref(false);
+
+const props = defineProps<{ problem: Problem }>();
+
+const emit = defineEmits<{
+  // Let parent know the form was submitted
+  submitted: [];
+}>();
+
+const { values, handleSubmit, isSubmitting } = useForm({
+  validationSchema: toTypedSchema(problemEditSchema),
+  initialValues: props.problem,
+});
+
+const formattedPriorities = computed(() =>
+  priorities.map((priority) => ({
+    value: priority,
+    label: priority.charAt(0).toUpperCase() + priority.slice(1).toLowerCase(),
+  })),
+);
+
+const formattedStatus = computed(() =>
+  status.map((status) => ({
+    value: status,
+    label: status.replace(/_/g, " "),
+  })),
+);
+
+const fetchUsers = async () => {
+  isLoading.value = true;
+  try {
+    users.value = await getAllUsers("EMPLEADO");
+  } catch (error: any) {
+    toast.error(error.message || "Error al cargar los ítems");
+    users.value = [];
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const onSubmit = handleSubmit(async (values) => {
+  try {
+    await updateProblem(props.problem.id, values);
+    toast.success("Se modificó el problema correctamente");
+    emit("submitted");
+  } catch (err: any) {
+    toast.error(err.message);
+  }
+});
+
+onMounted(() => {
+  fetchUsers();
+});
+</script>
+
+<template>
+  <form class="space-y-6" @submit="onSubmit">
+    <FormField v-slot="{ componentField }" name="titulo">
+      <FormItem>
+        <FormLabel>Título</FormLabel>
+        <FormControl>
+          <Input
+            type="text"
+            placeholder="Titulo del problema"
+            v-bind="componentField"
+          />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+
+    <FormField v-slot="{ componentField }" name="descripcion">
+      <FormItem>
+        <FormLabel>Descripción</FormLabel>
+        <FormControl>
+          <Textarea placeholder="Detalle el problema" v-bind="componentField" />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+
+    <FormField v-slot="{ componentField }" name="prioridad">
+      <FormItem>
+        <FormLabel>Prioridad</FormLabel>
+        <Select v-bind="componentField">
+          <FormControl>
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccione la prioridad del problema" />
+            </SelectTrigger>
+          </FormControl>
+          <SelectContent class="capitalize">
+            <SelectGroup>
+              <SelectItem
+                v-for="priority in formattedPriorities"
+                :key="priority.value"
+                :value="priority.value"
+              >
+                {{ priority.label }}
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+
+    <FormField v-slot="{ componentField }" name="estado">
+      <FormItem>
+        <FormLabel>Estado</FormLabel>
+        <Select v-bind="componentField">
+          <FormControl>
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccione el estado del problema" />
+            </SelectTrigger>
+          </FormControl>
+          <SelectContent class="capitalize">
+            <SelectGroup>
+              <SelectItem
+                v-for="status in formattedStatus"
+                :key="status.value"
+                :value="status.value"
+              >
+                {{ status.label }}
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+    <FormField v-slot="{ componentField }" name="responsable_id">
+      <FormItem>
+        <FormLabel>Responsable</FormLabel>
+        <Select v-bind="componentField">
+          <FormControl>
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccione el responsable" />
+            </SelectTrigger>
+          </FormControl>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem v-for="user in users" :key="user.id" :value="user.id">
+                {{ `${user.nombre} ${user.apellido} - ${user.email}` }}
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+
+    <Button
+      :disabled="isSubmitting"
+      type="submit"
+      class="flex mx-auto bold"
+      size="lg"
+    >
+      <Loader2 v-if="isSubmitting" class="w-4 h-4 mr-2 animate-spin" />
+      Enviar
+    </Button>
+  </form>
+</template>

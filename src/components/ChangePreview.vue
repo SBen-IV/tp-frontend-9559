@@ -28,7 +28,7 @@ import EditChangeForm from "./forms/EditChangeForm.vue";
 defineProps<{ change: Change }>();
 
 // Whether it should show the form to edit the Change or not
-const editView = ref(false)
+const editView = ref(false);
 
 const handleDialogClose = () => {
   // To prevent a minor visual glitch
@@ -43,11 +43,11 @@ const emit = defineEmits<{
 
 const handleEditSubmitted = () => {
   // Let parent know a Change was updated so it can re-fetch the Changes
-  emit('changesUpdated')
+  emit("changesUpdated");
 };
 
 const cancelEdit = () => {
-  editView.value = false
+  editView.value = false;
 };
 </script>
 
@@ -76,12 +76,12 @@ const cancelEdit = () => {
     <CardFooter>
       <Dialog @update:open="handleDialogClose">
         <DialogTrigger as-child class="ml-auto">
-          <Button variant="ghost">
-            <Eye class="w-4 h-4 mr-2" />Ver más
-          </Button>
+          <Button variant="ghost"> <Eye class="w-4 h-4 mr-2" />Ver más </Button>
         </DialogTrigger>
 
-        <DialogContent class="sm:max-w-[425px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[70dvh] ">
+        <DialogContent
+          class="sm:max-w-[425px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[70dvh]"
+        >
           <div v-if="editView === false">
             <DialogHeader class="p-6 pb-0">
               <DialogTitle class="flex justify-between">
@@ -107,8 +107,12 @@ const cancelEdit = () => {
               </TabsContent>
               <TabsContent value="config_items" class="overflow-y-auto">
                 <!-- TODO: Should link to the CI -->
-                <ItemOption v-for="item in change.config_items" :key="item.id" :item="item"
-                  class="hover:bg-accent rounded-md mb-2 pt-4" />
+                <ItemOption
+                  v-for="item in change.config_items"
+                  :key="item.id"
+                  :item="item"
+                  class="hover:bg-accent rounded-md mb-2 pt-4"
+                />
               </TabsContent>
             </Tabs>
             <DialogFooter class="">
@@ -126,18 +130,22 @@ const cancelEdit = () => {
 
           <div v-else class="flex flex-col flex-1 min-h-0">
             <DialogHeader class="p-6 pb-0 flex-shrink-0">
-               <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  class="h-6 w-6" 
-                  @click="cancelEdit"
-                >
-                  <ArrowLeft class="h-4 w-4" />
-                </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                class="h-6 w-6"
+                @click="cancelEdit"
+              >
+                <ArrowLeft class="h-4 w-4" />
+              </Button>
               <DialogTitle>Editar Cambio</DialogTitle>
             </DialogHeader>
 
-            <EditChangeForm class="p-6 pb-0 flex-1 min-h-0 overflow-y-auto px-6" :change="change" @submitted="handleEditSubmitted"/>
+            <EditChangeForm
+              class="p-6 pb-0 flex-1 min-h-0 overflow-y-auto px-6"
+              :change="change"
+              @submitted="handleEditSubmitted"
+            />
           </div>
         </DialogContent>
       </Dialog>
