@@ -1,3 +1,13 @@
+import {
+  BLUE,
+  LIGHT_BLUE,
+  ORANGE,
+  PINK,
+  RED,
+  VIOLET,
+  YELLOW,
+  type Color,
+} from "@/models/colors";
 import type { Metric } from "@/models/metrics";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -30,19 +40,27 @@ export const sortByName = (nombre1: string, nombre2: string) => {
   return 0;
 };
 
+export const colorsByPrioridad: Record<string, Color> = {
+  BAJA: BLUE,
+  MEDIA: YELLOW,
+  ALTA: ORANGE,
+  URGENTE: RED,
+};
+
 export const getPrioridadColor = (prioridad: string): string => {
-  switch (prioridad) {
-    case "BAJA":
-      return "bg-blue-400";
-    case "MEDIA":
-      return "bg-yellow-300";
-    case "ALTA":
-      return "bg-orange-500";
-    case "URGENTE":
-      return "bg-red-600";
-    default:
-      return "";
-  }
+  return colorsByPrioridad[prioridad].tw;
+  // switch (prioridad) {
+  //   case "BAJA":
+  //     return "bg-blue-400";
+  //   case "MEDIA":
+  //     return "bg-yellow-300";
+  //   case "ALTA":
+  //     return "bg-orange-500";
+  //   case "URGENTE":
+  //     return "bg-red-600";
+  //   default:
+  //     return "";
+  // }
 };
 
 export const prettyDate = (date: Date): string => {

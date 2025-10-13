@@ -31,6 +31,7 @@ import {
   type Color,
 } from "@/models/colors";
 import { Card } from "@/components/ui/card";
+import { colorsByPrioridad } from "@/lib/utils";
 
 const data = shallowRef<Change[]>([]);
 const metricsData = reactive<ChangeMetric>({
@@ -50,13 +51,6 @@ const colorsByEstado: Record<string, Color> = {
   RECHAZADO: BLUE,
   EN_PROGRESO: LIGHT_BLUE,
   CERRADO: GREEN,
-};
-
-const colorsByPrioridad: Record<string, Color> = {
-  BAJA: PINK,
-  MEDIA: VIOLET,
-  ALTA: BLUE,
-  URGENTE: LIGHT_BLUE,
 };
 
 const calculateMetrics = (changes: Change[]) => {
@@ -203,7 +197,7 @@ onMounted(() => {
     <div>
       <b>Titulo</b>
       <Input
-        id="search"
+        id="searchTitulo"
         type="text"
         placeholder="Buscar por título..."
         v-model="searchTitulo"
@@ -212,7 +206,7 @@ onMounted(() => {
     <div>
       <b>Descripción</b>
       <Input
-        id="search"
+        id="searchDescripcion"
         type="text"
         placeholder="Buscar por descripción..."
         v-model="searchDescripcion"
