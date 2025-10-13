@@ -115,6 +115,10 @@ const resetSearch = () => {
   searchCategoria.value = "";
 };
 
+const handleIncidentsUpdated = () => {
+  fetchItems();
+};
+
 onMounted(() => {
   fetchItems();
 });
@@ -200,7 +204,7 @@ onMounted(() => {
   <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
     <div v-for="item in filteredIncidents" :key="item.id" class="grid">
       <li class="grid gap-4">
-        <IncidentPreview :incident="item" />
+        <IncidentPreview :incident="item" @incidents-updated="handleIncidentsUpdated"/>
       </li>
     </div>
   </ul>
