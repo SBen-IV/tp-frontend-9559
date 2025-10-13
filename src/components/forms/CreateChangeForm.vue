@@ -44,6 +44,7 @@ import {
 } from "@/components/ui/select";
 import { createChange } from "@/api/changes";
 import { priorities } from "@/models/commons";
+import router from "@/router";
 
 const items = ref<ConfigItem[]>([]);
 const open = ref(false);
@@ -113,6 +114,7 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     await createChange(values);
     toast.success("Se solicitó el cambio correctamente");
+    router.push("/changes");
   } catch (err: any) {
     toast.error(err.message);
   }

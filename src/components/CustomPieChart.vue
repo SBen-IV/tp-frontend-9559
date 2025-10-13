@@ -48,7 +48,7 @@ const getDonutColor = (colors: Record<string, Color>) => {
     <CardTitle class="text-2xl font-bold text-center">{{ title }}</CardTitle>
     <CardContent>
       <div class="flex">
-        <div>
+        <div class="flex flex-col gap-1">
           <Badge
             v-for="metric in sortedMetrics"
             :class="getBadgeColor(metric.name)"
