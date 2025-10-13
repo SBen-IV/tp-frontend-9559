@@ -99,6 +99,10 @@ const resetSearch = () => {
   searchEstado.value = "";
 };
 
+const handleProblemsUpdated = () => {
+  fetchItems();
+};
+
 onMounted(() => {
   fetchItems();
 });
@@ -166,7 +170,10 @@ onMounted(() => {
   <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
     <div v-for="item in filteredProblemas" class="grid">
       <li class="grid gap-4">
-        <ProblemPreview :problem="item" />
+        <ProblemPreview
+          :problem="item"
+          @problems-updated="handleProblemsUpdated"
+        />
       </li>
     </div>
   </ul>

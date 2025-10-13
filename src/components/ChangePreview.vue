@@ -95,7 +95,7 @@ const cancelEdit = () => {
               </DialogDescription>
             </DialogHeader>
 
-            <Tabs default-value="descripcion" class="w-full px-6">
+            <Tabs default-value="descripcion" class="w-full px-6 max-h-[50dvh]">
               <TabsList class="grid w-full grid-cols-2">
                 <TabsTrigger value="descripcion">Descripción</TabsTrigger>
                 <TabsTrigger value="config_items">Ítems afectados</TabsTrigger>
@@ -116,7 +116,7 @@ const cancelEdit = () => {
               </TabsContent>
             </Tabs>
             <DialogFooter class="">
-              <div class="flex gap-2 pb-4 px-4">
+              <div class="flex gap-2 pb-4 px-4 pt-4">
                 <Button @click="editView = true">
                   <Pencil class="w-2 h-4" />Edit
                 </Button>

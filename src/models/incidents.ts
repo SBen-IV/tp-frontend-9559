@@ -24,10 +24,10 @@ export const incidentBaseSchema = z.object({
     .min(1, "Ingrese una descripción"),
   prioridad: z.enum(priorities),
   categoria: z.enum(incidentCategory), 
-  id_config_items: z.array(z.string().uuid()), 
 })
 
 export const incidentCreateSchema = incidentBaseSchema.extend({
+  id_config_items: z.array(z.string().uuid()), 
 });
 
 export const incidentSchema = incidentBaseSchema.extend({
@@ -39,5 +39,11 @@ export const incidentSchema = incidentBaseSchema.extend({
   config_items: z.array(configItemSchema),  
 })
 
+export const incidentEditSchema = incidentBaseSchema.extend({
+  estado: z.enum(incidentStatus).nullable().optional(),
+  responsable_id: z.string().uuid().nullable().optional(),
+})
+
 export type IncidentCreate = z.infer<typeof incidentCreateSchema>;
 export type Incident = z.infer<typeof incidentSchema>;
+export type IncidentEdit = z.infer<typeof incidentEditSchema>;

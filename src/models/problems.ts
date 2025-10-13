@@ -17,10 +17,16 @@ const problemBaseSchema = z.object({
     .string({ required_error: "Ingrese una descripción" })
     .min(1, "Ingrese una descripción"),
   prioridad: z.enum(priorities),
+});
+
+export const problemCreateSchema = problemBaseSchema.extend({
   id_config_items: z.array(z.string().uuid()),
 });
 
-export const problemCreateSchema = problemBaseSchema.extend({});
+export const problemEditSchema = problemBaseSchema.extend({
+  estado: z.enum(estados).nullable().optional(),
+  responsable_id: z.string().uuid().nullable().optional(),
+});
 
 export const problemSchema = problemBaseSchema.extend({
   estado: z.enum(estados),
@@ -32,4 +38,5 @@ export const problemSchema = problemBaseSchema.extend({
 });
 
 export type ProblemCreate = z.infer<typeof problemCreateSchema>;
+export type ProblemEdit = z.infer<typeof problemEditSchema>;
 export type Problem = z.infer<typeof problemSchema>;
