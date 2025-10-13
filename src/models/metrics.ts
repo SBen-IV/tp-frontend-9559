@@ -8,3 +8,9 @@ export interface ConfigItemMetric {
   byEstado: Metric[];
   byCategoria: Metric[];
 }
+
+export interface ChangeMetric {
+  total: number;
+  byEstado: Metric[];
+  byPrioridad: Metric[];
+}

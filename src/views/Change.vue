@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { BrushCleaning } from "lucide-vue-next";
 import { Input } from "@/components/ui/input";
-import { computed, onMounted, ref, shallowRef } from "vue";
+import { computed, onMounted, reactive, ref, shallowRef } from "vue";
 import { RouterLink } from "vue-router";
 import { toast } from "vue-sonner";
 import { Plus } from "lucide-vue-next";
@@ -16,22 +16,71 @@ import {
   SelectContent,
 } from "@/components/ui/select";
 import { changeStatus } from "@/models/changes";
-import { sortByDate, sortByName } from "@/lib/utils";
+import { mapToMetric, sortByDate, sortByName } from "@/lib/utils";
 import type { Change } from "@/models/changes";
 import { getAllChanges } from "@/api/changes";
 import { priorities } from "@/models/commons";
+import type { ChangeMetric } from "@/models/metrics";
+import CustomPieChart from "@/components/CustomPieChart.vue";
+import {
+  BLUE,
+  GREEN,
+  LIGHT_BLUE,
+  PINK,
+  VIOLET,
+  type Color,
+} from "@/models/colors";
+import { Card } from "@/components/ui/card";
+import { colorsByPrioridad } from "@/lib/utils";
 
 const data = shallowRef<Change[]>([]);
+const metricsData = reactive<ChangeMetric>({
+  total: 0,
+  byEstado: [],
+  byPrioridad: [],
+});
 const isLoading = ref(false);
 const searchTitulo = ref("");
 const searchPrioridad = ref("");
 const searchEstado = ref("");
 const searchDescripcion = ref("");
 
+const colorsByEstado: Record<string, Color> = {
+  RECIBIDO: PINK,
+  ACEPTADO: VIOLET,
+  RECHAZADO: BLUE,
+  EN_PROGRESO: LIGHT_BLUE,
+  CERRADO: GREEN,
+};
+
+const calculateMetrics = (changes: Change[]) => {
+  const byEstado: Map<string, number> = new Map();
+  const byPrioridad: Map<string, number> = new Map();
+
+  changes.forEach((change: Change) => {
+    const valueEstado: number | undefined = byEstado.get(change.estado)
+      ? byEstado.get(change.estado)! + 1
+      : 1;
+
+    byEstado.set(change.estado, valueEstado);
+
+    const valueCategoria: number | undefined = byPrioridad.get(change.prioridad)
+      ? byPrioridad.get(change.prioridad)! + 1
+      : 1;
+
+    byPrioridad.set(change.prioridad, valueCategoria);
+  });
+
+  metricsData.total = changes.length;
+  metricsData.byEstado = mapToMetric(byEstado);
+  metricsData.byPrioridad = mapToMetric(byPrioridad);
+};
+
 const fetchItems = async () => {
   isLoading.value = true;
   try {
     const changes: Change[] = await getAllChanges();
+    calculateMetrics(changes);
     data.value = changes.sort((change1, change2) => {
       const res = sortByDate(change1.fecha_creacion, change2.fecha_creacion);
 
@@ -119,20 +168,36 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- HACK: there's probably a better way to align this -->
+  <h1 class="text-6xl text-center font-bold mb-2">Cambios</h1>
   <div class="flex items-center my-2">
-    <h1 class="margin-0">Cambios</h1>
     <Button class="ml-auto">
       <RouterLink to="/changes/new" class="flex">
         <Plus class="w-2 h-4 mr-2" />Crear</RouterLink
       >
     </Button>
   </div>
+  <div class="grid grid-cols-3 gap-8 flex items-center">
+    <Card class="mx-6 max-w-3/4">
+      <div class="justify-items-center items-center">
+        <div class="text-4xl font-light">Total {{ metricsData.total }}</div>
+      </div>
+    </Card>
+    <CustomPieChart
+      :title="'Por estados'"
+      :metrics="metricsData.byEstado"
+      :colors="colorsByEstado"
+    />
+    <CustomPieChart
+      :title="'Por prioridades'"
+      :metrics="metricsData.byPrioridad"
+      :colors="colorsByPrioridad"
+    />
+  </div>
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 flex py-6">
     <div>
       <b>Titulo</b>
       <Input
-        id="search"
+        id="searchTitulo"
         type="text"
         placeholder="Buscar por título..."
         v-model="searchTitulo"
@@ -141,7 +206,7 @@ onMounted(() => {
     <div>
       <b>Descripción</b>
       <Input
-        id="search"
+        id="searchDescripcion"
         type="text"
         placeholder="Buscar por descripción..."
         v-model="searchDescripcion"
@@ -190,7 +255,7 @@ onMounted(() => {
   <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
     <div v-for="item in filteredItems" class="grid">
       <li class="grid gap-4">
-        <ChangePreview :change="item" @changes-updated="handleChangesUpdated"/>
+        <ChangePreview :change="item" @changes-updated="handleChangesUpdated" />
       </li>
     </div>
   </ul>

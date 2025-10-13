@@ -117,10 +117,10 @@ const cancelEdit = () => {
             </Tabs>
             <DialogFooter class="">
               <div class="flex gap-2 pb-4 px-4 pt-4">
-                <!-- TODO: These buttons should have actions associated -->
                 <Button @click="editView = true">
                   <Pencil class="w-2 h-4" />Edit
                 </Button>
+                <!-- TODO: This button should have action associated -->
                 <Button variant="destructive">
                   <Trash2 class="w-2 h-4" />Delete
                 </Button>

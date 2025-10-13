@@ -19,17 +19,14 @@ import {
 } from "@/components/ui/select";
 import { categorias, estados } from "@/models/config_items";
 import { mapToMetric, sortByDate, sortByName } from "@/lib/utils";
-import { DonutChart } from "@/components/ui/chart-donut";
 import type { ConfigItemMetric } from "@/models/metrics";
-import { CardContent, CardTitle, Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import {
   BLUE,
   GREEN,
   LIGHT_BLUE,
   LIGHT_GREEN,
   PINK,
-  RED,
   VIOLET,
   YELLOW,
   type Color,
@@ -62,14 +59,6 @@ const colorsByEstado: Record<string, Color> = {
   EN_ALMACEN: GREEN,
   EN_PRODUCCION: LIGHT_GREEN,
   EN_MANTENIMIENTO: YELLOW,
-};
-
-const getItemCategoriaColor = (categoria: string): string => {
-  return colorsByCategoria[categoria].tw;
-};
-
-const getItemEstadoColor = (estado: string): string => {
-  return colorsByEstado[estado].tw;
 };
 
 const calculateMetrics = (items: ConfigItem[]) => {
