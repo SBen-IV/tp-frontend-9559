@@ -50,6 +50,7 @@ const emit = defineEmits<{
 
 const handleEditSubmitted = () => {
   // Let parent know an Incident was updated so it can re-fetch the Incidents
+  editView.value = false;
   emit('incidentsUpdated')
 };
 
