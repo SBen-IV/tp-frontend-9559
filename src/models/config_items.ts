@@ -18,15 +18,20 @@ const configItemBaseSchema = z.object({
   descripcion: z
     .string({ required_error: "Ingrese una descripción" })
     .min(1, "Ingrese una descripción"),
-  version: z
-    .string({ required_error: "Ingrese una versión" })
-    .min(1, "Ingrese una versión"),
   categoria: z.enum(categorias),
 });
 
-export const configItemCreateSchema = configItemBaseSchema.extend({});
+export const configItemCreateSchema = configItemBaseSchema.extend({
+  version: z
+    .string({ required_error: "Ingrese una versión" })
+    .min(1, "Ingrese una versión"),
+});
 
-export const configItemSchema = configItemBaseSchema.extend({
+export const configItemEditSchema = configItemBaseSchema.extend({
+  estado: z.enum(estados),
+});
+
+export const configItemSchema = configItemCreateSchema.extend({
   estado: z.enum(estados),
   fecha_creacion: z.date(),
   id: z.string().uuid(),
@@ -34,4 +39,5 @@ export const configItemSchema = configItemBaseSchema.extend({
 });
 
 export type ConfigItemCreate = z.infer<typeof configItemCreateSchema>;
+export type ConfigItemEdit = z.infer<typeof configItemEditSchema>;
 export type ConfigItem = z.infer<typeof configItemSchema>;
