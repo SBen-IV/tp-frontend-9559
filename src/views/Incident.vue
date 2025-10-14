@@ -181,6 +181,8 @@ onMounted(() => {
       >
     </Button>
   </div>
+  <!-- In this case 4 items on grid look broken (pie charts come out of card) so
+ change the layout as it's not important -->
   <div class="gap-6 items-center">
     <Card class="mx-6 mb-4">
       <div class="justify-items-center items-center">
