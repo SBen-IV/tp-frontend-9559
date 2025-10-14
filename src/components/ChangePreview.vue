@@ -43,6 +43,7 @@ const emit = defineEmits<{
 
 const handleEditSubmitted = () => {
   // Let parent know a Change was updated so it can re-fetch the Changes
+  editView.value = false;
   emit("changesUpdated");
 };
 
@@ -115,7 +116,7 @@ const cancelEdit = () => {
                 />
               </TabsContent>
             </Tabs>
-            <DialogFooter class="">
+            <DialogFooter>
               <div class="flex gap-2 pb-4 px-4 pt-4">
                 <Button @click="editView = true">
                   <Pencil class="w-2 h-4" />Edit
