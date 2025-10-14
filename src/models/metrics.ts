@@ -14,3 +14,10 @@ export interface ChangeMetric {
   byEstado: Metric[];
   byPrioridad: Metric[];
 }
+
+export interface IncidentMetric {
+  total: number;
+  byEstado: Metric[];
+  byPrioridad: Metric[];
+  byCategoria: Metric[];
+}

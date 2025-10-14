@@ -41,6 +41,10 @@ const getDonutColor = (colors: Record<string, Color>) => {
 
   return donutColors.map((key) => colors[key].rgb);
 };
+
+const formatMetricName = (name: string): string => {
+  return name.replace(/_/g, " ");
+};
 </script>
 
 <template>
@@ -53,7 +57,7 @@ const getDonutColor = (colors: Record<string, Color>) => {
             v-for="metric in sortedMetrics"
             :class="getBadgeColor(metric.name)"
           >
-            {{ metric.name }} ({{ metric.total }})
+            {{ formatMetricName(metric.name) }} ({{ metric.total }})
           </Badge>
         </div>
         <DonutChart

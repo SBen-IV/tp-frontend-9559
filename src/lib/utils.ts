@@ -1,5 +1,6 @@
 import {
   BLUE,
+  GREEN,
   LIGHT_BLUE,
   ORANGE,
   PINK,
@@ -49,20 +50,29 @@ export const colorsByPrioridad: Record<string, Color> = {
 
 export const getPrioridadColor = (prioridad: string): string => {
   return colorsByPrioridad[prioridad].tw;
-  // switch (prioridad) {
-  //   case "BAJA":
-  //     return "bg-blue-400";
-  //   case "MEDIA":
-  //     return "bg-yellow-300";
-  //   case "ALTA":
-  //     return "bg-orange-500";
-  //   case "URGENTE":
-  //     return "bg-red-600";
-  //   default:
-  //     return "";
-  // }
 };
 
+export const colorsByIncidenteEstado: Record<string, Color> = {
+  NUEVO: PINK,
+  EN_PROGRESO: VIOLET,
+  RESUELTO: BLUE,
+  CERRADO: LIGHT_BLUE,
+};
+
+export const colorsByIncidenteCategoria: Record<string, Color> = {
+  SOFTWARE: PINK,
+  HARDWARE: VIOLET,
+  SOLICITUD_DE_SERVICIO: BLUE,
+  SEGURIDAD: LIGHT_BLUE,
+};
+
+export const colorsByCambioEstado: Record<string, Color> = {
+  RECIBIDO: PINK,
+  ACEPTADO: VIOLET,
+  RECHAZADO: BLUE,
+  EN_PROGRESO: LIGHT_BLUE,
+  CERRADO: GREEN,
+};
 export const prettyDate = (date: Date): string => {
   // For some reason `date` is not a `Date`
   const d = new Date(date);

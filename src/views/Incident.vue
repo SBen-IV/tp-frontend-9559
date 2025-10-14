@@ -12,28 +12,76 @@ import {
 } from "@/components/ui/select";
 import type { Incident as Incident } from "@/models/incidents";
 import { Button } from "@/components/ui/button";
-import { sortByDate, sortByName } from "@/lib/utils";
+import {
+  mapToMetric,
+  sortByDate,
+  sortByName,
+  colorsByPrioridad,
+  colorsByIncidenteEstado,
+  colorsByIncidenteCategoria,
+} from "@/lib/utils";
 import { Plus } from "lucide-vue-next";
 import { incidentStatus as estados } from "@/models/incidents";
-import { shallowRef, ref, computed, onMounted } from "vue";
+import { shallowRef, ref, computed, onMounted, reactive } from "vue";
 import { toast } from "vue-sonner";
 import { getAllIncidents } from "@/api/incidents";
 import IncidentPreview from "@/components/IncidentPreview.vue";
 import { priorities } from "@/models/commons";
 import { incidentCategory as categorias } from "@/models/incidents";
+import CustomPieChart from "@/components/CustomPieChart.vue";
+import { Card } from "@/components/ui/card";
+import type { IncidentMetric } from "@/models/metrics";
 
 const data = shallowRef<Incident[]>([]);
+const metricsData = reactive<IncidentMetric>({
+  total: 0,
+  byEstado: [],
+  byPrioridad: [],
+  byCategoria: [],
+});
 const isLoading = ref(false);
 const searchTitulo = ref("");
 const searchCategoria = ref("");
 const searchPrioridad = ref("");
 const searchEstado = ref("");
 
+const calculateMetrics = (changes: Incident[]) => {
+  const byEstado: Map<string, number> = new Map();
+  const byPrioridad: Map<string, number> = new Map();
+  const byCategoria: Map<string, number> = new Map();
+
+  changes.forEach((change: Incident) => {
+    const valueEstado: number | undefined = byEstado.get(change.estado)
+      ? byEstado.get(change.estado)! + 1
+      : 1;
+
+    byEstado.set(change.estado, valueEstado);
+
+    const valuePrioridad: number | undefined = byPrioridad.get(change.prioridad)
+      ? byPrioridad.get(change.prioridad)! + 1
+      : 1;
+
+    byPrioridad.set(change.prioridad, valuePrioridad);
+
+    const valueCategoria: number | undefined = byCategoria.get(change.categoria)
+      ? byCategoria.get(change.categoria)! + 1
+      : 1;
+
+    byCategoria.set(change.categoria, valueCategoria);
+  });
+
+  metricsData.total = changes.length;
+  metricsData.byEstado = mapToMetric(byEstado);
+  metricsData.byPrioridad = mapToMetric(byPrioridad);
+  metricsData.byCategoria = mapToMetric(byCategoria);
+};
+
 const fetchItems = async () => {
   isLoading.value = true;
   try {
-    const items: Incident[] = await getAllIncidents();
-    data.value = items.sort((item1, item2) => {
+    const incidents: Incident[] = await getAllIncidents();
+    calculateMetrics(incidents);
+    data.value = incidents.sort((item1, item2) => {
       const res = sortByDate(item1.fecha_creacion, item2.fecha_creacion);
 
       return res != 0 ? res : sortByName(item1.titulo, item2.titulo);
@@ -50,14 +98,14 @@ const formattedCategorias = computed(() =>
   categorias.map((categoria) => ({
     value: categoria,
     label: categoria.replace(/_/g, " "),
-  }))
+  })),
 );
 
 const formattedPrioridades = computed(() =>
   priorities.map((prioridad) => ({
     value: prioridad,
     label: prioridad,
-  }))
+  })),
 );
 
 const formattedEstados = computed(() =>
@@ -66,7 +114,7 @@ const formattedEstados = computed(() =>
     label:
       estado.charAt(0).toUpperCase() +
       estado.replace("_", " ").slice(1).toLowerCase(),
-  }))
+  })),
 );
 
 const filteredIncidents = computed(() => {
@@ -125,13 +173,39 @@ onMounted(() => {
 </script>
 
 <template>
+  <h1 class="text-6xl text-center font-bold mb-2">Incidentes</h1>
   <div class="flex items-center my-2">
-    <h1 class="margin-0">Incidentes</h1>
     <Button class="ml-auto">
       <RouterLink to="/incidents/new" class="flex">
         <Plus class="w-2 h-4 mr-2" />Crear</RouterLink
       >
     </Button>
+  </div>
+  <!-- In this case 4 items on grid look broken (pie charts come out of card) so
+ change the layout as it's not important -->
+  <div class="gap-6 items-center">
+    <Card class="mx-6 mb-4">
+      <div class="justify-items-center items-center">
+        <div class="text-4xl font-light">Total {{ metricsData.total }}</div>
+      </div>
+    </Card>
+    <div class="grid grid-cols-3 gap-6 flex items-center">
+      <CustomPieChart
+        :title="'Por estados'"
+        :metrics="metricsData.byEstado"
+        :colors="colorsByIncidenteEstado"
+      />
+      <CustomPieChart
+        :title="'Por prioridades'"
+        :metrics="metricsData.byPrioridad"
+        :colors="colorsByPrioridad"
+      />
+      <CustomPieChart
+        :title="'Por categorías'"
+        :metrics="metricsData.byCategoria"
+        :colors="colorsByIncidenteCategoria"
+      />
+    </div>
   </div>
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 flex py-6">
     <div class="">
@@ -204,7 +278,10 @@ onMounted(() => {
   <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
     <div v-for="item in filteredIncidents" :key="item.id" class="grid">
       <li class="grid gap-4">
-        <IncidentPreview :incident="item" @incidents-updated="handleIncidentsUpdated"/>
+        <IncidentPreview
+          :incident="item"
+          @incidents-updated="handleIncidentsUpdated"
+        />
       </li>
     </div>
   </ul>
