@@ -64,11 +64,11 @@ const calculateMetrics = (changes: Change[]) => {
 
     byEstado.set(change.estado, valueEstado);
 
-    const valueCategoria: number | undefined = byPrioridad.get(change.prioridad)
+    const valuePrioridad: number | undefined = byPrioridad.get(change.prioridad)
       ? byPrioridad.get(change.prioridad)! + 1
       : 1;
 
-    byPrioridad.set(change.prioridad, valueCategoria);
+    byPrioridad.set(change.prioridad, valuePrioridad);
   });
 
   metricsData.total = changes.length;
