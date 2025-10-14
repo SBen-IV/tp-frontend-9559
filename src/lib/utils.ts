@@ -1,5 +1,6 @@
 import {
   BLUE,
+  GREEN,
   LIGHT_BLUE,
   ORANGE,
   PINK,
@@ -65,6 +66,13 @@ export const colorsByIncidenteCategoria: Record<string, Color> = {
   SEGURIDAD: LIGHT_BLUE,
 };
 
+export const colorsByCambioEstado: Record<string, Color> = {
+  RECIBIDO: PINK,
+  ACEPTADO: VIOLET,
+  RECHAZADO: BLUE,
+  EN_PROGRESO: LIGHT_BLUE,
+  CERRADO: GREEN,
+};
 export const prettyDate = (date: Date): string => {
   // For some reason `date` is not a `Date`
   const d = new Date(date);

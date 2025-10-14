@@ -16,7 +16,12 @@ import {
   SelectContent,
 } from "@/components/ui/select";
 import { changeStatus } from "@/models/changes";
-import { mapToMetric, sortByDate, sortByName } from "@/lib/utils";
+import {
+  colorsByCambioEstado,
+  mapToMetric,
+  sortByDate,
+  sortByName,
+} from "@/lib/utils";
 import type { Change } from "@/models/changes";
 import { getAllChanges } from "@/api/changes";
 import { priorities } from "@/models/commons";
@@ -44,14 +49,6 @@ const searchTitulo = ref("");
 const searchPrioridad = ref("");
 const searchEstado = ref("");
 const searchDescripcion = ref("");
-
-const colorsByEstado: Record<string, Color> = {
-  RECIBIDO: PINK,
-  ACEPTADO: VIOLET,
-  RECHAZADO: BLUE,
-  EN_PROGRESO: LIGHT_BLUE,
-  CERRADO: GREEN,
-};
 
 const calculateMetrics = (changes: Change[]) => {
   const byEstado: Map<string, number> = new Map();
@@ -185,7 +182,7 @@ onMounted(() => {
     <CustomPieChart
       :title="'Por estados'"
       :metrics="metricsData.byEstado"
-      :colors="colorsByEstado"
+      :colors="colorsByCambioEstado"
     />
     <CustomPieChart
       :title="'Por prioridades'"
