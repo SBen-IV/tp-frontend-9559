@@ -21,3 +21,9 @@ export interface IncidentMetric {
   byPrioridad: Metric[];
   byCategoria: Metric[];
 }
+
+export interface ProblemMetric {
+  total: number;
+  byEstado: Metric[];
+  byPrioridad: Metric[];
+}

@@ -73,6 +73,14 @@ export const colorsByCambioEstado: Record<string, Color> = {
   EN_PROGRESO: LIGHT_BLUE,
   CERRADO: GREEN,
 };
+
+export const colorsByProblemaEstado: Record<string, Color> = {
+  EN_ANALISIS: PINK,
+  DETECTADO: VIOLET,
+  RESUELTO: BLUE,
+  CERRADO: LIGHT_BLUE,
+};
+
 export const prettyDate = (date: Date): string => {
   // For some reason `date` is not a `Date`
   const d = new Date(date);
