@@ -12,26 +12,66 @@ import {
 } from "@/components/ui/select";
 import type { Problem } from "@/models/problems";
 import { Button } from "@/components/ui/button";
-import { sortByDate, sortByName } from "@/lib/utils";
+import {
+  colorsByPrioridad,
+  colorsByProblemaEstado,
+  mapToMetric,
+  sortByDate,
+  sortByName,
+} from "@/lib/utils";
 import { Plus } from "lucide-vue-next";
 import { estados } from "@/models/problems";
-import { shallowRef, ref, computed, onMounted } from "vue";
+import { shallowRef, ref, computed, onMounted, reactive } from "vue";
 import { toast } from "vue-sonner";
 import { getAllProblems } from "@/api/problems";
 import ProblemPreview from "@/components/ProblemPreview.vue";
 import { priorities } from "@/models/commons";
+import type { ProblemMetric } from "@/models/metrics";
+import { Card } from "@/components/ui/card";
+import CustomPieChart from "@/components/CustomPieChart.vue";
 
 const data = shallowRef<Problem[]>([]);
+const metricsData = reactive<ProblemMetric>({
+  total: 0,
+  byEstado: [],
+  byPrioridad: [],
+});
 const isLoading = ref(false);
 const searchTitulo = ref("");
 const searchPrioridad = ref("");
 const searchEstado = ref("");
 
+const calculateMetrics = (problems: Problem[]) => {
+  const byEstado: Map<string, number> = new Map();
+  const byPrioridad: Map<string, number> = new Map();
+
+  problems.forEach((problem: Problem) => {
+    const valueEstado: number | undefined = byEstado.get(problem.estado)
+      ? byEstado.get(problem.estado)! + 1
+      : 1;
+
+    byEstado.set(problem.estado, valueEstado);
+
+    const valuePrioridad: number | undefined = byPrioridad.get(
+      problem.prioridad,
+    )
+      ? byPrioridad.get(problem.prioridad)! + 1
+      : 1;
+
+    byPrioridad.set(problem.prioridad, valuePrioridad);
+  });
+
+  metricsData.total = problems.length;
+  metricsData.byEstado = mapToMetric(byEstado);
+  metricsData.byPrioridad = mapToMetric(byPrioridad);
+};
+
 const fetchItems = async () => {
   isLoading.value = true;
   try {
-    const items: Problem[] = await getAllProblems();
-    data.value = items.sort((item1, item2) => {
+    const problems: Problem[] = await getAllProblems();
+    calculateMetrics(problems);
+    data.value = problems.sort((item1, item2) => {
       const res = sortByDate(item1.fecha_creacion, item2.fecha_creacion);
 
       return res != 0 ? res : sortByName(item1.titulo, item2.titulo);
@@ -109,13 +149,30 @@ onMounted(() => {
 </script>
 
 <template>
+  <h1 class="text-6xl text-center font-bold mb-2">Problemas</h1>
   <div class="flex items-center my-2">
-    <h1 class="margin-0">Problemas</h1>
     <Button class="ml-auto">
       <RouterLink to="/problems/new" class="flex">
         <Plus class="w-2 h-4 mr-2" />Crear</RouterLink
       >
     </Button>
+  </div>
+  <div class="grid grid-cols-3 gap-8 flex items-center">
+    <Card class="mx-6 max-w-3/4">
+      <div class="justify-items-center items-center">
+        <div class="text-4xl font-light">Total {{ metricsData.total }}</div>
+      </div>
+    </Card>
+    <CustomPieChart
+      :title="'Por estados'"
+      :metrics="metricsData.byEstado"
+      :colors="colorsByProblemaEstado"
+    />
+    <CustomPieChart
+      :title="'Por prioridades'"
+      :metrics="metricsData.byPrioridad"
+      :colors="colorsByPrioridad"
+    />
   </div>
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 flex py-6">
     <div class="">
