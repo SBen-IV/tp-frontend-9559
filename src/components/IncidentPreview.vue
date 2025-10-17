@@ -7,7 +7,16 @@ import {
   CardFooter,
 } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { Eye, Trash2, Pencil, CodeXml, Wrench, ShieldAlert, MessageCircleQuestion, ArrowLeft } from "lucide-vue-next";
+import {
+  Eye,
+  Trash2,
+  Pencil,
+  CodeXml,
+  Wrench,
+  ShieldAlert,
+  MessageCircleQuestion,
+  ArrowLeft,
+} from "lucide-vue-next";
 import {
   Dialog,
   DialogTrigger,
@@ -24,6 +33,20 @@ import type { Incident } from "@/models/incidents";
 import { getPrioridadColor, prettyDate } from "@/lib/utils";
 import { computed, ref } from "vue";
 import EditIncidentForm from "./forms/EditIncidentForm.vue";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { deleteIncident } from "@/api/incidents";
+import { toast } from "vue-sonner";
+import router from "@/router";
 
 const props = defineProps<{ incident: Incident }>();
 
@@ -35,7 +58,9 @@ const categoryIcons: Record<string, any> = {
 };
 
 // Whether it should show the form to edit the Incident or not
-const editView = ref(false)
+const editView = ref(false);
+
+const deleteAlert = ref(false);
 
 const handleDialogClose = () => {
   // To prevent a minor visual glitch
@@ -51,11 +76,11 @@ const emit = defineEmits<{
 const handleEditSubmitted = () => {
   // Let parent know an Incident was updated so it can re-fetch the Incidents
   editView.value = false;
-  emit('incidentsUpdated')
+  emit("incidentsUpdated");
 };
 
 const cancelEdit = () => {
-  editView.value = false
+  editView.value = false;
 };
 
 const categoryIcon = computed(() => {
@@ -63,8 +88,18 @@ const categoryIcon = computed(() => {
 });
 
 const prettyEstado = (estado: String): String => {
-  // Replace all ocurrences of _ 
-  return estado.replace(/_/g, " "); 
+  // Replace all ocurrences of _
+  return estado.replace(/_/g, " ");
+};
+
+const handleDelete = async () => {
+  try {
+    await deleteIncident(props.incident.id);
+    toast.success("Se eliminó incidente correctamente");
+    emit("incidentsUpdated");
+  } catch (err: any) {
+    toast.error(err.message);
+  }
 };
 </script>
 
@@ -90,7 +125,7 @@ const prettyEstado = (estado: String): String => {
         Fecha creación: {{ prettyDate(incident.fecha_creacion) }}
       </p>
     </CardContent>
-    <CardFooter  @update:open="handleDialogClose">
+    <CardFooter @update:open="handleDialogClose">
       <Dialog>
         <DialogTrigger as-child class="ml-auto">
           <Button variant="ghost"> <Eye class="w-4 h-4 mr-2" />Ver más </Button>
@@ -98,68 +133,94 @@ const prettyEstado = (estado: String): String => {
         <DialogContent
           class="sm:max-w-[425px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[50dvh]"
         >
-        <div v-if="editView === false">
-          <DialogHeader class="p-6 pb-0">
-            <DialogTitle class="flex justify-between">
-              <p>{{ incident.titulo }}</p>
-              <p class="italic text-xs font-light mr-2">
-                Fecha creación: {{ prettyDate(incident.fecha_creacion) }}
-              </p>
-            </DialogTitle>
-            <DialogDescription>
-              <Badge variant="secondary">{{
-                prettyEstado(incident.estado)
-              }}</Badge>
-            </DialogDescription>
-          </DialogHeader>
+          <div v-if="editView === false">
+            <DialogHeader class="p-6 pb-0">
+              <DialogTitle class="flex justify-between">
+                <p>{{ incident.titulo }}</p>
+                <p class="italic text-xs font-light mr-2">
+                  Fecha creación: {{ prettyDate(incident.fecha_creacion) }}
+                </p>
+              </DialogTitle>
+              <DialogDescription>
+                <Badge variant="secondary">{{
+                  prettyEstado(incident.estado)
+                }}</Badge>
+              </DialogDescription>
+            </DialogHeader>
 
-          <Tabs default-value="descripcion" class="w-full px-6 max-h-[35dvh]">
-            <TabsList class="grid w-full grid-cols-2">
-              <TabsTrigger value="descripcion">Descripción</TabsTrigger>
-              <TabsTrigger value="config_items">Ítems afectados</TabsTrigger>
-            </TabsList>
-            <TabsContent value="descripcion" class="overflow-y-auto">
-              <p class="pt-4">
-                {{ incident.descripcion }}
-              </p>
-            </TabsContent>
-            <TabsContent value="config_items" class="overflow-y-auto">
-              <!-- TODO: Should link to the CI -->
-              <ItemOption
-                v-for="item in incident.config_items"
-                :key="item.id"
-                :item="item"
-                class="hover:bg-accent rounded-md mb-2 pt-4"
-              />
-            </TabsContent>
-          </Tabs>
-          <DialogFooter class="">
-            <div class="flex gap-2 pb-4 px-4 pt-4">
-              <!-- TODO: These buttons should have actions associated -->
-              <Button @click="editView = true"> <Pencil class="w-2 h-4" />Edit </Button>
-              <Button variant="destructive">
-                <Trash2 class="w-2 h-4" />Delete
-              </Button>
-            </div>
-          </DialogFooter>
-        </div>
-
-        <div v-else class="flex flex-col flex-1 min-h-0">
-            <DialogHeader class="p-6 pb-0 flex-shrink-0">
-               <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  class="h-6 w-6" 
-                  @click="cancelEdit"
-                >
-                  <ArrowLeft class="h-4 w-4" />
+            <Tabs default-value="descripcion" class="w-full px-6 max-h-[35dvh]">
+              <TabsList class="grid w-full grid-cols-2">
+                <TabsTrigger value="descripcion">Descripción</TabsTrigger>
+                <TabsTrigger value="config_items">Ítems afectados</TabsTrigger>
+              </TabsList>
+              <TabsContent value="descripcion" class="overflow-y-auto">
+                <p class="pt-4">
+                  {{ incident.descripcion }}
+                </p>
+              </TabsContent>
+              <TabsContent value="config_items" class="overflow-y-auto">
+                <!-- TODO: Should link to the CI -->
+                <ItemOption
+                  v-for="item in incident.config_items"
+                  :key="item.id"
+                  :item="item"
+                  class="hover:bg-accent rounded-md mb-2 pt-4"
+                />
+              </TabsContent>
+            </Tabs>
+            <DialogFooter class="">
+              <div class="flex gap-2 pb-4 px-4 pt-4">
+                <Button @click="editView = true">
+                  <Pencil class="w-2 h-4" />Editar
                 </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger as-child>
+                    <Button variant="destructive">
+                      <Trash2 class="w-2 h-4" />Borrar
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle
+                        >Está por borrar '{{
+                          incident.titulo
+                        }}'</AlertDialogTitle
+                      >
+                      <AlertDialogDescription>
+                        Esta acción no puede deshacerse.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction @click="handleDelete"
+                        >Eliminar definitivamente</AlertDialogAction
+                      >
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </DialogFooter>
+          </div>
+
+          <div v-else class="flex flex-col flex-1 min-h-0">
+            <DialogHeader class="p-6 pb-0 flex-shrink-0">
+              <Button
+                variant="ghost"
+                size="icon"
+                class="h-6 w-6"
+                @click="cancelEdit"
+              >
+                <ArrowLeft class="h-4 w-4" />
+              </Button>
               <DialogTitle>Editar Incidente</DialogTitle>
             </DialogHeader>
 
-            <EditIncidentForm class="p-6 pb-0 flex-1 min-h-0 overflow-y-auto px-6" :incident="incident" @submitted="handleEditSubmitted"/>
-        </div>
-
+            <EditIncidentForm
+              class="p-6 pb-0 flex-1 min-h-0 overflow-y-auto px-6"
+              :incident="incident"
+              @submitted="handleEditSubmitted"
+            />
+          </div>
         </DialogContent>
       </Dialog>
     </CardFooter>
