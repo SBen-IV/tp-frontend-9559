@@ -46,7 +46,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { deleteIncident } from "@/api/incidents";
 import { toast } from "vue-sonner";
-import router from "@/router";
 
 const props = defineProps<{ incident: Incident }>();
 
@@ -59,8 +58,6 @@ const categoryIcons: Record<string, any> = {
 
 // Whether it should show the form to edit the Incident or not
 const editView = ref(false);
-
-const deleteAlert = ref(false);
 
 const handleDialogClose = () => {
   // To prevent a minor visual glitch
