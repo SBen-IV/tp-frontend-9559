@@ -19,6 +19,7 @@ import {
   colorsByPrioridad,
   colorsByIncidenteEstado,
   colorsByIncidenteCategoria,
+  formatAverageResolutionTime
 } from "@/lib/utils";
 import { Plus } from "lucide-vue-next";
 import { incidentStatus as estados } from "@/models/incidents";
@@ -38,6 +39,7 @@ const metricsData = reactive<IncidentMetric>({
   byEstado: [],
   byPrioridad: [],
   byCategoria: [],
+  tiempoPromedioCierre: 0
 });
 const isLoading = ref(false);
 const searchTitulo = ref("");
@@ -49,6 +51,20 @@ const calculateMetrics = (changes: Incident[]) => {
   const byEstado: Map<string, number> = new Map();
   const byPrioridad: Map<string, number> = new Map();
   const byCategoria: Map<string, number> = new Map();
+
+  const closedIncidents = changes.filter(incident => 
+    incident.estado === 'CERRADO' && incident.fecha_cierre
+  );
+
+  if (closedIncidents.length > 0) {
+    const totalMs = closedIncidents.reduce((total, incident) => {
+      const fechaCreacion = new Date(incident.fecha_creacion)
+      const fechaCierre = new Date(incident.fecha_cierre!)
+      return total + (fechaCierre.getTime() - fechaCreacion.getTime())
+    }, 0)
+
+    metricsData.tiempoPromedioCierre = totalMs / closedIncidents.length
+  } 
 
   changes.forEach((change: Incident) => {
     const valueEstado: number | undefined = byEstado.get(change.estado)
@@ -187,6 +203,7 @@ onMounted(() => {
     <Card class="mx-6 mb-4">
       <div class="justify-items-center items-center">
         <div class="text-4xl font-light">Total {{ metricsData.total }}</div>
+        <div class="text-xl font-light">Tiempo promedio de cierre: {{ formatAverageResolutionTime(metricsData.tiempoPromedioCierre) }}</div>
       </div>
     </Card>
     <div class="grid grid-cols-3 gap-6 flex items-center">
