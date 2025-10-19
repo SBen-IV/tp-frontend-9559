@@ -33,6 +33,7 @@ export const incidentCreateSchema = incidentBaseSchema.extend({
 export const incidentSchema = incidentBaseSchema.extend({
   estado: z.enum(incidentStatus),
   fecha_creacion: z.date(),
+  fecha_cierre: z.date().nullable().optional(),
   owner_id: z.string().uuid(),
   responsable_id: z.string().uuid(),
   id: z.string().uuid(),
