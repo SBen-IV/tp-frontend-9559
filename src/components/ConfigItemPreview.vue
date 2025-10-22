@@ -27,9 +27,22 @@ import {
   DialogFooter,
   DialogTitle,
 } from "./ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "./ui/button";
 import { prettyDate } from "@/lib/utils";
 import EditConfigItemForm from "./forms/EditConfigItemForm.vue";
+import { deleteConfigItem } from "@/api/config_items";
+import { toast } from "vue-sonner";
 
 const props = defineProps<{ item: ConfigItem }>();
 
@@ -65,6 +78,16 @@ const handleEditSubmitted = () => {
 
 const cancelEdit = () => {
   editView.value = false;
+};
+
+const handleDelete = async () => {
+  try {
+    await deleteConfigItem(props.item.id);
+    toast.success("Se eliminó el ítem correctamente");
+    emit("configItemUpdated");
+  } catch (err: any) {
+    toast.error(err.message);
+  }
 };
 </script>
 
@@ -128,9 +151,29 @@ const cancelEdit = () => {
                 <Button @click="editView = true">
                   <Pencil class="w-2 h-4" />Edit</Button
                 >
-                <Button variant="destructive">
-                  <Trash2 class="w-2 h-4" />Delete</Button
-                >
+                <AlertDialog>
+                  <AlertDialogTrigger as-child>
+                    <Button variant="destructive">
+                      <Trash2 class="w-2 h-4" />Borrar
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle
+                        >Está por borrar '{{ item.nombre }}'</AlertDialogTitle
+                      >
+                      <AlertDialogDescription>
+                        Esta acción no puede deshacerse.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction @click="handleDelete"
+                        >Eliminar definitivamente</AlertDialogAction
+                      >
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </DialogFooter>
           </div>
