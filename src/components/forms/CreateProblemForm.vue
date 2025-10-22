@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import ItemOption from "@/components/ItemOption.vue";
+import IncidentOption from "@/components/IncidentOption.vue";
 import {
   Combobox,
   ComboboxAnchor,
@@ -45,9 +46,13 @@ import { createProblem } from "@/api/problems";
 import { problemCreateSchema } from "@/models/problems";
 import { priorities } from "@/models/commons";
 import router from "@/router";
+import { getAllIncidents } from "@/api/incidents";
+import type { Incident } from "@/models/incidents";
 
 const items = ref<ConfigItem[]>([]);
-const open = ref(false);
+const incidents = ref<Incident[]>([]);
+const openItems = ref(false);
+const openIncidents = ref(false);
 const searchTerm = ref("");
 const isLoading = ref(false);
 
@@ -90,7 +95,7 @@ const fetchItems = async () => {
   }
 };
 
-const getItemById = (id: string) => items.value.find((item) => item.id === id);
+const getItemById = (id: string) => items.value.find((item) => item.id === id)!;
 
 const addItemToForm = (itemId: string) => {
   const currentItems = values.id_config_items || [];
@@ -100,7 +105,7 @@ const addItemToForm = (itemId: string) => {
   searchTerm.value = "";
 
   if (filteredItems.value.length === 0) {
-    open.value = false;
+    openItems.value = false;
   }
 };
 
@@ -109,6 +114,54 @@ const handleItemSelect = (event: { detail: { value: string } }) => {
     addItemToForm(event.detail.value);
   }
 };
+
+const fetchIncidents = async () => {
+  isLoading.value = true;
+  try {
+    incidents.value = await getAllIncidents();
+  } catch (error: any) {
+    toast.error(error.message || "Error al cargar los incidentes");
+    incidents.value = [];
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const getIncidentById = (id: string) =>
+  incidents.value.find((incident) => incident.id === id)!;
+
+const addIncidentToForm = (incidentId: string) => {
+  const currentIncidents = values.id_incidentes || [];
+  if (!currentIncidents.includes(incidentId)) {
+    setFieldValue("id_incidentes", [...currentIncidents, incidentId]);
+  }
+  searchTerm.value = "";
+
+  if (filteredIncidents.value.length === 0) {
+    openIncidents.value = false;
+  }
+};
+
+const handleIncidentSelect = (event: { detail: { value: string } }) => {
+  if (typeof event.detail.value === "string") {
+    addIncidentToForm(event.detail.value);
+  }
+};
+
+const filteredIncidents = computed(() => {
+  const currentIncidents = values.id_incidentes || [];
+  const { contains } = useFilter({ sensitivity: "base" });
+
+  const availableIncidents = incidents.value.filter(
+    (i) => !currentIncidents.includes(i.id),
+  );
+
+  return searchTerm.value
+    ? availableIncidents.filter((incident) =>
+        contains(incident.titulo, searchTerm.value),
+      )
+    : availableIncidents;
+});
 
 const onSubmit = handleSubmit(async (values) => {
   try {
@@ -122,6 +175,7 @@ const onSubmit = handleSubmit(async (values) => {
 
 onMounted(() => {
   fetchItems();
+  fetchIncidents();
 });
 </script>
 
@@ -179,7 +233,7 @@ onMounted(() => {
     <FormField v-slot="{ componentField }" name="id_config_items">
       <FormItem>
         <FormLabel>Items afectados</FormLabel>
-        <Combobox v-model:open="open" :ignore-filter="true">
+        <Combobox v-model:open="openItems" :ignore-filter="true">
           <ComboboxAnchor as-child>
             <TagsInput
               :model-value="componentField.modelValue"
@@ -200,7 +254,11 @@ onMounted(() => {
                 </TagsInputItem>
               </div>
 
-              <ComboboxInput v-model="searchTerm" as-child @click="open = true">
+              <ComboboxInput
+                v-model="searchTerm"
+                as-child
+                @click="openItems = true"
+              >
                 <TagsInputInput
                   placeholder="Items..."
                   class="min-w-[200px] w-full p-0 border-none focus-visible:ring-0 h-auto"
@@ -228,6 +286,61 @@ onMounted(() => {
       </FormItem>
     </FormField>
 
+    <FormField v-slot="{ componentField }" name="id_incidentes">
+      <FormItem>
+        <FormLabel>Incidentes relacionados</FormLabel>
+        <Combobox v-model:open="openIncidents" :ignore-filter="true">
+          <ComboboxAnchor as-child>
+            <TagsInput
+              :model-value="componentField.modelValue"
+              class="px-2 gap-2 w-80"
+              @update:model-value="componentField['onUpdate:modelValue']"
+            >
+              <div
+                class="flex gap-2 flex-wrap items-center overflow-y-auto max-h-40"
+              >
+                <TagsInputItem
+                  v-for="incidentID in componentField.modelValue"
+                  :key="incidentID"
+                  :value="incidentID"
+                  class="h-full"
+                >
+                  <IncidentOption :incident="getIncidentById(incidentID)" />
+                  <TagsInputItemDelete />
+                </TagsInputItem>
+              </div>
+
+              <ComboboxInput
+                v-model="searchTerm"
+                as-child
+                @click="openIncidents = true"
+              >
+                <TagsInputInput
+                  placeholder="Incidentes..."
+                  class="min-w-[200px] w-full p-0 border-none focus-visible:ring-0 h-auto"
+                  @keydown.enter.prevent
+                />
+              </ComboboxInput>
+            </TagsInput>
+
+            <ComboboxList class="w-[--reka-popper-anchor-width]">
+              <ComboboxEmpty />
+              <ComboboxGroup class="max-h-60 overflow-y-auto">
+                <ComboboxItem
+                  v-for="incident in filteredIncidents"
+                  :key="incident.id"
+                  :value="incident.id"
+                  @select.prevent="handleIncidentSelect"
+                >
+                  <IncidentOption :incident="incident" />
+                </ComboboxItem>
+              </ComboboxGroup>
+            </ComboboxList>
+          </ComboboxAnchor>
+        </Combobox>
+        <FormMessage />
+      </FormItem>
+    </FormField>
     <Button
       :disabled="isSubmitting"
       type="submit"

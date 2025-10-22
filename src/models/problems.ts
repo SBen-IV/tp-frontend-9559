@@ -21,6 +21,7 @@ const problemBaseSchema = z.object({
 
 export const problemCreateSchema = problemBaseSchema.extend({
   id_config_items: z.array(z.string().uuid()),
+  id_incidentes: z.array(z.string().uuid()),
 });
 
 export const problemEditSchema = problemBaseSchema.extend({
