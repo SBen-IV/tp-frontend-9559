@@ -46,6 +46,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { deleteIncident } from "@/api/incidents";
 import { toast } from "vue-sonner";
+import DeleteAlertDialog from "./DeleteAlertDialog.vue";
 
 const props = defineProps<{ incident: Incident }>();
 
@@ -170,31 +171,10 @@ const handleDelete = async () => {
                 <Button @click="editView = true">
                   <Pencil class="w-2 h-4" />Editar
                 </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger as-child>
-                    <Button variant="destructive">
-                      <Trash2 class="w-2 h-4" />Borrar
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle
-                        >Está por borrar '{{
-                          incident.titulo
-                        }}'</AlertDialogTitle
-                      >
-                      <AlertDialogDescription>
-                        Esta acción no puede deshacerse.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction @click="handleDelete"
-                        >Eliminar definitivamente</AlertDialogAction
-                      >
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <DeleteAlertDialog
+                  :title="incident.titulo"
+                  :handleDelete="handleDelete"
+                />
               </div>
             </DialogFooter>
           </div>
