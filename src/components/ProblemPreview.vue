@@ -17,6 +17,17 @@ import {
   DialogFooter,
   DialogTitle,
 } from "./ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "./ui/button";
 import ItemOption from "./ItemOption.vue";
@@ -24,8 +35,10 @@ import type { Problem } from "@/models/problems";
 import { getPrioridadColor, prettyDate } from "@/lib/utils";
 import { ref } from "vue";
 import EditProblemForm from "@/components/forms/EditProblemForm.vue";
+import { deleteProblem } from "@/api/problems";
+import { toast } from "vue-sonner";
 
-defineProps<{ problem: Problem }>();
+const props = defineProps<{ problem: Problem }>();
 
 const prettyEstado = (estado: String): String => {
   return estado.replace("_", " ");
@@ -52,6 +65,16 @@ const handleEditSubmitted = () => {
 
 const cancelEdit = () => {
   editView.value = false;
+};
+
+const handleDelete = async () => {
+  try {
+    await deleteProblem(props.problem.id);
+    toast.success("Se eliminó el problema correctamente");
+    emit("problemsUpdated");
+  } catch (err: any) {
+    toast.error(err.message);
+  }
 };
 </script>
 
@@ -122,9 +145,29 @@ const cancelEdit = () => {
                 <Button @click="editView = true">
                   <Pencil class="w-2 h-4" />Edit
                 </Button>
-                <Button variant="destructive">
-                  <Trash2 class="w-2 h-4" />Delete
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger as-child>
+                    <Button variant="destructive">
+                      <Trash2 class="w-2 h-4" />Borrar
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle
+                        >Está por borrar '{{ problem.titulo }}'</AlertDialogTitle
+                      >
+                      <AlertDialogDescription>
+                        Esta acción no puede deshacerse.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction @click="handleDelete"
+                        >Eliminar definitivamente</AlertDialogAction
+                      >
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </DialogFooter>
           </div>
