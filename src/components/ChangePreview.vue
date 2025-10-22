@@ -24,8 +24,22 @@ import ItemOption from "./ItemOption.vue";
 import { prettyDate, getPrioridadColor } from "@/lib/utils";
 import { ref } from "vue";
 import EditChangeForm from "./forms/EditChangeForm.vue";
+import { toast } from "vue-sonner";
+import { deleteChange } from "@/api/changes";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import DeleteAlertDialog from "./DeleteAlertDialog.vue";
 
-defineProps<{ change: Change }>();
+const props = defineProps<{ change: Change }>();
 
 // Whether it should show the form to edit the Change or not
 const editView = ref(false);
@@ -49,6 +63,16 @@ const handleEditSubmitted = () => {
 
 const cancelEdit = () => {
   editView.value = false;
+};
+
+const handleDelete = async () => {
+  try {
+    await deleteChange(props.change.id);
+    toast.success("Se eliminó cambio correctamente");
+    emit("changesUpdated");
+  } catch (err: any) {
+    toast.error(err.message);
+  }
 };
 </script>
 
@@ -121,10 +145,10 @@ const cancelEdit = () => {
                 <Button @click="editView = true">
                   <Pencil class="w-2 h-4" />Edit
                 </Button>
-                <!-- TODO: This button should have action associated -->
-                <Button variant="destructive">
-                  <Trash2 class="w-2 h-4" />Delete
-                </Button>
+                <DeleteAlertDialog
+                  :title="change.titulo"
+                  :handleDelete="handleDelete"
+                />
               </div>
             </DialogFooter>
           </div>
