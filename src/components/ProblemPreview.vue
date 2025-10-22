@@ -17,17 +17,6 @@ import {
   DialogFooter,
   DialogTitle,
 } from "./ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "./ui/button";
 import ItemOption from "./ItemOption.vue";
@@ -37,6 +26,7 @@ import { ref } from "vue";
 import EditProblemForm from "@/components/forms/EditProblemForm.vue";
 import { deleteProblem } from "@/api/problems";
 import { toast } from "vue-sonner";
+import DeleteAlertDialog from "./DeleteAlertDialog.vue";
 
 const props = defineProps<{ problem: Problem }>();
 
@@ -145,29 +135,10 @@ const handleDelete = async () => {
                 <Button @click="editView = true">
                   <Pencil class="w-2 h-4" />Edit
                 </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger as-child>
-                    <Button variant="destructive">
-                      <Trash2 class="w-2 h-4" />Borrar
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle
-                        >Está por borrar '{{ problem.titulo }}'</AlertDialogTitle
-                      >
-                      <AlertDialogDescription>
-                        Esta acción no puede deshacerse.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction @click="handleDelete"
-                        >Eliminar definitivamente</AlertDialogAction
-                      >
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <DeleteAlertDialog
+                  :title="problem.titulo"
+                  :handleDelete="handleDelete"
+                />
               </div>
             </DialogFooter>
           </div>
