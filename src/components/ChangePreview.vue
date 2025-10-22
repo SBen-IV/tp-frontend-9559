@@ -37,6 +37,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import DeleteAlertDialog from "./DeleteAlertDialog.vue";
 
 const props = defineProps<{ change: Change }>();
 
@@ -144,29 +145,10 @@ const handleDelete = async () => {
                 <Button @click="editView = true">
                   <Pencil class="w-2 h-4" />Edit
                 </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger as-child>
-                    <Button variant="destructive">
-                      <Trash2 class="w-2 h-4" />Borrar
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle
-                        >Está por borrar '{{ change.titulo }}'</AlertDialogTitle
-                      >
-                      <AlertDialogDescription>
-                        Esta acción no puede deshacerse.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction @click="handleDelete"
-                        >Eliminar definitivamente</AlertDialogAction
-                      >
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <DeleteAlertDialog
+                  :title="change.titulo"
+                  :handleDelete="handleDelete"
+                />
               </div>
             </DialogFooter>
           </div>
