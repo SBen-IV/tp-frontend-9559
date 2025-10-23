@@ -131,7 +131,10 @@ const handleDelete = async () => {
                   class="hover:bg-accent rounded-md mb-2 pt-4"
                 />
               </TabsContent>
-              <TabsContent value="incidentes" class="overflow-y-auto">
+              <TabsContent
+                value="incidentes"
+                class="overflow-y-auto grid grid-cols-2"
+              >
                 <IncidentOption
                   v-for="incidente in problem.incidentes"
                   :key="incidente.id"

@@ -28,6 +28,7 @@ export const problemCreateSchema = problemBaseSchema.extend({
 export const problemEditSchema = problemBaseSchema.extend({
   estado: z.enum(estados).nullable().optional(),
   responsable_id: z.string().uuid().nullable().optional(),
+  id_incidentes: z.array(z.string().uuid()).optional(),
 });
 
 export const problemSchema = problemBaseSchema.extend({

@@ -53,7 +53,8 @@ const items = ref<ConfigItem[]>([]);
 const incidents = ref<Incident[]>([]);
 const openItems = ref(false);
 const openIncidents = ref(false);
-const searchTerm = ref("");
+const searchItemTerm = ref("");
+const searchIncidentTerm = ref("");
 const isLoading = ref(false);
 
 const { values, handleSubmit, isSubmitting, setFieldValue } = useForm({
@@ -78,8 +79,10 @@ const filteredItems = computed(() => {
     (i) => !currentItems.includes(i.id),
   );
 
-  return searchTerm.value
-    ? availableItems.filter((item) => contains(item.nombre, searchTerm.value))
+  return searchItemTerm.value
+    ? availableItems.filter((item) =>
+        contains(item.nombre, searchItemTerm.value),
+      )
     : availableItems;
 });
 
@@ -102,7 +105,7 @@ const addItemToForm = (itemId: string) => {
   if (!currentItems.includes(itemId)) {
     setFieldValue("id_config_items", [...currentItems, itemId]);
   }
-  searchTerm.value = "";
+  searchItemTerm.value = "";
 
   if (filteredItems.value.length === 0) {
     openItems.value = false;
@@ -135,7 +138,7 @@ const addIncidentToForm = (incidentId: string) => {
   if (!currentIncidents.includes(incidentId)) {
     setFieldValue("id_incidentes", [...currentIncidents, incidentId]);
   }
-  searchTerm.value = "";
+  searchIncidentTerm.value = "";
 
   if (filteredIncidents.value.length === 0) {
     openIncidents.value = false;
@@ -156,9 +159,9 @@ const filteredIncidents = computed(() => {
     (i) => !currentIncidents.includes(i.id),
   );
 
-  return searchTerm.value
+  return searchIncidentTerm.value
     ? availableIncidents.filter((incident) =>
-        contains(incident.titulo, searchTerm.value),
+        contains(incident.titulo, searchIncidentTerm.value),
       )
     : availableIncidents;
 });
@@ -255,7 +258,7 @@ onMounted(() => {
               </div>
 
               <ComboboxInput
-                v-model="searchTerm"
+                v-model="searchItemTerm"
                 as-child
                 @click="openItems = true"
               >
@@ -311,7 +314,7 @@ onMounted(() => {
               </div>
 
               <ComboboxInput
-                v-model="searchTerm"
+                v-model="searchIncidentTerm"
                 as-child
                 @click="openIncidents = true"
               >

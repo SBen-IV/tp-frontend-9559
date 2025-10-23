@@ -1,14 +1,29 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from "vue";
+import { useFilter } from "reka-ui";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import { Loader2 } from "lucide-vue-next";
 import { toast } from "vue-sonner";
-import { changeEditSchema, type Change } from "../../models/changes";
 import { problemEditSchema, type Problem } from "@/models/problems";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import {
+  Combobox,
+  ComboboxAnchor,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
+import {
+  TagsInput,
+  TagsInputInput,
+  TagsInputItem,
+  TagsInputItemDelete,
+} from "@/components/ui/tags-input";
 import {
   FormControl,
   FormField,
@@ -29,9 +44,16 @@ import { priorities } from "@/models/commons";
 import { updateProblem } from "@/api/problems";
 import type { User } from "@/models/users";
 import { getAllUsers } from "@/api/users";
+import { getAllIncidents } from "@/api/incidents";
+import type { Incident } from "@/models/incidents";
+import IncidentOption from "../IncidentOption.vue";
 
 const users = ref<User[]>([]);
-const isLoading = ref(false);
+const incidents = ref<Incident[]>([]);
+const openIncidents = ref(false);
+const searchIncidentTerm = ref("");
+const isLoadingUsers = ref(false);
+const isLoadingIncidents = ref(false);
 
 const props = defineProps<{ problem: Problem }>();
 
@@ -40,9 +62,13 @@ const emit = defineEmits<{
   submitted: [];
 }>();
 
-const { values, handleSubmit, isSubmitting } = useForm({
+const { values, handleSubmit, isSubmitting, setFieldValue } = useForm({
   validationSchema: toTypedSchema(problemEditSchema),
-  initialValues: props.problem,
+  initialValues: {
+    ...props.problem,
+    id_incidentes:
+      props.problem.incidentes?.map((incident) => incident.id) || [],
+  },
 });
 
 const formattedPriorities = computed(() =>
@@ -60,16 +86,67 @@ const formattedStatus = computed(() =>
 );
 
 const fetchUsers = async () => {
-  isLoading.value = true;
+  isLoadingUsers.value = true;
   try {
     users.value = await getAllUsers("EMPLEADO");
   } catch (error: any) {
     toast.error(error.message || "Error al cargar los ítems");
     users.value = [];
   } finally {
-    isLoading.value = false;
+    isLoadingUsers.value = false;
   }
 };
+
+const fetchIncidents = async () => {
+  isLoadingUsers.value = true;
+  try {
+    incidents.value = await getAllIncidents();
+  } catch (error: any) {
+    toast.error(error.message || "Error al cargar los incidentes");
+    incidents.value = [];
+  } finally {
+    isLoadingIncidents.value = false;
+  }
+};
+
+const getIncidentById = (id: string) =>
+  incidents.value.find((incident) => incident.id === id);
+
+const addIncidentToForm = (incidentId: string) => {
+  const currentIncidents = values.id_incidentes || [];
+  if (!currentIncidents.includes(incidentId)) {
+    setFieldValue("id_incidentes", [...currentIncidents, incidentId]);
+  }
+  searchIncidentTerm.value = "";
+
+  if (filteredIncidents.value.length === 0) {
+    openIncidents.value = false;
+  }
+};
+
+const handleIncidentSelect = (event: { detail: { value: string } }) => {
+  if (typeof event.detail.value === "string") {
+    addIncidentToForm(event.detail.value);
+  }
+};
+
+const filteredIncidents = computed(() => {
+  const initialIncidents = props.problem.incidentes.map(
+    (incident) => incident.id,
+  );
+  const currentIncidents = values.id_incidentes || initialIncidents || [];
+  const { contains } = useFilter({ sensitivity: "base" });
+
+  const availableIncidents = incidents.value.filter(
+    (i) => !currentIncidents.includes(i.id),
+  );
+
+  return searchIncidentTerm.value
+    ? availableIncidents.filter((incident) =>
+        contains(incident.titulo, searchIncidentTerm.value),
+      )
+    : availableIncidents;
+});
 
 const onSubmit = handleSubmit(async (values) => {
   try {
@@ -83,6 +160,7 @@ const onSubmit = handleSubmit(async (values) => {
 
 onMounted(() => {
   fetchUsers();
+  fetchIncidents();
 });
 </script>
 
@@ -181,7 +259,64 @@ onMounted(() => {
         <FormMessage />
       </FormItem>
     </FormField>
+    <FormField v-slot="{ componentField }" name="id_incidentes">
+      <FormItem>
+        <FormLabel>Incidentes relacionados</FormLabel>
+        <Combobox v-model:open="openIncidents" :ignore-filter="true">
+          <ComboboxAnchor as-child>
+            <TagsInput
+              :model-value="componentField.modelValue"
+              class="px-2 gap-2 w-80"
+              @update:model-value="componentField['onUpdate:modelValue']"
+            >
+              <div
+                class="flex gap-2 flex-wrap items-center overflow-y-auto max-h-40"
+              >
+                <TagsInputItem
+                  v-for="incidentID in componentField.modelValue"
+                  :key="incidentID"
+                  :value="incidentID"
+                  class="h-full"
+                >
+                  <IncidentOption
+                    v-if="getIncidentById(incidentID)"
+                    :incident="getIncidentById(incidentID)!"
+                  />
+                  <TagsInputItemDelete />
+                </TagsInputItem>
+              </div>
 
+              <ComboboxInput
+                v-model="searchIncidentTerm"
+                as-child
+                @click="openIncidents = true"
+              >
+                <TagsInputInput
+                  placeholder="Incidentes..."
+                  class="min-w-[200px] w-full p-0 border-none focus-visible:ring-0 h-auto"
+                  @keydown.enter.prevent
+                />
+              </ComboboxInput>
+            </TagsInput>
+
+            <ComboboxList class="w-[--reka-popper-anchor-width]">
+              <ComboboxEmpty />
+              <ComboboxGroup class="max-h-60 overflow-y-auto">
+                <ComboboxItem
+                  v-for="incident in filteredIncidents"
+                  :key="incident.id"
+                  :value="incident.id"
+                  @select.prevent="handleIncidentSelect"
+                >
+                  <IncidentOption :incident="incident" />
+                </ComboboxItem>
+              </ComboboxGroup>
+            </ComboboxList>
+          </ComboboxAnchor>
+        </Combobox>
+        <FormMessage />
+      </FormItem>
+    </FormField>
     <Button
       :disabled="isSubmitting"
       type="submit"
