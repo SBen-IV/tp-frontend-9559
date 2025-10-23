@@ -1,18 +1,19 @@
 <script setup lang="ts">
-import type { ConfigItem } from "@/models/config_items";
-import { CodeXml, Wrench, FileText } from "lucide-vue-next";
+import type { Incident } from "@/models/incidents";
+import { CodeXml, Wrench, FileText, ShieldAlert, Plug } from "lucide-vue-next";
 import { computed } from "vue";
 
-const props = defineProps<{ item: ConfigItem }>();
+const props = defineProps<{ incident: Incident }>();
 
 const categoryIcons: Record<string, any> = {
   SOFTWARE: CodeXml,
   HARDWARE: Wrench,
-  DOCUMENTACION: FileText,
+  SEGURIDAD: ShieldAlert,
+  SOLICITUD_DE_SERVICIO: Plug,
 };
 
 const itemIcon = computed(() => {
-  return categoryIcons[props.item.categoria];
+  return categoryIcons[props.incident.categoria];
 });
 </script>
 
@@ -26,16 +27,16 @@ const itemIcon = computed(() => {
     />
     <div class="flex-1 min-w-0">
       <div class="flex items-center justify-between gap-1">
-        <span class="text-xs font-medium wrap">{{ item.nombre }}</span>
+        <span class="text-xs font-medium wrap">{{ incident.titulo }}</span>
         <span
-          v-if="item.version"
+          v-if="incident.estado"
           class="text-[10px] text-muted-foreground flex-shrink-0"
         >
-          v{{ item.version }}
+          {{ incident.estado }}
         </span>
       </div>
       <div class="text-[10px] text-muted-foreground wrap">
-        ID: {{ item.id }}
+        ID: {{ incident.id }}
       </div>
     </div>
   </div>

@@ -1,6 +1,7 @@
 import * as z from "zod";
 import { priorities } from "./commons";
 import { configItemSchema } from "./config_items";
+import { incidentSchema } from "./incidents";
 
 export const estados = [
   "EN_ANALISIS",
@@ -21,11 +22,13 @@ const problemBaseSchema = z.object({
 
 export const problemCreateSchema = problemBaseSchema.extend({
   id_config_items: z.array(z.string().uuid()),
+  id_incidentes: z.array(z.string().uuid()),
 });
 
 export const problemEditSchema = problemBaseSchema.extend({
   estado: z.enum(estados).nullable().optional(),
   responsable_id: z.string().uuid().nullable().optional(),
+  id_incidentes: z.array(z.string().uuid()).optional(),
 });
 
 export const problemSchema = problemBaseSchema.extend({
@@ -35,6 +38,7 @@ export const problemSchema = problemBaseSchema.extend({
   responsable_id: z.string().uuid(),
   id: z.string().uuid(),
   config_items: z.array(configItemSchema),
+  incidentes: z.array(incidentSchema),
 });
 
 export type ProblemCreate = z.infer<typeof problemCreateSchema>;

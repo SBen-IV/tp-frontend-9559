@@ -7,7 +7,7 @@ import {
   CardFooter,
 } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { Eye, Trash2, ArrowLeft, Pencil } from "lucide-vue-next";
+import { Eye, ArrowLeft, Pencil } from "lucide-vue-next";
 import {
   Dialog,
   DialogTrigger,
@@ -24,6 +24,7 @@ import type { Problem } from "@/models/problems";
 import { getPrioridadColor, prettyDate } from "@/lib/utils";
 import { ref } from "vue";
 import EditProblemForm from "@/components/forms/EditProblemForm.vue";
+import IncidentOption from "./IncidentOption.vue";
 import { deleteProblem } from "@/api/problems";
 import { toast } from "vue-sonner";
 import DeleteAlertDialog from "./DeleteAlertDialog.vue";
@@ -92,7 +93,7 @@ const handleDelete = async () => {
           <Button variant="ghost"> <Eye class="w-4 h-4 mr-2" />Ver más </Button>
         </DialogTrigger>
         <DialogContent
-          class="sm:max-w-[425px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[50dvh]"
+          class="sm:max-w-[450px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[50dvh]"
         >
           <div v-if="!editView">
             <DialogHeader class="p-6 pb-0">
@@ -110,9 +111,11 @@ const handleDelete = async () => {
             </DialogHeader>
 
             <Tabs default-value="descripcion" class="w-full px-6 max-h-[35dvh]">
-              <TabsList class="grid w-full grid-cols-2">
+              <TabsList class="grid w-full grid-cols-3">
+                <!-- NOTE: Keep tab names short so that it doesn't overflow -->
                 <TabsTrigger value="descripcion">Descripción</TabsTrigger>
-                <TabsTrigger value="config_items">Ítems afectados</TabsTrigger>
+                <TabsTrigger value="config_items">Ítems</TabsTrigger>
+                <TabsTrigger value="incidentes">Incidentes</TabsTrigger>
               </TabsList>
               <TabsContent value="descripcion" class="overflow-y-auto">
                 <p class="pt-4">
@@ -125,6 +128,17 @@ const handleDelete = async () => {
                   v-for="item in problem.config_items"
                   :key="item.id"
                   :item="item"
+                  class="hover:bg-accent rounded-md mb-2 pt-4"
+                />
+              </TabsContent>
+              <TabsContent
+                value="incidentes"
+                class="overflow-y-auto grid grid-cols-2"
+              >
+                <IncidentOption
+                  v-for="incidente in problem.incidentes"
+                  :key="incidente.id"
+                  :incident="incidente"
                   class="hover:bg-accent rounded-md mb-2 pt-4"
                 />
               </TabsContent>
