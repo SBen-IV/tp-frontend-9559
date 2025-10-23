@@ -47,13 +47,20 @@ import { getAllUsers } from "@/api/users";
 import { getAllIncidents } from "@/api/incidents";
 import type { Incident } from "@/models/incidents";
 import IncidentOption from "../IncidentOption.vue";
+import type { ConfigItem } from "@/models/config_items";
+import { getAllConfigItems } from "@/api/config_items";
+import ItemOption from "../ItemOption.vue";
 
 const users = ref<User[]>([]);
 const incidents = ref<Incident[]>([]);
+const items = ref<ConfigItem[]>([]);
 const openIncidents = ref(false);
+const openItems = ref(false);
 const searchIncidentTerm = ref("");
+const searchItemTerm = ref("");
 const isLoadingUsers = ref(false);
 const isLoadingIncidents = ref(false);
+const isLoadingItems = ref(false);
 
 const props = defineProps<{ problem: Problem }>();
 
@@ -66,6 +73,7 @@ const { values, handleSubmit, isSubmitting, setFieldValue } = useForm({
   validationSchema: toTypedSchema(problemEditSchema),
   initialValues: {
     ...props.problem,
+    id_config_items: props.problem.config_items?.map((item) => item.id) || [],
     id_incidentes:
       props.problem.incidentes?.map((incident) => incident.id) || [],
   },
@@ -98,7 +106,7 @@ const fetchUsers = async () => {
 };
 
 const fetchIncidents = async () => {
-  isLoadingUsers.value = true;
+  isLoadingIncidents.value = true;
   try {
     incidents.value = await getAllIncidents();
   } catch (error: any) {
@@ -148,6 +156,53 @@ const filteredIncidents = computed(() => {
     : availableIncidents;
 });
 
+const fetchItems = async () => {
+  isLoadingItems.value = true;
+  try {
+    items.value = await getAllConfigItems();
+  } catch (error: any) {
+    toast.error(error.message || "Error al cargar los incidentes");
+    items.value = [];
+  } finally {
+    isLoadingItems.value = false;
+  }
+};
+
+const getItemById = (id: string) => items.value.find((item) => item.id === id);
+
+const addItemToForm = (itemId: string) => {
+  const currentItems = values.id_config_items || [];
+  if (!currentItems.includes(itemId)) {
+    setFieldValue("id_config_items", [...currentItems, itemId]);
+  }
+  searchItemTerm.value = "";
+
+  if (filteredItems.value.length === 0) {
+    openItems.value = false;
+  }
+};
+
+const handleItemSelect = (event: { detail: { value: string } }) => {
+  if (typeof event.detail.value === "string") {
+    addItemToForm(event.detail.value);
+  }
+};
+
+const filteredItems = computed(() => {
+  const currentItems = values.id_config_items || [];
+  const { contains } = useFilter({ sensitivity: "base" });
+
+  const availableItems = items.value.filter(
+    (i) => !currentItems.includes(i.id),
+  );
+
+  return searchItemTerm.value
+    ? availableItems.filter((item) =>
+        contains(item.nombre, searchItemTerm.value),
+      )
+    : availableItems;
+});
+
 const onSubmit = handleSubmit(async (values) => {
   try {
     await updateProblem(props.problem.id, values);
@@ -160,6 +215,7 @@ const onSubmit = handleSubmit(async (values) => {
 
 onMounted(() => {
   fetchUsers();
+  fetchItems();
   fetchIncidents();
 });
 </script>
@@ -259,6 +315,66 @@ onMounted(() => {
         <FormMessage />
       </FormItem>
     </FormField>
+
+    <FormField v-slot="{ componentField }" name="id_config_items">
+      <FormItem>
+        <FormLabel>Ítems de configuración relacionados</FormLabel>
+        <Combobox v-model:open="openItems" :ignore-filter="true">
+          <ComboboxAnchor as-child>
+            <TagsInput
+              :model-value="componentField.modelValue"
+              class="px-2 gap-2 w-80"
+              @update:model-value="componentField['onUpdate:modelValue']"
+            >
+              <div
+                class="flex gap-2 flex-wrap items-center overflow-y-auto max-h-40"
+              >
+                <TagsInputItem
+                  v-for="itemID in componentField.modelValue"
+                  :key="itemID"
+                  :value="itemID"
+                  class="h-full"
+                >
+                  <ItemOption
+                    v-if="getItemById(itemID)"
+                    :item="getItemById(itemID)!"
+                  />
+                  <TagsInputItemDelete />
+                </TagsInputItem>
+              </div>
+
+              <ComboboxInput
+                v-model="searchItemTerm"
+                as-child
+                @click="openItems = true"
+              >
+                <TagsInputInput
+                  placeholder="Ítems..."
+                  class="min-w-[200px] w-full p-0 border-none focus-visible:ring-0 h-auto"
+                  @keydown.enter.prevent
+                />
+              </ComboboxInput>
+            </TagsInput>
+
+            <ComboboxList class="w-[--reka-popper-anchor-width]">
+              <ComboboxEmpty />
+              <ComboboxGroup class="max-h-60 overflow-y-auto">
+                <ComboboxItem
+                  v-for="item in filteredItems"
+                  :key="item.id"
+                  :value="item.id"
+                  @select.prevent="handleItemSelect"
+                >
+                  <ItemOption :item="item" />
+                </ComboboxItem>
+              </ComboboxGroup>
+            </ComboboxList>
+          </ComboboxAnchor>
+        </Combobox>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+
     <FormField v-slot="{ componentField }" name="id_incidentes">
       <FormItem>
         <FormLabel>Incidentes relacionados</FormLabel>
