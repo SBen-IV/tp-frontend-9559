@@ -24,3 +24,7 @@ export async function updateProblem(
 
   return response.data;
 }
+
+export async function deleteProblem(problemID: string) {
+  return await axiosInstance.delete(`${BASE_URL}/${problemID}`);
+}
