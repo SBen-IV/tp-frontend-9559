@@ -43,6 +43,7 @@ export const incidentSchema = incidentBaseSchema.extend({
 export const incidentEditSchema = incidentBaseSchema.extend({
   estado: z.enum(incidentStatus).nullable().optional(),
   responsable_id: z.string().uuid().nullable().optional(),
+  id_config_items: z.array(z.string().uuid()), 
 })
 
 export type IncidentCreate = z.infer<typeof incidentCreateSchema>;
