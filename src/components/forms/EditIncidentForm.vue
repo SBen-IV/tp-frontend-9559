@@ -8,6 +8,22 @@ import { incidentEditSchema, type Incident } from "../../models/incidents";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import ItemOption from "@/components/ItemOption.vue";
+import {
+  Combobox,
+  ComboboxAnchor,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
+import {
+  TagsInput,
+  TagsInputInput,
+  TagsInputItem,
+  TagsInputItemDelete,
+} from "@/components/ui/tags-input";
 import {
   FormControl,
   FormField,
@@ -29,20 +45,26 @@ import { incidentCategory } from "@/models/incidents";
 import { updateIncident } from "@/api/incidents";
 import type { User } from "@/models/users";
 import { getAllUsers } from "@/api/users";
+import { useFilter } from "reka-ui";
+import type { ConfigItem } from "@/models/config_items";
+import { getAllConfigItems } from "@/api/config_items";
 
 const props = defineProps<{ incident: Incident }>();
 
 const users = ref<User[]>([]);
 const isLoading = ref(false);
+const items = ref<ConfigItem[]>([]);
+const open = ref(false);
+const searchTerm = ref("");
 
 const emit = defineEmits<{
   // Let parent know the form was submitted
   submitted: [];
 }>();
 
-const { values, handleSubmit, isSubmitting } = useForm({
+const { values, handleSubmit, isSubmitting, setFieldValue } = useForm({
   validationSchema: toTypedSchema(incidentEditSchema),
-  initialValues: props.incident,
+  initialValues: {...props.incident, id_config_items: props.incident.config_items.map(item => item.id)},
 });
 
 const formattedPriorities = computed(() =>
@@ -58,6 +80,49 @@ const formattedStatus = computed(() =>
     label: status.replace(/_/g, " "),
   })),
 );
+
+const filteredItems = computed(() => {
+  const currentItems = values.id_config_items || [];
+  console.log("current items: ", currentItems)
+  const { contains } = useFilter({ sensitivity: "base" });
+  const availableItems = items.value.filter(
+    (i) => !currentItems.includes(i.id),
+  );
+  return searchTerm.value
+    ? availableItems.filter((item) => contains(item.nombre, searchTerm.value))
+    : availableItems;
+});
+
+const fetchItems = async () => {
+  isLoading.value = true;
+  try {
+    items.value = await getAllConfigItems();
+  } catch (error: any) {
+    toast.error(error.message || "Error al cargar los ítems");
+    items.value = [];
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const getItemById = (id: string) => items.value.find((item) => item.id === id);
+
+const addItemToForm = (itemId: string) => {
+  const currentItems = values.id_config_items || [];
+  if (!currentItems.includes(itemId)) {
+    setFieldValue("id_config_items", [...currentItems, itemId]);
+  }
+  searchTerm.value = "";
+  if (filteredItems.value.length === 0) {
+    open.value = false;
+  }
+};
+
+const handleItemSelect = (event: { detail: { value: string } }) => {
+  if (typeof event.detail.value === "string") {
+    addItemToForm(event.detail.value);
+  }
+};
 
 const fetchUsers = async () => {
   isLoading.value = true;
@@ -83,6 +148,7 @@ const onSubmit = handleSubmit(async (values) => {
 
 onMounted(() => {
   fetchUsers();
+  fetchItems();
 });
 </script>
 
@@ -207,6 +273,57 @@ onMounted(() => {
             </SelectGroup>
           </SelectContent>
         </Select>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+
+    <FormField v-slot="{ componentField }" name="id_config_items">
+      <FormItem>
+        <FormLabel>Items afectados</FormLabel>
+        <Combobox v-model:open="open" :ignore-filter="true">
+          <ComboboxAnchor as-child>
+            <TagsInput
+              :model-value="componentField.modelValue"
+              class="px-2 gap-2 w-80"
+              @update:model-value="componentField['onUpdate:modelValue']"
+            >
+              <div class="flex gap-2 flex-wrap items-center">
+                <TagsInputItem
+                  v-for="itemID in componentField.modelValue"
+                  :key="itemID"
+                  :value="itemID"
+                  class="h-full"
+                >
+                  <!-- Add v-if condition since ItemOption can't handle undefined -->
+                  <ItemOption v-if="getItemById(itemID)" :item="getItemById(itemID)" />
+                  <TagsInputItemDelete />
+                </TagsInputItem>
+              </div>
+
+              <ComboboxInput v-model="searchTerm" as-child @click="open = true">
+                <TagsInputInput
+                  placeholder="Items..."
+                  class="min-w-[200px] w-full p-0 border-none focus-visible:ring-0 h-auto"
+                  @keydown.enter.prevent
+                />
+              </ComboboxInput>
+            </TagsInput>
+
+            <ComboboxList class="w-[--reka-popper-anchor-width]">
+              <ComboboxEmpty />
+              <ComboboxGroup>
+                <ComboboxItem
+                  v-for="item in filteredItems"
+                  :key="item.id"
+                  :value="item.id"
+                  @select.prevent="handleItemSelect"
+                >
+                  <ItemOption :item="item" />
+                </ComboboxItem>
+              </ComboboxGroup>
+            </ComboboxList>
+          </ComboboxAnchor>
+        </Combobox>
         <FormMessage />
       </FormItem>
     </FormField>

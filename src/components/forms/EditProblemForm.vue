@@ -318,7 +318,7 @@ onMounted(() => {
 
     <FormField v-slot="{ componentField }" name="id_config_items">
       <FormItem>
-        <FormLabel>Ítems de configuración relacionados</FormLabel>
+        <FormLabel>Ítems afectados</FormLabel>
         <Combobox v-model:open="openItems" :ignore-filter="true">
           <ComboboxAnchor as-child>
             <TagsInput
