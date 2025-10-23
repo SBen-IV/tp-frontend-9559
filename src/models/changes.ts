@@ -25,7 +25,8 @@ export const changeCreateSchema = changeBaseSchema.extend({
 });
 
 export const changeEditSchema = changeBaseSchema.extend({
-  estado: z.enum(changeStatus).nullable().optional()
+  estado: z.enum(changeStatus).nullable().optional(),
+  id_config_items: z.array(z.string().uuid()),
 })
 
 export const changeSchema = changeBaseSchema.extend({
