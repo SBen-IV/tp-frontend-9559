@@ -1,6 +1,7 @@
 import * as z from "zod";
 import { priorities } from "./commons";
 import { configItemSchema } from "./config_items";
+import { incidentSchema } from "./incidents";
 
 export const estados = [
   "EN_ANALISIS",
@@ -36,6 +37,7 @@ export const problemSchema = problemBaseSchema.extend({
   responsable_id: z.string().uuid(),
   id: z.string().uuid(),
   config_items: z.array(configItemSchema),
+  incidentes: z.array(incidentSchema),
 });
 
 export type ProblemCreate = z.infer<typeof problemCreateSchema>;
