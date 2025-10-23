@@ -7,7 +7,7 @@ import {
   CardFooter,
 } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { Eye, Trash2, ArrowLeft, Pencil } from "lucide-vue-next";
+import { Eye, ArrowLeft, Pencil } from "lucide-vue-next";
 import {
   Dialog,
   DialogTrigger,
@@ -25,8 +25,11 @@ import { getPrioridadColor, prettyDate } from "@/lib/utils";
 import { ref } from "vue";
 import EditProblemForm from "@/components/forms/EditProblemForm.vue";
 import IncidentOption from "./IncidentOption.vue";
+import { deleteProblem } from "@/api/problems";
+import { toast } from "vue-sonner";
+import DeleteAlertDialog from "./DeleteAlertDialog.vue";
 
-defineProps<{ problem: Problem }>();
+const props = defineProps<{ problem: Problem }>();
 
 const prettyEstado = (estado: String): String => {
   return estado.replace("_", " ");
@@ -53,6 +56,16 @@ const handleEditSubmitted = () => {
 
 const cancelEdit = () => {
   editView.value = false;
+};
+
+const handleDelete = async () => {
+  try {
+    await deleteProblem(props.problem.id);
+    toast.success("Se eliminó el problema correctamente");
+    emit("problemsUpdated");
+  } catch (err: any) {
+    toast.error(err.message);
+  }
 };
 </script>
 
@@ -133,9 +146,10 @@ const cancelEdit = () => {
                 <Button @click="editView = true">
                   <Pencil class="w-2 h-4" />Edit
                 </Button>
-                <Button variant="destructive">
-                  <Trash2 class="w-2 h-4" />Delete
-                </Button>
+                <DeleteAlertDialog
+                  :title="problem.titulo"
+                  :handleDelete="handleDelete"
+                />
               </div>
             </DialogFooter>
           </div>
