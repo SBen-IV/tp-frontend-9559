@@ -122,7 +122,10 @@ const handleDelete = async () => {
                   {{ problem.descripcion }}
                 </p>
               </TabsContent>
-              <TabsContent value="config_items" class="overflow-y-auto">
+              <TabsContent
+                value="config_items"
+                class="grid grid-cols-2 overflow-y-auto"
+              >
                 <!-- TODO: Should link to the CI -->
                 <ItemOption
                   v-for="item in problem.config_items"
