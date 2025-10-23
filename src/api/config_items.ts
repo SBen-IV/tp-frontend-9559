@@ -32,3 +32,7 @@ export async function updateConfigItem(
 
   return response.data;
 }
+
+export async function deleteConfigItem(configItemID: string) {
+  return await axiosInstance.delete(`${BASE_URL}/${configItemID}`);
+}

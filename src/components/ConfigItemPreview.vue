@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ConfigItem } from "@/models/config_items";
+import DeleteAlertDialog from "./DeleteAlertDialog.vue";
 import {
   CardHeader,
   Card,
@@ -13,7 +14,6 @@ import {
   FileText,
   Wrench,
   Eye,
-  Trash2,
   Pencil,
   ArrowLeft,
 } from "lucide-vue-next";
@@ -30,6 +30,8 @@ import {
 import { Button } from "./ui/button";
 import { prettyDate } from "@/lib/utils";
 import EditConfigItemForm from "./forms/EditConfigItemForm.vue";
+import { deleteConfigItem } from "@/api/config_items";
+import { toast } from "vue-sonner";
 
 const props = defineProps<{ item: ConfigItem }>();
 
@@ -65,6 +67,16 @@ const handleEditSubmitted = () => {
 
 const cancelEdit = () => {
   editView.value = false;
+};
+
+const handleDelete = async () => {
+  try {
+    await deleteConfigItem(props.item.id);
+    toast.success("Se eliminó el ítem correctamente");
+    emit("configItemUpdated");
+  } catch (err: any) {
+    toast.error(err.message);
+  }
 };
 </script>
 
@@ -128,9 +140,10 @@ const cancelEdit = () => {
                 <Button @click="editView = true">
                   <Pencil class="w-2 h-4" />Edit</Button
                 >
-                <Button variant="destructive">
-                  <Trash2 class="w-2 h-4" />Delete</Button
-                >
+                <DeleteAlertDialog
+                  :title="item.nombre"
+                  :handleDelete="handleDelete"
+                />
               </div>
             </DialogFooter>
           </div>
