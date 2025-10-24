@@ -99,16 +99,16 @@ export const mapToMetric = (data: Map<string, number>): Metric[] => {
 };
 
 export const formatAverageResolutionTime = (averageMs: number): string => {
-  if (averageMs == 0) return "no hay datos"
+  if (averageMs == 0) return "No hay datos";
 
   const seconds = Math.floor(averageMs / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
 
-  if (days > 0) return `${days} ${days === 1 ? 'día' : 'días'}`;
-  if (hours > 0) return `${hours} ${hours === 1 ? 'hora' : 'horas'}`;
-  if (minutes > 0) return `${minutes} ${minutes === 1 ? 'minuto' : 'minutos'}`;
-  
-  return `${seconds} ${seconds === 1 ? 'segundo' : 'segundos'}`;
-}
+  if (days > 0) return `${days} ${days === 1 ? "día" : "días"}`;
+  if (hours > 0) return `${hours} ${hours === 1 ? "hora" : "horas"}`;
+  if (minutes > 0) return `${minutes} ${minutes === 1 ? "minuto" : "minutos"}`;
+
+  return `${seconds} ${seconds === 1 ? "segundo" : "segundos"}`;
+};

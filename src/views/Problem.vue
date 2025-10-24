@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import {
   colorsByPrioridad,
   colorsByProblemaEstado,
+  formatAverageResolutionTime,
   mapToMetric,
   sortByDate,
   sortByName,
@@ -35,6 +36,7 @@ const metricsData = reactive<ProblemMetric>({
   total: 0,
   byEstado: [],
   byPrioridad: [],
+  tiempoPromedioCierre: 0,
 });
 const isLoading = ref(false);
 const searchTitulo = ref("");
@@ -44,6 +46,20 @@ const searchEstado = ref("");
 const calculateMetrics = (problems: Problem[]) => {
   const byEstado: Map<string, number> = new Map();
   const byPrioridad: Map<string, number> = new Map();
+
+  const closedProblems = problems.filter(
+    (problem) => problem.estado === "CERRADO" && problem.fecha_cierre,
+  );
+
+  if (closedProblems.length > 0) {
+    const totalMs = closedProblems.reduce((total, problem) => {
+      const fechaCreacion = new Date(problem.fecha_creacion);
+      const fechaCierre = new Date(problem.fecha_cierre!);
+      return total + (fechaCierre.getTime() - fechaCreacion.getTime());
+    }, 0);
+
+    metricsData.tiempoPromedioCierre = totalMs / closedProblems.length;
+  }
 
   problems.forEach((problem: Problem) => {
     const valueEstado: number | undefined = byEstado.get(problem.estado)
@@ -161,6 +177,10 @@ onMounted(() => {
     <Card class="mx-6 max-w-3/4">
       <div class="justify-items-center items-center">
         <div class="text-4xl font-light">Total {{ metricsData.total }}</div>
+        <div class="text-xl font-light">
+          Tiempo promedio de cierre:
+          {{ formatAverageResolutionTime(metricsData.tiempoPromedioCierre) }}
+        </div>
       </div>
     </Card>
     <CustomPieChart

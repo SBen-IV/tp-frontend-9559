@@ -27,4 +27,5 @@ export interface ProblemMetric {
   total: number;
   byEstado: Metric[];
   byPrioridad: Metric[];
+  tiempoPromedioCierre: number;
 }

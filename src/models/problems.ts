@@ -33,6 +33,7 @@ export const problemEditSchema = problemCreateSchema.extend({
 export const problemSchema = problemBaseSchema.extend({
   estado: z.enum(estados),
   fecha_creacion: z.date(),
+  fecha_cierre: z.date().nullable().optional(),
   owner_id: z.string().uuid(),
   responsable_id: z.string().uuid(),
   id: z.string().uuid(),
