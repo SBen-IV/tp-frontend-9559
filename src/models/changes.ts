@@ -18,7 +18,7 @@ export const changeBaseSchema = z.object({
     .string({ required_error: "Ingrese una descripción" })
     .min(1, "Ingrese una descripción"),
   prioridad: z.enum(priorities),
-})
+});
 
 export const changeCreateSchema = changeBaseSchema.extend({
   id_config_items: z.array(z.string().uuid()),
@@ -27,11 +27,12 @@ export const changeCreateSchema = changeBaseSchema.extend({
 export const changeEditSchema = changeBaseSchema.extend({
   estado: z.enum(changeStatus).nullable().optional(),
   id_config_items: z.array(z.string().uuid()),
-})
+});
 
 export const changeSchema = changeBaseSchema.extend({
   estado: z.enum(changeStatus),
   fecha_creacion: z.date(),
+  fecha_cierre: z.date().nullable().optional(),
   id: z.string().uuid(),
   owner_id: z.string().uuid(),
   config_items: z.array(configItemSchema),
