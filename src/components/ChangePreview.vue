@@ -143,7 +143,7 @@ const handleDelete = async () => {
             <DialogFooter>
               <div class="w-full flex justify-between items-center pb-4 px-4 pt-4">
                 <Button class="bg-secondary">
-                  <RouterLink :to="`/changes/${change.id}/history`">
+                  <RouterLink :to="`/changes/${change.id}`">
                     <History class="w-2 h-4" color="black" />
                   </RouterLink>
                 </Button>

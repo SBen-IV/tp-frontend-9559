@@ -24,7 +24,7 @@ const routes = [
   { path: "/config-items", component: ConfigurationItem },
   { path: "/config-items/new", component: NewConfigurationItem },
   { path: "/changes", component: Change },
-  { path: "/changes/:id/history", component: ChangeHistory },
+  { path: "/changes/:id", component: ChangeHistory },
   { path: "/incidents", component: Incident },
   { path: "/incidents/new", component: NewIncident },
   { path: "/changes/new", component: NewChange },
