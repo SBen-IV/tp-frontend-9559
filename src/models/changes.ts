@@ -37,6 +37,11 @@ export const changeSchema = changeBaseSchema.extend({
   config_items: z.array(configItemSchema),
 });
 
+export const changeAudtiSchema = changeSchema.omit({ config_items: true }).extend({
+  id_config_items: z.array(z.string().uuid()),
+})
+
 export type ChangeCreate = z.infer<typeof changeCreateSchema>;
 export type ChangeEdit = z.infer<typeof changeEditSchema>;
 export type Change = z.infer<typeof changeSchema>;
+export type ChangeAudit = z.infer<typeof changeAudtiSchema>;
