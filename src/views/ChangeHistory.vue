@@ -8,6 +8,7 @@ import Badge from '@/components/ui/badge/Badge.vue';
 import Separator from '@/components/ui/separator/Separator.vue';
 import Card from '@/components/ui/card/Card.vue';
 import { prettyDate } from '@/lib/utils';
+import ItemOption from '@/components/ItemOption.vue';
 
 const route = useRoute()
 
@@ -67,6 +68,24 @@ onMounted(() => {
           {{ change.descripcion }}
         </p>
       </div>
+
+            <Separator class="my-4" />
+
+      <div>
+        <p class="font-medium text-muted-foreground mb-1">Ítems de configuración</p>
+        <div class="flex">
+          <ItemOption
+            v-for="item in change.config_items"
+            :key="item.id"
+            :item="item"
+            class="hover:bg-accent rounded-md mb-2 pt-4"
+          />
+        </div>
+      </div>
     </Card>
+
+    <Separator class="my-4" />
+
+
   </div>
 </template>
