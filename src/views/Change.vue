@@ -18,6 +18,7 @@ import {
 import { changeStatus } from "@/models/changes";
 import {
   colorsByCambioEstado,
+  formatAverageResolutionTime,
   mapToMetric,
   sortByDate,
   sortByName,
@@ -27,14 +28,6 @@ import { getAllChanges } from "@/api/changes";
 import { priorities } from "@/models/commons";
 import type { ChangeMetric } from "@/models/metrics";
 import CustomPieChart from "@/components/CustomPieChart.vue";
-import {
-  BLUE,
-  GREEN,
-  LIGHT_BLUE,
-  PINK,
-  VIOLET,
-  type Color,
-} from "@/models/colors";
 import { Card } from "@/components/ui/card";
 import { colorsByPrioridad } from "@/lib/utils";
 
@@ -43,6 +36,7 @@ const metricsData = reactive<ChangeMetric>({
   total: 0,
   byEstado: [],
   byPrioridad: [],
+  tiempoPromedioCierre: 0,
 });
 const isLoading = ref(false);
 const searchTitulo = ref("");
@@ -53,6 +47,20 @@ const searchDescripcion = ref("");
 const calculateMetrics = (changes: Change[]) => {
   const byEstado: Map<string, number> = new Map();
   const byPrioridad: Map<string, number> = new Map();
+
+  const closedChanges = changes.filter(
+    (change) => change.estado === "CERRADO" && change.fecha_cierre,
+  );
+
+  if (closedChanges.length > 0) {
+    const totalMs = closedChanges.reduce((total, change) => {
+      const fechaCreacion = new Date(change.fecha_creacion);
+      const fechaCierre = new Date(change.fecha_cierre!);
+      return total + (fechaCierre.getTime() - fechaCreacion.getTime());
+    }, 0);
+
+    metricsData.tiempoPromedioCierre = totalMs / closedChanges.length;
+  }
 
   changes.forEach((change: Change) => {
     const valueEstado: number | undefined = byEstado.get(change.estado)
@@ -177,6 +185,10 @@ onMounted(() => {
     <Card class="mx-6 max-w-3/4">
       <div class="justify-items-center items-center">
         <div class="text-4xl font-light">Total {{ metricsData.total }}</div>
+        <div class="text-xl font-light">
+          Tiempo promedio de cierre:
+          {{ formatAverageResolutionTime(metricsData.tiempoPromedioCierre) }}
+        </div>
       </div>
     </Card>
     <CustomPieChart
