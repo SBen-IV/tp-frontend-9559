@@ -8,7 +8,9 @@ export async function createChange(change: ChangeCreate) {
 }
 
 export async function getChangeByID(changeID: string): Promise<Change> {
-  return await axiosInstance.get(`${BASE_URL}/${changeID}`);
+  const response = await axiosInstance.get(`${BASE_URL}/${changeID}`);
+
+  return response.data
 }
 
 export async function getAllChanges(): Promise<Change[]> {
