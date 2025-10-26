@@ -53,8 +53,8 @@ defineProps<{ changeVersions: ChangeVersion[], handleRollback: (versionID: strin
           </div>
         </div>
 
+        <p class="text-muted-foreground mb-1 font-medium">Descripción</p>
         <div class="max-h-[20dvh] overflow-y-auto">
-          <p class="text-muted-foreground mb-1 font-medium">Descripción</p>
           <p class="text-sm leading-relaxed">{{ version.descripcion }}</p>
         </div>
       </div>
