@@ -60,13 +60,13 @@ const fetchChange = async () => {
   console.log("Change data:", change.value);
 };
 
-const fetchChangePage = async (changeID: string) => {
+const fetchChangeHistory = async (changeID: string) => {
   changeAudits.value = await getChangeAuditsByID(changeID);
 };
 
 onMounted(() => {
   fetchChange();
-  fetchChangePage(route.params.id as string);
+  fetchChangeHistory(route.params.id as string);
 });
 </script>
 
