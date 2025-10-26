@@ -1,4 +1,4 @@
-import { priorities } from "./commons";
+import { auditSchema, priorities } from "./commons";
 import { configItemSchema } from "./config_items";
 import * as z from "zod";
 
@@ -37,11 +37,11 @@ export const changeSchema = changeBaseSchema.extend({
   config_items: z.array(configItemSchema),
 });
 
-export const changeAudtiSchema = changeSchema.omit({ config_items: true }).extend({
-  id_config_items: z.array(z.string().uuid()),
+export const changeAuditSchema = auditSchema.extend({
+  estado_nuevo: changeSchema.omit({ config_items: true } ).extend({ id_config_items: z.array(z.string().uuid()) })
 })
 
 export type ChangeCreate = z.infer<typeof changeCreateSchema>;
 export type ChangeEdit = z.infer<typeof changeEditSchema>;
 export type Change = z.infer<typeof changeSchema>;
-export type ChangeAudit = z.infer<typeof changeAudtiSchema>;
+export type ChangeAudit = z.infer<typeof changeAuditSchema>;
