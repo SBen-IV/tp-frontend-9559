@@ -26,7 +26,7 @@ const handleRollback = async (versionID: string) => {
   try {
     await rollbackChange(route.params.id as string, versionID);
     toast.success("Se restauró el cambio correctamente");
-    fetchChange()
+    fetchChange();
   } catch (err: any) {
     toast.error(err.message);
   }
@@ -60,7 +60,7 @@ watch(
 );
 
 const fetchChange = async () => {
-  const changeID = route.params.id as string
+  const changeID = route.params.id as string;
   change.value = await getChangeByID(changeID);
   console.log("Change data:", change.value);
 };
@@ -153,9 +153,11 @@ onMounted(() => {
               {{ version.titulo }}
             </span>
 
-            <RollbackAlertDialog
-              :handleRollback="() => handleRollback(version.id)"
-            />
+            <div class="flex justify-end">
+              <RollbackAlertDialog
+                :handleRollback="() => handleRollback(version.id)"
+              />
+            </div>
           </CardHeader>
 
           <CardContent class="grid grid-cols-3 gap-6 text-sm">
