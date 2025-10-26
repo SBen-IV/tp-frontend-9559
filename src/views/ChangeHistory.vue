@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getChangeAuditsByID, getChangeByID } from '@/api/changes';
-import type { Change, ChangeAudit } from '@/models/changes';
-import { onMounted, ref, shallowRef } from 'vue'
+import type { Change, ChangeAudit, ChangeVersion } from '@/models/changes';
+import { computed, onMounted, ref, shallowRef, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getPrioridadColor } from '@/lib/utils';
 import Badge from '@/components/ui/badge/Badge.vue';
@@ -9,11 +9,36 @@ import Separator from '@/components/ui/separator/Separator.vue';
 import Card from '@/components/ui/card/Card.vue';
 import { prettyDate } from '@/lib/utils';
 import ItemOption from '@/components/ItemOption.vue';
+import { getConfigItemById } from '@/api/config_items';
 
 const route = useRoute()
 
 const change = ref<Change>();
-const changeVersions = shallowRef<ChangeAudit[]>([]);
+const changeAudits = shallowRef<ChangeAudit[]>([]);
+const changeVersions = ref<ChangeVersion[]>([])
+
+watch(
+  () => changeAudits.value,
+  async (audits) => {
+    if (!audits || audits.length === 0) return
+
+    const versions = await Promise.all(
+      audits.map(async (audit) => {
+        const configItems = await Promise.all(
+          audit.estado_nuevo.id_config_items.map((id) => getConfigItemById(id))
+        )
+
+        return {
+          ...audit.estado_nuevo,
+          config_items: configItems,
+          id_auditoria: audit.id,
+        } as ChangeVersion
+      })
+    )
+
+    changeVersions.value = versions
+  }
+)
 
 const fetchChange = async (changeID: string) => {
   change.value = await getChangeByID(changeID)
@@ -21,7 +46,7 @@ const fetchChange = async (changeID: string) => {
 }
 
 const fetchChangeHistory = async (changeID: string) => {
-  changeVersions.value = await getChangeAuditsByID(changeID)
+  changeAudits.value = await getChangeAuditsByID(changeID)
 }
 
 onMounted(() => {
@@ -32,13 +57,10 @@ onMounted(() => {
 
 <template>
   <div v-if="change" class="space-y-6">
-    <div>
+    <Card class="p-6">
       <h1 class="text-4xl text-center font-bold">
         {{ change.titulo }}
       </h1>
-    </div>
-
-    <Card class="p-6">
       <div class="grid grid-cols-4 gap-6 text-sm">
         <div>
           <p class="font-medium text-muted-foreground">ID</p>
@@ -69,7 +91,7 @@ onMounted(() => {
         </p>
       </div>
 
-            <Separator class="my-4" />
+      <Separator class="my-4" />
 
       <div>
         <p class="font-medium text-muted-foreground mb-1">Ítems de configuración</p>
@@ -86,6 +108,19 @@ onMounted(() => {
 
     <Separator class="my-4" />
 
+    <div>
+      <h3 class="text-2xl font-bold mb-4">Historial de Versiones</h3>
+        <div v-if="changeAudits.length > 0" class="space-y-4">
+          <div v-for="version in changeVersions" :key="version.id_auditoria">
+              <Card >
+                  {{ version.id_auditoria }}
+              </Card>
+          </div>
+        </div>
+        <div v-else>
+          No se encontraron versiones anteriores para este cambio.
+        </div>
+    </div>
 
   </div>
 </template>
