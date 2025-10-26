@@ -63,13 +63,16 @@ defineProps<{ changeVersions: ChangeVersion[], handleRollback: (versionID: strin
         <p class="text-muted-foreground mb-2 font-medium">
           Ítems de configuración
         </p>
-        <div class="flex flex-col gap-2 max-h-60 overflow-y-auto pr-2">
+        <div v-if="version.config_items.length > 0" class="flex flex-col gap-2 max-h-60 overflow-y-auto pr-2">
           <ItemOption
             v-for="item in version.config_items"
             :key="item.id"
             :item="item"
             class="hover:bg-accent rounded-md max-w-full"
           />
+        </div>
+        <div v-else class="text-sm">
+          Sin ítem relacionados.
         </div>
       </div>
     </CardContent>

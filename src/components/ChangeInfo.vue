@@ -52,13 +52,16 @@ defineProps<{ change: Change }>();
         Ítems de configuración
       </p>
       <div class="max-h-[120px] overflow-y-auto">
-        <div class="grid grid-cols-1 sm:grid-cols-5 gap-2">
+        <div v-if="change.config_items.length > 0" class="grid grid-cols-1 sm:grid-cols-5 gap-2">
           <ItemOption
             v-for="item in change.config_items"
             :key="item.id"
             :item="item"
             class="hover:bg-accent rounded-md p-2"
           />
+        </div>
+        <div v-else class="text-sm">
+          Sin ítem relacionados.
         </div>
       </div>
     </div>
