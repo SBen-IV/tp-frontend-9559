@@ -33,7 +33,7 @@ export async function deleteChange(changeID: string) {
 }
 
 export async function getChangeAuditsByID(changeID: string): Promise<ChangeAudit[]> {
-  const response = await axiosInstance.get(`${BASE_URL}/${changeID}`);
+  const response = await axiosInstance.get(`${BASE_URL}/${changeID}/history`);
 
   return response.data;
 }
