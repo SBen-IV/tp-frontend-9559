@@ -38,8 +38,8 @@ defineProps<{ change: Change }>();
 
     <Separator class="my-4" />
 
-    <div>
-      <p class="font-medium text-muted-foreground mb-1">Descripción</p>
+    <p class="font-medium text-muted-foreground">Descripción</p>
+    <div class="max-h-[200px] overflow-y-auto">
       <p class="text-sm leading-relaxed">
         {{ change.descripcion }}
       </p>
