@@ -12,12 +12,25 @@ import ItemOption from "@/components/ItemOption.vue";
 import { getConfigItemById } from "@/api/config_items";
 import CardHeader from "@/components/ui/card/CardHeader.vue";
 import CardContent from "@/components/ui/card/CardContent.vue";
+import RollbackAlertDialog from "@/components/RollbackAlertDialog.vue";
+import { toast } from "vue-sonner";
+import { rollbackChange } from "@/api/changes";
 
 const route = useRoute();
 
 const change = ref<Change>();
 const changeAudits = shallowRef<ChangeAudit[]>([]);
 const changeVersions = ref<ChangeVersion[]>([]);
+
+const handleRollback = async (versionID: string) => {
+  try {
+    await rollbackChange(route.params.id as string, versionID);
+    toast.success("Se restauró el cambio correctamente");
+    fetchChange()
+  } catch (err: any) {
+    toast.error(err.message);
+  }
+};
 
 watch(
   () => changeAudits.value,
@@ -46,7 +59,8 @@ watch(
   }
 );
 
-const fetchChange = async (changeID: string) => {
+const fetchChange = async () => {
+  const changeID = route.params.id as string
   change.value = await getChangeByID(changeID);
   console.log("Change data:", change.value);
 };
@@ -56,7 +70,7 @@ const fetchChangeHistory = async (changeID: string) => {
 };
 
 onMounted(() => {
-  fetchChange(route.params.id as string);
+  fetchChange();
   fetchChangeHistory(route.params.id as string);
 });
 </script>
@@ -138,6 +152,10 @@ onMounted(() => {
             <span class="text-xl font-medium text-center">
               {{ version.titulo }}
             </span>
+
+            <RollbackAlertDialog
+              :handleRollback="() => handleRollback(version.id)"
+            />
           </CardHeader>
 
           <CardContent class="grid grid-cols-3 gap-6 text-sm">
