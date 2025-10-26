@@ -34,7 +34,7 @@ watch(
     const versions = await Promise.all(
       audits.map(async (audit) => {
         const configItems = await Promise.all(
-          audit.estado_nuevo.id_config_items.map((id) => getConfigItemById(id))
+          audit?.estado_nuevo?.id_config_items?.map(id => getConfigItemById(id)) || []
         );
 
         const { estado_nuevo, ...auditWithoutEstadoNuevo } = audit;
