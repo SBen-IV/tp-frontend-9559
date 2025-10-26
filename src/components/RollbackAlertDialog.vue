@@ -19,9 +19,12 @@ defineProps<{ handleRollback: () => void }>();
 <template>
   <AlertDialog>
     <AlertDialogTrigger as-child>
-      <Button variant="outline" size="icon" aria-label="Restaurar">
-        <History/>
-      </Button>
+      <div class="flex">
+        <Button variant="secondary" class="relative p-0">
+          <History class="w-2 h-4" />
+          Restaurar
+        </Button>
+      </div>
     </AlertDialogTrigger>
     <AlertDialogContent>
       <AlertDialogHeader>
@@ -32,9 +35,7 @@ defineProps<{ handleRollback: () => void }>();
       </AlertDialogHeader>
       <AlertDialogFooter>
         <AlertDialogCancel>Cancelar</AlertDialogCancel>
-        <AlertDialogAction @click="handleRollback"
-          >Restaurar</AlertDialogAction
-        >
+        <AlertDialogAction @click="handleRollback">Restaurar</AlertDialogAction>
       </AlertDialogFooter>
     </AlertDialogContent>
   </AlertDialog>

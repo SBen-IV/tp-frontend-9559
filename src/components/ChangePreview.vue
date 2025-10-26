@@ -142,11 +142,17 @@ const handleDelete = async () => {
             </Tabs>
             <DialogFooter>
               <div class="w-full flex justify-between items-center pb-4 px-4 pt-4">
-                <Button class="bg-secondary">
-                  <RouterLink :to="`/changes/${change.id}`">
-                    <History class="w-2 h-4" color="black" />
-                  </RouterLink>
-                </Button>
+                <div class="flex">
+                  <Button variant="secondary" class="relative p-0">
+                    <RouterLink 
+                      :to="`/changes/${change.id}`" 
+                      class="flex items-center gap-2 w-full h-full px-4 py-2"
+                    >
+                      <History class="w-2 h-4"/>
+                      Historial
+                    </RouterLink>
+                  </Button>
+                </div>
 
                 <div class="flex gap-2">
                   <Button @click="editView = true">
