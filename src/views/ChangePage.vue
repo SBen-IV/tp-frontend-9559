@@ -3,16 +3,12 @@ import { getChangeAuditsByID, getChangeByID } from "@/api/changes";
 import type { Change, ChangeAudit, ChangeVersion } from "@/models/changes";
 import { onMounted, ref, shallowRef, watch } from "vue";
 import { useRoute } from "vue-router";
-import { getPrioridadColor } from "@/lib/utils";
-import Badge from "@/components/ui/badge/Badge.vue";
 import Separator from "@/components/ui/separator/Separator.vue";
-import Card from "@/components/ui/card/Card.vue";
-import { prettyDate } from "@/lib/utils";
-import ItemOption from "@/components/ItemOption.vue";
 import { getConfigItemById } from "@/api/config_items";
 import { toast } from "vue-sonner";
 import { rollbackChange } from "@/api/changes";
 import ChangeHistory from "@/components/ChangeHistory.vue";
+import ChangeInfo from "@/components/ChangeInfo.vue";
 
 const route = useRoute();
 
@@ -43,9 +39,10 @@ watch(
 
         const { estado_nuevo, ...auditWithoutEstadoNuevo } = audit;
 
+        // We remove nested structure from the audit and we add the config_items
         const changeVersion: ChangeVersion = {
-          ...audit.estado_nuevo,
-          ...auditWithoutEstadoNuevo,
+          ...audit.estado_nuevo,  // the Change version
+          ...auditWithoutEstadoNuevo, // fecha_actualizacion, (audit) ID, ... 
           config_items: configItems,
         };
 
@@ -75,67 +72,17 @@ onMounted(() => {
 
 <template>
   <div v-if="change" class="space-y-6">
-    <Card class="p-6">
-      <h1 class="text-4xl text-center font-bold">
-        {{ change.titulo }}
-      </h1>
-      <div class="grid grid-cols-4 gap-6 text-sm">
-        <div>
-          <p class="font-medium text-muted-foreground">ID</p>
-          <p>{{ change.id }}</p>
-        </div>
-        <div>
-          <p class="font-medium text-muted-foreground">Estado</p>
-          <Badge variant="secondary">{{ change.estado }}</Badge>
-        </div>
-        <div>
-          <p class="font-medium text-muted-foreground">Prioridad</p>
-          <Badge :class="getPrioridadColor(change.prioridad)">
-            {{ change.prioridad }}
-          </Badge>
-        </div>
-        <div>
-          <p class="font-medium text-muted-foreground">Fecha de creación</p>
-          <p>{{ prettyDate(change.fecha_creacion) }}</p>
-        </div>
-      </div>
-
-      <Separator class="my-4" />
-
-      <div>
-        <p class="font-medium text-muted-foreground mb-1">Descripción</p>
-        <p class="text-sm leading-relaxed">
-          {{ change.descripcion }}
-        </p>
-      </div>
-
-      <Separator class="my-4" />
-
-      <div>
-        <p class="font-medium text-muted-foreground mb-1">
-          Ítems de configuración
-        </p>
-        <div class="max-h-[120px] overflow-y-auto">
-          <div class="grid grid-cols-1 sm:grid-cols-5 gap-2">
-            <ItemOption
-              v-for="item in change.config_items"
-              :key="item.id"
-              :item="item"
-              class="hover:bg-accent rounded-md p-2"
-            />
-          </div>
-        </div>
-      </div>
-    </Card>
+    <ChangeInfo :change="change" />
 
     <Separator class="my-4" />
 
-    <div>
-      <h3 class="text-xl font-bold mb-4">Historial de Versiones</h3>
-      <div v-if="changeAudits.length > 0" class="space-y-4">
-        <ChangeHistory :change-versions="changeVersions" :handleRollback="handleRollback"/>
-      </div>
-      <div v-else>No se encontraron versiones anteriores para este cambio.</div>
+    <h3 class="text-xl font-bold mb-4">Historial de Versiones</h3>
+    <div v-if="changeAudits.length > 0" class="space-y-4">
+      <ChangeHistory
+        :change-versions="changeVersions"
+        :handle-rollback="handleRollback"
+      />
     </div>
+    <div v-else>No se encontraron versiones anteriores para este cambio.</div>
   </div>
 </template>
