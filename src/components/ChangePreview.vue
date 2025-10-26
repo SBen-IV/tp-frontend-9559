@@ -7,7 +7,7 @@ import {
   CardFooter,
 } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { Eye, Trash2, Pencil, ArrowLeft } from "lucide-vue-next";
+import { Eye, Trash2, Pencil, ArrowLeft, History } from "lucide-vue-next";
 import {
   Dialog,
   DialogTrigger,
@@ -141,18 +141,31 @@ const handleDelete = async () => {
               </TabsContent>
             </Tabs>
             <DialogFooter>
-              <div class="flex gap-2 pb-4 px-4 pt-4">
-                <Button @click="editView = true">
-                  <Pencil class="w-2 h-4" />Edit
-                </Button>
-                <DeleteAlertDialog
-                  :title="change.titulo"
-                  :handleDelete="handleDelete"
-                />
+              <div class="w-full flex justify-between items-center pb-4 px-4 pt-4">
+                <div class="flex">
+                  <Button variant="secondary" class="relative p-0">
+                    <RouterLink 
+                      :to="`/changes/${change.id}`" 
+                      class="flex items-center gap-2 w-full h-full px-4 py-2"
+                    >
+                      <History class="w-2 h-4"/>
+                      Historial
+                    </RouterLink>
+                  </Button>
+                </div>
+
+                <div class="flex gap-2">
+                  <Button @click="editView = true">
+                    <Pencil class="w-2 h-4" />Edit
+                  </Button>
+                  <DeleteAlertDialog
+                    :title="change.titulo"
+                    :handleDelete="handleDelete"
+                  />
+                </div>
               </div>
             </DialogFooter>
           </div>
-
           <div v-else class="flex flex-col flex-1 min-h-0">
             <DialogHeader class="p-6 pb-0 flex-shrink-0">
               <Button

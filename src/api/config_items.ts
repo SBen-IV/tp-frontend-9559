@@ -12,7 +12,9 @@ export async function createConfigItem(configItem: ConfigItemCreate) {
 }
 
 export async function getConfigItemById(configItemId: string) {
-  return await axiosInstance.get(`${BASE_URL}/${configItemId}`);
+  const response = await axiosInstance.get(`${BASE_URL}/${configItemId}`);
+
+  return response.data
 }
 
 export async function getAllConfigItems(): Promise<ConfigItem[]> {

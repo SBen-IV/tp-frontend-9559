@@ -1,4 +1,4 @@
-import { priorities } from "./commons";
+import { auditSchema, priorities } from "./commons";
 import { configItemSchema } from "./config_items";
 import * as z from "zod";
 
@@ -38,6 +38,21 @@ export const changeSchema = changeBaseSchema.extend({
   config_items: z.array(configItemSchema),
 });
 
+// This is what the backend returns
+export const changeAuditSchema = auditSchema.extend({
+  estado_nuevo: changeSchema
+    .omit({ config_items: true })
+    .extend({ id_config_items: z.array(z.string().uuid()) }),
+});
+
+// We want the changeSchema and the audit information (operacion, fecha_actualizacion, id, ...)
+// We remove unnecessary info like the change ID, creation date, and its owner 
+export const changeVersionSchema = changeSchema
+  .omit({ id: true, fecha_creacion: true, owner_id: true })
+  .merge(auditSchema)
+
 export type ChangeCreate = z.infer<typeof changeCreateSchema>;
 export type ChangeEdit = z.infer<typeof changeEditSchema>;
 export type Change = z.infer<typeof changeSchema>;
+export type ChangeAudit = z.infer<typeof changeAuditSchema>;
+export type ChangeVersion = z.infer<typeof changeVersionSchema>;

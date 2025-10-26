@@ -1,5 +1,6 @@
-import type { Change, ChangeCreate, ChangeEdit } from "@/models/changes";
+import type { Change, ChangeAudit, ChangeCreate, ChangeEdit } from "@/models/changes";
 import axiosInstance from "./index";
+import type { AxiosRequestConfig } from "axios";
 
 const BASE_URL: string = "/api/v1/changes";
 
@@ -7,8 +8,10 @@ export async function createChange(change: ChangeCreate) {
   return await axiosInstance.post(BASE_URL, change);
 }
 
-export async function getChangeByID(changeID: string) {
-  return await axiosInstance.get(`${BASE_URL}/${changeID}`);
+export async function getChangeByID(changeID: string): Promise<Change> {
+  const response = await axiosInstance.get(`${BASE_URL}/${changeID}`);
+
+  return response.data
 }
 
 export async function getAllChanges(): Promise<Change[]> {
@@ -28,4 +31,20 @@ export async function updateChange(
 
 export async function deleteChange(changeID: string) {
   return await axiosInstance.delete(`${BASE_URL}/${changeID}`);
+}
+
+export async function getChangeAuditsByID(changeID: string): Promise<ChangeAudit[]> {
+  const response = await axiosInstance.get(`${BASE_URL}/${changeID}/history`);
+
+  return response.data;
+}
+
+export async function rollbackChange(changeID: string, auditID: string) {
+  const params: AxiosRequestConfig = {
+    params: {
+      id_auditoria: auditID
+    }
+  };
+  
+  return await axiosInstance.post(`${BASE_URL}/${changeID}/rollback`, null, params);
 }
