@@ -1,5 +1,7 @@
+import type { AxiosRequestConfig } from "axios";
 import type {
   ConfigItem,
+  ConfigItemAudit,
   ConfigItemCreate,
   ConfigItemEdit,
 } from "../models/config_items";
@@ -37,4 +39,20 @@ export async function updateConfigItem(
 
 export async function deleteConfigItem(configItemID: string) {
   return await axiosInstance.delete(`${BASE_URL}/${configItemID}`);
+}
+
+export async function getConfigItemAuditsByID(configItemID: string): Promise<ConfigItemAudit[]> {
+  const response = await axiosInstance.get(`${BASE_URL}/${configItemID}/history`);
+
+  return response.data;
+}
+
+export async function rollbackConfigItem(configItemID: string, auditID: string) {
+  const params: AxiosRequestConfig = {
+    params: {
+      id_auditoria: auditID
+    }
+  };
+  
+  return await axiosInstance.post(`${BASE_URL}/${configItemID}/rollback`, null, params);
 }
