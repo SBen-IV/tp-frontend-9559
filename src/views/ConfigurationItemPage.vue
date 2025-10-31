@@ -5,6 +5,7 @@ import { onMounted, ref, shallowRef, watch } from "vue";
 import { useRoute } from "vue-router";
 import Separator from "@/components/ui/separator/Separator.vue";
 import { toast } from "vue-sonner";
+import ConfigItemInfo from "@/components/ConfigItemInfo.vue";
 
 const route = useRoute();
 
@@ -61,6 +62,6 @@ onMounted(() => {
 
 <template>
   <div v-if="configItem" class="space-y-6">
-    Config Item {{ configItem.id }}
+    <ConfigItemInfo :config-item="configItem" />
   </div>
 </template>
