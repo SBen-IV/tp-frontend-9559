@@ -105,7 +105,7 @@ const handleDelete = async () => {
           >
         </DialogTrigger>
         <DialogContent
-          class="sm:max-w-[425px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[50dvh]"
+          class="sm:max-w-[425px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[70dvh]"
         >
           <div v-if="!editView">
             <DialogHeader class="p-6 pb-0">
@@ -130,13 +130,14 @@ const handleDelete = async () => {
                 Fecha creación: {{ prettyDate(item.fecha_creacion) }}
               </p>
             </DialogHeader>
-            <div class="grid gap-4 py-4 overflow-y-auto px-6">
+
+            <div class="p-6 pb-0 mt-1 overflow-y-auto max-h-[30dvh]">
               <p>
                 {{ item.descripcion }}
               </p>
             </div>
             <DialogFooter>
-              <div class="w-full flex justify-between items-center pb-4 px-4 pt-4">
+              <div class="w-full flex justify-between items-center px-4 pt-4">
                 <div class="flex">
                   <Button variant="secondary" class="relative p-0">
                     <RouterLink 
