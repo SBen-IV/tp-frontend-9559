@@ -16,6 +16,7 @@ import {
   Eye,
   Pencil,
   ArrowLeft,
+  History,
 } from "lucide-vue-next";
 import { computed, ref } from "vue";
 import {
@@ -135,7 +136,18 @@ const handleDelete = async () => {
               </p>
             </div>
             <DialogFooter>
-              <div class="flex gap-2 pb-4 px-4">
+              <div class="w-full flex justify-between items-center pb-4 px-4 pt-4">
+                <div class="flex">
+                  <Button variant="secondary" class="relative p-0">
+                    <RouterLink 
+                      :to="`/config-items/${item.id}`" 
+                      class="flex items-center gap-2 w-full h-full px-4 py-2"
+                    >
+                      <History class="w-2 h-4"/>
+                      Historial
+                    </RouterLink>
+                  </Button>
+                </div>
                 <!-- TODO: These buttons should have actions associated -->
                 <Button @click="editView = true">
                   <Pencil class="w-2 h-4" />Edit</Button
