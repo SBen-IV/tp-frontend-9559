@@ -33,6 +33,7 @@ import { prettyDate } from "@/lib/utils";
 import EditConfigItemForm from "./forms/EditConfigItemForm.vue";
 import { deleteConfigItem } from "@/api/config_items";
 import { toast } from "vue-sonner";
+import OwnerInfo from "./OwnerInfo.vue";
 
 const props = defineProps<{ item: ConfigItem }>();
 
@@ -126,6 +127,7 @@ const handleDelete = async () => {
                 Estado:
                 <Badge variant="secondary">{{ item.estado }}</Badge>
               </p>
+              <OwnerInfo :owner-id="item.owner_id" />
               <p class="italic text-xs">
                 Fecha creación: {{ prettyDate(item.fecha_creacion) }}
               </p>
@@ -140,11 +142,11 @@ const handleDelete = async () => {
               <div class="w-full flex justify-between items-center px-4 pt-4">
                 <div class="flex">
                   <Button variant="secondary" class="relative p-0">
-                    <RouterLink 
-                      :to="`/config-items/${item.id}`" 
+                    <RouterLink
+                      :to="`/config-items/${item.id}`"
                       class="flex items-center gap-2 w-full h-full px-4 py-2"
                     >
-                      <History class="w-2 h-4"/>
+                      <History class="w-2 h-4" />
                       Historial
                     </RouterLink>
                   </Button>
