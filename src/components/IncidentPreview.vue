@@ -9,7 +9,8 @@ import {
 import { Badge } from "./ui/badge";
 import {
   Eye,
-  Trash2,
+  Calendar,
+  Clock,
   Pencil,
   CodeXml,
   Wrench,
@@ -118,9 +119,16 @@ const handleDelete = async () => {
       }}</Badge>
       <Badge variant="secondary">{{ prettyEstado(incident.estado) }}</Badge>
     </CardHeader>
-    <CardContent class="overflow-hidden text-ellipsis text-wrap max-h-30">
-      <p class="italic text-xs">
-        Fecha creación: {{ prettyDate(incident.fecha_creacion) }}
+    <CardContent class="space-y-1 text-xs text-foreground">
+      <p class="flex items-center gap-1">
+        <Calendar class="w-3 h-3" />
+        <span class="font-semibold">Fecha creación:</span>
+        {{ prettyDate(incident.fecha_creacion) }}
+      </p>
+      <p class="flex items-center gap-1">
+        <Clock class="w-3 h-3" />
+        <span class="font-semibold">Fecha cierre:</span>
+        {{ incident.fecha_cierre ? prettyDate(incident.fecha_cierre) : "N/A" }}
       </p>
     </CardContent>
     <CardFooter @update:open="handleDialogClose">
@@ -132,20 +140,29 @@ const handleDelete = async () => {
           class="sm:max-w-[425px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[50dvh]"
         >
           <div v-if="editView === false">
-            <DialogHeader class="p-6 pb-0">
-              <DialogTitle class="flex justify-between">
-                <p>{{ incident.titulo }}</p>
-                <p class="italic text-xs font-light mr-2">
-                  Fecha creación: {{ prettyDate(incident.fecha_creacion) }}
-                </p>
-              </DialogTitle>
-              <DialogDescription>
+            <DialogHeader class="p-6 pb-1">
+              <div class="flex justify-between items-start">
+                <DialogTitle>{{ incident.titulo }}</DialogTitle>
                 <Badge variant="secondary">{{
                   prettyEstado(incident.estado)
                 }}</Badge>
-              </DialogDescription>
-            </DialogHeader>
+              </div>
 
+              <div class="mt-1 text-xs italic font-light">
+                <p>
+                  <span class="font-medium">Fecha creación:</span>
+                  {{ prettyDate(incident.fecha_creacion) }}
+                </p>
+                <p>
+                  <span class="font-medium">Fecha cierre:</span>
+                  {{
+                    incident.fecha_cierre
+                      ? prettyDate(incident.fecha_cierre)
+                      : "N/A"
+                  }}
+                </p>
+              </div>
+            </DialogHeader>
             <Tabs default-value="descripcion" class="w-full px-6 max-h-[35dvh]">
               <TabsList class="grid w-full grid-cols-2">
                 <TabsTrigger value="descripcion">Descripción</TabsTrigger>
@@ -167,7 +184,7 @@ const handleDelete = async () => {
               </TabsContent>
             </Tabs>
             <DialogFooter class="">
-              <div class="flex gap-2 pb-4 px-4 pt-4">
+              <div class="flex gap-2 px-4 pt-4">
                 <Button @click="editView = true">
                   <Pencil class="w-2 h-4" />Editar
                 </Button>
