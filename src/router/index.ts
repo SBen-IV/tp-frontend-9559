@@ -15,6 +15,7 @@ import NewIncident from "@/views/NewIncident.vue";
 import NewProblem from "@/views/NewProblem.vue";
 import Problem from "@/views/Problem.vue";
 import ChangePage from "@/views/ChangePage.vue";
+import ConfigurationItemPage from "@/views/ConfigurationItemPage.vue";
 
 const routes = [
   { path: "/", component: Home },
@@ -22,6 +23,7 @@ const routes = [
   { path: "/register", component: Register },
   { path: "/login", component: Login },
   { path: "/config-items", component: ConfigurationItem },
+  { path: "/config-items/:id", component: ConfigurationItemPage },
   { path: "/config-items/new", component: NewConfigurationItem },
   { path: "/changes", component: Change },
   { path: "/changes/:id", component: ChangePage },

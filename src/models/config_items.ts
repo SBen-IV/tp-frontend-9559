@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { auditSchema } from "./commons";
 
 export const categorias = ["SOFTWARE", "HARDWARE", "DOCUMENTACION"] as const;
 export const estados = [
@@ -38,6 +39,21 @@ export const configItemSchema = configItemCreateSchema.extend({
   owner_id: z.string().uuid(),
 });
 
+
+// This is what the backend returns
+export const configItemAuditSchema = auditSchema.extend({
+  estado_nuevo: configItemSchema
+});
+
+// We want the configItemSchema and the audit information (operacion, fecha_actualizacion, id, ...)
+// We remove unnecessary info like the item ID, creation date, and its owner 
+export const configItemVersionSchema = configItemSchema
+  .omit({ id: true, fecha_creacion: true, owner_id: true })
+  .merge(auditSchema)
+  
+
 export type ConfigItemCreate = z.infer<typeof configItemCreateSchema>;
 export type ConfigItemEdit = z.infer<typeof configItemEditSchema>;
 export type ConfigItem = z.infer<typeof configItemSchema>;
+export type ConfigItemAudit = z.infer<typeof configItemAuditSchema>;
+export type ConfigItemVersion = z.infer<typeof configItemVersionSchema>;
