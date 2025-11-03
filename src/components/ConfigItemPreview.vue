@@ -33,6 +33,7 @@ import { prettyDate } from "@/lib/utils";
 import EditConfigItemForm from "./forms/EditConfigItemForm.vue";
 import { deleteConfigItem } from "@/api/config_items";
 import { toast } from "vue-sonner";
+import OwnerInfo from "./OwnerInfo.vue";
 
 const props = defineProps<{ item: ConfigItem }>();
 
@@ -109,9 +110,10 @@ const handleDelete = async () => {
         >
           <div v-if="!editView">
             <DialogHeader class="p-6 pb-0">
-              <DialogTitle
-                >Nombre: <b>{{ item.nombre }}</b></DialogTitle
-              >
+              <DialogTitle class="text-center"
+                ><b>{{ item.nombre }}</b>
+              </DialogTitle>
+              <OwnerInfo class="m-auto" :owner-id="item.owner_id" />
               <DialogDescription
                 >Versión: <b>{{ item.version }}</b></DialogDescription
               >
@@ -140,11 +142,11 @@ const handleDelete = async () => {
               <div class="w-full flex justify-between items-center px-4 pt-4">
                 <div class="flex">
                   <Button variant="secondary" class="relative p-0">
-                    <RouterLink 
-                      :to="`/config-items/${item.id}`" 
+                    <RouterLink
+                      :to="`/config-items/${item.id}`"
                       class="flex items-center gap-2 w-full h-full px-4 py-2"
                     >
-                      <History class="w-2 h-4"/>
+                      <History class="w-2 h-4" />
                       Historial
                     </RouterLink>
                   </Button>

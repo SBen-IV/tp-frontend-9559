@@ -42,3 +42,9 @@ export async function getAllUsers(rol?: string): Promise<User[]> {
 
   return response.data;
 }
+
+export async function getUserById(userId: string): Promise<User> {
+  const response = await axiosInstance.get(`${BASE_URL}/${userId}`);
+
+  return response.data;
+}
