@@ -48,8 +48,18 @@ export const colorsByPrioridad: Record<string, Color> = {
   URGENTE: RED,
 };
 
+export const colorsByImpacto: Record<string, Color> = {
+  MENOR: GREEN,
+  SIGNIFICATIVO: ORANGE,
+  MAYOR: RED,
+};
+
 export const getPrioridadColor = (prioridad: string): string => {
   return colorsByPrioridad[prioridad].tw;
+};
+
+export const getImpactoColor = (impacto: string): string => {
+  return colorsByImpacto[impacto].tw;
 };
 
 export const colorsByIncidenteEstado: Record<string, Color> = {

@@ -21,7 +21,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "./ui/button";
 import type { Change } from "@/models/changes";
 import ItemOption from "./ItemOption.vue";
-import { prettyDate, getPrioridadColor } from "@/lib/utils";
+import { prettyDate, getPrioridadColor, getImpactoColor } from "@/lib/utils";
 import { ref } from "vue";
 import EditChangeForm from "./forms/EditChangeForm.vue";
 import { toast } from "vue-sonner";
@@ -90,6 +90,9 @@ const handleDelete = async () => {
       </div>
       <Badge variant="default" :class="getPrioridadColor(change.prioridad)">{{
         change.prioridad
+      }}</Badge>
+      <Badge variant="default" :class="getImpactoColor(change.impacto)">{{
+        change.impacto
       }}</Badge>
       <Badge variant="secondary">{{ change.estado }}</Badge>
     </CardHeader>
