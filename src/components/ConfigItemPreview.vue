@@ -110,9 +110,10 @@ const handleDelete = async () => {
         >
           <div v-if="!editView">
             <DialogHeader class="p-6 pb-0">
-              <DialogTitle
-                >Nombre: <b>{{ item.nombre }}</b></DialogTitle
-              >
+              <DialogTitle class="text-center"
+                ><b>{{ item.nombre }}</b>
+              </DialogTitle>
+              <OwnerInfo class="m-auto" :owner-id="item.owner_id" />
               <DialogDescription
                 >Versión: <b>{{ item.version }}</b></DialogDescription
               >
@@ -127,7 +128,6 @@ const handleDelete = async () => {
                 Estado:
                 <Badge variant="secondary">{{ item.estado }}</Badge>
               </p>
-              <OwnerInfo :owner-id="item.owner_id" />
               <p class="italic text-xs">
                 Fecha creación: {{ prettyDate(item.fecha_creacion) }}
               </p>

@@ -23,8 +23,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex gap-1">
-    <CircleUser class="w-5 h-5" />
+  <div class="flex gap-1 text-sm">
+    <CircleUser class="w-4 h-4" />
     <span v-if="user"
       >{{ user.nombre }} {{ user.apellido }} - {{ user.email }}</span
     >
