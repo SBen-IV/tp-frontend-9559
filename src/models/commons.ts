@@ -2,6 +2,8 @@ import z from "zod";
 
 export const priorities = ["BAJA", "MEDIA", "ALTA", "URGENTE"] as const;
 
+export const impactos = ["MENOR", "SIGNIFICATIVO", "MAYOR"] as const;
+
 export const tipoEntidad = ["CAMBIO", "CONFIG_ITEM", "INCIDENTE", "PROBLEMA"] as const;
 
 export const operacion = ["CREAR", "ACTUALIZAR", "ELIMINAR"] as const;

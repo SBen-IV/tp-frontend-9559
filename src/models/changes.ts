@@ -1,4 +1,4 @@
-import { auditSchema, priorities } from "./commons";
+import { auditSchema, priorities, impactos } from "./commons";
 import { configItemSchema } from "./config_items";
 import * as z from "zod";
 
@@ -18,6 +18,7 @@ export const changeBaseSchema = z.object({
     .string({ required_error: "Ingrese una descripción" })
     .min(1, "Ingrese una descripción"),
   prioridad: z.enum(priorities),
+  impacto: z.enum(impactos),
 });
 
 export const changeCreateSchema = changeBaseSchema.extend({

@@ -43,7 +43,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createChange } from "@/api/changes";
-import { priorities } from "@/models/commons";
+import { priorities, impactos } from "@/models/commons";
 import router from "@/router";
 
 const items = ref<ConfigItem[]>([]);
@@ -62,6 +62,13 @@ const formattedPriorities = computed(() =>
   priorities.map((priority) => ({
     value: priority,
     label: priority.charAt(0).toUpperCase() + priority.slice(1).toLowerCase(),
+  })),
+);
+
+const formattedImpactos = computed(() =>
+  impactos.map((impacto) => ({
+    value: impacto,
+    label: impacto.charAt(0).toUpperCase() + impacto.slice(1).toLowerCase(),
   })),
 );
 
@@ -171,6 +178,31 @@ onMounted(() => {
                 :value="priority.value"
               >
                 {{ priority.label }}
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+
+    <FormField v-slot="{ componentField }" name="impacto">
+      <FormItem>
+        <FormLabel>Impacto</FormLabel>
+        <Select v-bind="componentField">
+          <FormControl>
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccione el impacto del cambio" />
+            </SelectTrigger>
+          </FormControl>
+          <SelectContent class="capitalize">
+            <SelectGroup>
+              <SelectItem
+                v-for="impacto in formattedImpactos"
+                :key="impacto.value"
+                :value="impacto.value"
+              >
+                {{ impacto.label }}
               </SelectItem>
             </SelectGroup>
           </SelectContent>
