@@ -114,23 +114,22 @@ const handleDelete = async () => {
                 ><b>{{ item.nombre }}</b>
               </DialogTitle>
               <OwnerInfo class="m-auto" :owner-id="item.owner_id" />
-              <DialogDescription
-                >Versión: <b>{{ item.version }}</b></DialogDescription
-              >
-              <p>
-                Categoría:
+              <DialogDescription class="text-foreground">
+                <span class="font-bold">Versión: </span>
+                {{ item.version }}
+                <br />
+                <span class="font-bold">Categoría: </span>
                 <Badge>
                   <component :is="itemIcon" class="w-3 h-3 flex-shrink-0" />
                   {{ item.categoria }}</Badge
                 >
-              </p>
-              <p>
-                Estado:
+                <br />
+                <span class="font-bold">Estado: </span>
                 <Badge variant="secondary">{{ item.estado }}</Badge>
-              </p>
-              <p class="italic text-xs">
-                Fecha creación: {{ prettyDate(item.fecha_creacion) }}
-              </p>
+                <br />
+                <span class="font-bold">Fecha creación: </span>
+                {{ prettyDate(item.fecha_creacion) }}
+              </DialogDescription>
             </DialogHeader>
 
             <div class="p-6 pb-0 mt-1 overflow-y-auto max-h-[30dvh]">
