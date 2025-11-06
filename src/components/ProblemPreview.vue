@@ -110,15 +110,15 @@ const handleDelete = async () => {
               }}</DialogTitle>
               <OwnerInfo class="m-auto" :owner-id="problem.owner_id" />
               <DialogDescription class="text-foreground">
-                <span class="font-bold">Estado: </span>
+                <b>Estado: </b>
                 <Badge variant="secondary">{{
                   prettyEstado(problem.estado)
                 }}</Badge>
                 <br />
-                <span class="font-bold">Fecha creación: </span>
+                <b>Fecha creación: </b>
                 {{ prettyDate(problem.fecha_creacion) }}
                 <br />
-                <span class="font-bold">Fecha cierre: </span>
+                <b>Fecha cierre: </b>
                 {{
                   problem.fecha_cierre
                     ? prettyDate(problem.fecha_cierre)
