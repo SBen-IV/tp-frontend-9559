@@ -126,7 +126,7 @@ const handleDelete = async () => {
               </p>      
             </DialogHeader>
 
-            <Tabs default-value="descripcion" class="w-full px-6 max-h-[50dvh]">
+            <Tabs default-value="descripcion" class="w-full px-6 max-h-[45dvh]">
               <TabsList class="grid w-full grid-cols-2">
                 <TabsTrigger value="descripcion">Descripción</TabsTrigger>
                 <TabsTrigger value="config_items">Ítems afectados</TabsTrigger>
