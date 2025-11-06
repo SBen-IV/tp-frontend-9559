@@ -128,7 +128,7 @@ const handleDelete = async () => {
                 Estado:
                 <Badge variant="secondary">{{ item.estado }}</Badge>
               </p>
-              <p class="italic text-xs">
+              <p>
                 Fecha creación: {{ prettyDate(item.fecha_creacion) }}
               </p>
             </DialogHeader>
