@@ -48,6 +48,7 @@ import {
 import { deleteIncident } from "@/api/incidents";
 import { toast } from "vue-sonner";
 import DeleteAlertDialog from "./DeleteAlertDialog.vue";
+import OwnerInfo from "./OwnerInfo.vue";
 
 const props = defineProps<{ incident: Incident }>();
 
@@ -141,27 +142,26 @@ const handleDelete = async () => {
         >
           <div v-if="editView === false">
             <DialogHeader class="p-6 pb-1">
-              <div class="flex justify-between items-start">
-                <DialogTitle>{{ incident.titulo }}</DialogTitle>
+              <DialogTitle class="text-center">{{ incident.titulo }}</DialogTitle>
+              <OwnerInfo class="m-auto" :owner-id="incident.owner_id" />
+              <DialogDescription class="text-foreground pb-1">
+                <b>Estado: </b>
                 <Badge variant="secondary">{{
                   prettyEstado(incident.estado)
                 }}</Badge>
-              </div>
-
-              <div class="mt-1 text-xs italic font-light">
                 <p>
-                  <span class="font-medium">Fecha creación:</span>
+                  <b>Fecha creación:</b>
                   {{ prettyDate(incident.fecha_creacion) }}
                 </p>
                 <p>
-                  <span class="font-medium">Fecha cierre:</span>
+                  <b>Fecha cierre:</b>
                   {{
                     incident.fecha_cierre
                       ? prettyDate(incident.fecha_cierre)
                       : "N/A"
                   }}
                 </p>
-              </div>
+              </DialogDescription>
             </DialogHeader>
             <Tabs default-value="descripcion" class="w-full px-6 max-h-[35dvh]">
               <TabsList class="grid w-full grid-cols-2">
