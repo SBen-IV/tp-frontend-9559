@@ -38,6 +38,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import DeleteAlertDialog from "./DeleteAlertDialog.vue";
+import OwnerInfo from "./OwnerInfo.vue";
 
 const props = defineProps<{ change: Change }>();
 
@@ -111,19 +112,21 @@ const handleDelete = async () => {
           class="sm:max-w-[425px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[70dvh]"
         >
           <div v-if="editView === false">
-            <DialogHeader class="p-6 pb-0">
-              <DialogTitle class="flex justify-between">
+            <DialogHeader class="p-6 pb-0 mb-1">
+              <DialogTitle class="text-center">
                 <p>{{ change.titulo }}</p>
-                <p class="italic text-xs font-light mr-2">
-                  Fecha creación: {{ prettyDate(change.fecha_creacion) }}
-                </p>
               </DialogTitle>
-              <DialogDescription>
+              <OwnerInfo class="m-auto" :owner-id="change.owner_id" />
+              <DialogDescription class="text-foreground">
+                <b>Estado: </b>
                 <Badge variant="secondary">{{ change.estado }}</Badge>
-              </DialogDescription>
+                <br/>
+                <b>Fecha creación: </b>
+                {{ prettyDate(change.fecha_creacion) }}
+              </DialogDescription>    
             </DialogHeader>
 
-            <Tabs default-value="descripcion" class="w-full px-6 max-h-[50dvh]">
+            <Tabs default-value="descripcion" class="w-full px-6 max-h-[45dvh]">
               <TabsList class="grid w-full grid-cols-2">
                 <TabsTrigger value="descripcion">Descripción</TabsTrigger>
                 <TabsTrigger value="config_items">Ítems afectados</TabsTrigger>
