@@ -28,6 +28,7 @@ import IncidentOption from "./IncidentOption.vue";
 import { deleteProblem } from "@/api/problems";
 import { toast } from "vue-sonner";
 import DeleteAlertDialog from "./DeleteAlertDialog.vue";
+import OwnerInfo from "./OwnerInfo.vue";
 
 const props = defineProps<{ problem: Problem }>();
 
@@ -103,28 +104,27 @@ const handleDelete = async () => {
           class="sm:max-w-[450px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[50dvh]"
         >
           <div v-if="!editView">
-            <DialogHeader class="p-6 pb-1">
-              <div class="flex justify-between items-start">
-                <DialogTitle>{{ problem.titulo }}</DialogTitle>
+            <DialogHeader class="p-6 pb-1 mb-1">
+              <DialogTitle class="text-center">{{
+                problem.titulo
+              }}</DialogTitle>
+              <OwnerInfo class="m-auto" :owner-id="problem.owner_id" />
+              <DialogDescription class="text-foreground">
+                <span class="font-bold">Estado: </span>
                 <Badge variant="secondary">{{
                   prettyEstado(problem.estado)
                 }}</Badge>
-              </div>
-
-              <div class="mt-1 text-xs italic font-light">
-                <p>
-                  <span class="font-medium">Fecha creación:</span>
-                  {{ prettyDate(problem.fecha_creacion) }}
-                </p>
-                <p>
-                  <span class="font-medium">Fecha cierre:</span>
-                  {{
-                    problem.fecha_cierre
-                      ? prettyDate(problem.fecha_cierre)
-                      : "N/A"
-                  }}
-                </p>
-              </div>
+                <br />
+                <span class="font-bold">Fecha creación: </span>
+                {{ prettyDate(problem.fecha_creacion) }}
+                <br />
+                <span class="font-bold">Fecha cierre: </span>
+                {{
+                  problem.fecha_cierre
+                    ? prettyDate(problem.fecha_cierre)
+                    : "N/A"
+                }}
+              </DialogDescription>
             </DialogHeader>
             <Tabs default-value="descripcion" class="w-full px-6 max-h-[35dvh]">
               <TabsList class="grid w-full grid-cols-3">
