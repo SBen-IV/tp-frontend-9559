@@ -102,7 +102,7 @@ const handleDelete = async () => {
           <Button variant="ghost"> <Eye class="w-4 h-4 mr-2" />Ver más </Button>
         </DialogTrigger>
         <DialogContent
-          class="sm:max-w-[450px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[50dvh]"
+          class="sm:max-w-[450px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[70dvh]"
         >
           <div v-if="!editView">
             <DialogHeader class="p-6 pb-1 mb-1">
@@ -167,7 +167,7 @@ const handleDelete = async () => {
                 />
               </TabsContent>
             </Tabs>
-            <DialogFooter class="">
+            <DialogFooter>
               <div class="flex gap-2 px-4 pt-4">
                 <!-- TODO: These buttons should have actions associated -->
                 <Button @click="editView = true">
