@@ -125,7 +125,9 @@ const handleDelete = async () => {
                 {{ prettyDate(change.fecha_creacion) }}
                 <br />
                 <b>Impacto: </b>
-                <Badge>{{ change.impacto }}</Badge>
+                <Badge :class="getImpactoColor(change.impacto)">{{
+                  change.impacto
+                }}</Badge>
               </DialogDescription>
             </DialogHeader>
 
