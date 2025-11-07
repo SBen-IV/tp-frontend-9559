@@ -40,7 +40,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { changeStatus as status } from "@/models/changes";
-import { priorities } from "@/models/commons";
+import { impactos, priorities } from "@/models/commons";
 import { updateChange } from "@/api/changes";
 import { useFilter } from "reka-ui";
 import type { ConfigItem } from "@/models/config_items";
@@ -60,13 +60,23 @@ const emit = defineEmits<{
 
 const { values, handleSubmit, isSubmitting, setFieldValue } = useForm({
   validationSchema: toTypedSchema(changeEditSchema),
-  initialValues: {...props.change, id_config_items: props.change.config_items.map(item => item.id)},
+  initialValues: {
+    ...props.change,
+    id_config_items: props.change.config_items.map((item) => item.id),
+  },
 });
 
 const formattedPriorities = computed(() =>
   priorities.map((priority) => ({
     value: priority,
     label: priority.charAt(0).toUpperCase() + priority.slice(1).toLowerCase(),
+  })),
+);
+
+const formattedImpact = computed(() =>
+  impactos.map((impacto) => ({
+    value: impacto,
+    label: impacto.charAt(0).toUpperCase() + impacto.slice(1).toLowerCase(),
   })),
 );
 
@@ -79,7 +89,6 @@ const formattedStatus = computed(() =>
 
 const filteredItems = computed(() => {
   const currentItems = values.id_config_items || [];
-  console.log("current items: ", currentItems)
   const { contains } = useFilter({ sensitivity: "base" });
 
   const availableItems = items.value.filter(
@@ -125,9 +134,9 @@ const handleItemSelect = (event: { detail: { value: string } }) => {
 
 const onSubmit = handleSubmit(async (values) => {
   try {
-    await updateChange(props.change.id, values)
+    await updateChange(props.change.id, values);
     toast.success("Se modificó el cambio correctamente");
-    emit('submitted');
+    emit("submitted");
   } catch (err: any) {
     toast.error(err.message);
   }
@@ -135,8 +144,6 @@ const onSubmit = handleSubmit(async (values) => {
 
 onMounted(() => {
   fetchItems();
-
-
 });
 </script>
 
@@ -194,6 +201,31 @@ onMounted(() => {
       </FormItem>
     </FormField>
 
+    <FormField v-slot="{ componentField }" name="impacto">
+      <FormItem>
+        <FormLabel>Impacto</FormLabel>
+        <Select v-bind="componentField">
+          <FormControl>
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccione el impacto del cambio" />
+            </SelectTrigger>
+          </FormControl>
+          <SelectContent class="capitalize">
+            <SelectGroup>
+              <SelectItem
+                v-for="impact in formattedImpact"
+                :key="impact.value"
+                :value="impact.value"
+              >
+                {{ impact.label }}
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+
     <FormField v-slot="{ componentField }" name="estado">
       <FormItem>
         <FormLabel>Estado</FormLabel>
@@ -237,7 +269,10 @@ onMounted(() => {
                   class="h-full"
                 >
                   <!-- Add v-if condition since ItemOption can't handle undefined -->
-                  <ItemOption v-if="getItemById(itemID)" :item="getItemById(itemID)" />
+                  <ItemOption
+                    v-if="getItemById(itemID)"
+                    :item="getItemById(itemID)"
+                  />
                   <TagsInputItemDelete />
                 </TagsInputItem>
               </div>
