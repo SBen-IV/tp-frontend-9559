@@ -29,6 +29,7 @@ import { deleteProblem } from "@/api/problems";
 import { toast } from "vue-sonner";
 import DeleteAlertDialog from "./DeleteAlertDialog.vue";
 import OwnerInfo from "./OwnerInfo.vue";
+import ResponsableInfo from "./ResponsableInfo.vue";
 
 const props = defineProps<{ problem: Problem }>();
 
@@ -125,6 +126,10 @@ const handleDelete = async () => {
                     : "N/A"
                 }}
               </DialogDescription>
+              <ResponsableInfo
+                :key="problem.responsable_id"
+                :responsable-id="problem.responsable_id"
+              />
             </DialogHeader>
             <Tabs default-value="descripcion" class="w-full px-6 max-h-[35dvh]">
               <TabsList class="grid w-full grid-cols-3">
