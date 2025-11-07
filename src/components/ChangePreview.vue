@@ -120,10 +120,13 @@ const handleDelete = async () => {
               <DialogDescription class="text-foreground">
                 <b>Estado: </b>
                 <Badge variant="secondary">{{ change.estado }}</Badge>
-                <br/>
+                <br />
                 <b>Fecha creación: </b>
                 {{ prettyDate(change.fecha_creacion) }}
-              </DialogDescription>    
+                <br />
+                <b>Impacto: </b>
+                <Badge>{{ change.impacto }}</Badge>
+              </DialogDescription>
             </DialogHeader>
 
             <Tabs default-value="descripcion" class="w-full px-6 max-h-[45dvh]">
@@ -136,7 +139,10 @@ const handleDelete = async () => {
                   {{ change.descripcion }}
                 </p>
               </TabsContent>
-              <TabsContent value="config_items" class="overflow-y-auto">
+              <TabsContent
+                value="config_items"
+                class="overflow-y-auto grid grid-cols-2"
+              >
                 <!-- TODO: Should link to the CI -->
                 <ItemOption
                   v-for="item in change.config_items"
@@ -147,14 +153,16 @@ const handleDelete = async () => {
               </TabsContent>
             </Tabs>
             <DialogFooter>
-              <div class="w-full flex justify-between items-center pb-4 px-4 pt-4">
+              <div
+                class="w-full flex justify-between items-center pb-4 px-4 pt-4"
+              >
                 <div class="flex">
                   <Button variant="secondary" class="relative p-0">
-                    <RouterLink 
-                      :to="`/changes/${change.id}`" 
+                    <RouterLink
+                      :to="`/changes/${change.id}`"
                       class="flex items-center gap-2 w-full h-full px-4 py-2"
                     >
-                      <History class="w-2 h-4"/>
+                      <History class="w-2 h-4" />
                       Historial
                     </RouterLink>
                   </Button>
