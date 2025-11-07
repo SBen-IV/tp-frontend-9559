@@ -163,7 +163,7 @@ const handleDelete = async () => {
                   }}
                 </p>
               </DialogDescription>
-              <ResponsableInfo :responsable-id="incident.responsable_id"/>
+              <ResponsableInfo :key="incident.responsable_id" :responsable-id="incident.responsable_id"/>
             </DialogHeader>
             <Tabs default-value="descripcion" class="w-full px-6 max-h-[35dvh]">
               <TabsList class="grid w-full grid-cols-2">
