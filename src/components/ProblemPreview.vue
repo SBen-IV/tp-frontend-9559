@@ -226,7 +226,7 @@ const handleDelete = async () => {
               >
                 <ArrowLeft class="h-4 w-4" />
               </Button>
-              <DialogTitle>Agregar solucion</DialogTitle>
+              <DialogTitle>Agregar solución</DialogTitle>
             </DialogHeader>
 
             <ProblemAddSolutionForm
