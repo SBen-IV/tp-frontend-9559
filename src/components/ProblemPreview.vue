@@ -29,6 +29,7 @@ import { deleteProblem } from "@/api/problems";
 import { toast } from "vue-sonner";
 import DeleteAlertDialog from "./DeleteAlertDialog.vue";
 import OwnerInfo from "./OwnerInfo.vue";
+import ResponsableInfo from "./ResponsableInfo.vue";
 
 const props = defineProps<{ problem: Problem }>();
 
@@ -101,7 +102,7 @@ const handleDelete = async () => {
           <Button variant="ghost"> <Eye class="w-4 h-4 mr-2" />Ver más </Button>
         </DialogTrigger>
         <DialogContent
-          class="sm:max-w-[450px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[50dvh]"
+          class="sm:max-w-[450px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[70dvh]"
         >
           <div v-if="!editView">
             <DialogHeader class="p-6 pb-1 mb-1">
@@ -125,6 +126,10 @@ const handleDelete = async () => {
                     : "N/A"
                 }}
               </DialogDescription>
+              <ResponsableInfo
+                :key="problem.responsable_id"
+                :responsable-id="problem.responsable_id"
+              />
             </DialogHeader>
             <Tabs default-value="descripcion" class="w-full px-6 max-h-[35dvh]">
               <TabsList class="grid w-full grid-cols-3">
@@ -162,7 +167,7 @@ const handleDelete = async () => {
                 />
               </TabsContent>
             </Tabs>
-            <DialogFooter class="">
+            <DialogFooter>
               <div class="flex gap-2 px-4 pt-4">
                 <!-- TODO: These buttons should have actions associated -->
                 <Button @click="editView = true">

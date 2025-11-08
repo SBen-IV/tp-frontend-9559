@@ -139,11 +139,13 @@ const handleDelete = async () => {
           <Button variant="ghost"> <Eye class="w-4 h-4 mr-2" />Ver más </Button>
         </DialogTrigger>
         <DialogContent
-          class="sm:max-w-[425px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[50dvh]"
+          class="sm:max-w-[425px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[70dvh]"
         >
           <div v-if="editView === false">
             <DialogHeader class="p-6 pb-1">
-              <DialogTitle class="text-center">{{ incident.titulo }}</DialogTitle>
+              <DialogTitle class="text-center">{{
+                incident.titulo
+              }}</DialogTitle>
               <OwnerInfo class="m-auto" :owner-id="incident.owner_id" />
               <DialogDescription class="text-foreground pb-1">
                 <b>Estado: </b>
@@ -163,9 +165,12 @@ const handleDelete = async () => {
                   }}
                 </p>
               </DialogDescription>
-              <ResponsableInfo :key="incident.responsable_id" :responsable-id="incident.responsable_id"/>
+              <ResponsableInfo
+                :key="incident.responsable_id"
+                :responsable-id="incident.responsable_id"
+              />
             </DialogHeader>
-            <Tabs default-value="descripcion" class="w-full px-6 max-h-[35dvh]">
+            <Tabs default-value="descripcion" class="w-full px-6 max-h-[45dvh]">
               <TabsList class="grid w-full grid-cols-2">
                 <TabsTrigger value="descripcion">Descripción</TabsTrigger>
                 <TabsTrigger value="config_items">Ítems afectados</TabsTrigger>
@@ -175,7 +180,10 @@ const handleDelete = async () => {
                   {{ incident.descripcion }}
                 </p>
               </TabsContent>
-              <TabsContent value="config_items" class="overflow-y-auto">
+              <TabsContent
+                value="config_items"
+                class="overflow-y-auto grid grid-cols-2"
+              >
                 <!-- TODO: Should link to the CI -->
                 <ItemOption
                   v-for="item in incident.config_items"
