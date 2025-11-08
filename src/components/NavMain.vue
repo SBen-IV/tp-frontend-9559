@@ -18,7 +18,7 @@ defineProps<{
 </script>
 <template>
   <SidebarGroup>
-    <SidebarGroupLabel>Plataforma</SidebarGroupLabel>
+    <SidebarGroupLabel>Gestiones</SidebarGroupLabel>
     <SidebarMenu>
       <SidebarMenuItem v-for="item in items" :key="item.title">
         <SidebarMenuButton as-child :is-active="item.isActive">
