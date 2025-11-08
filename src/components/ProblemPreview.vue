@@ -7,7 +7,7 @@ import {
   CardFooter,
 } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { Eye, ArrowLeft, Pencil, Calendar, Clock } from "lucide-vue-next";
+import { Eye, ArrowLeft, Pencil, Calendar, Clock, Plus } from "lucide-vue-next";
 import {
   Dialog,
   DialogTrigger,
@@ -30,6 +30,7 @@ import { toast } from "vue-sonner";
 import DeleteAlertDialog from "./DeleteAlertDialog.vue";
 import OwnerInfo from "./OwnerInfo.vue";
 import ResponsableInfo from "./ResponsableInfo.vue";
+import ProblemAddSolutionForm from "./forms/ProblemAddSolutionForm.vue";
 
 const props = defineProps<{ problem: Problem }>();
 
@@ -38,6 +39,7 @@ const prettyEstado = (estado: String): String => {
 };
 
 const editView = ref(false);
+const addSolutionView = ref(false);
 
 const handleDialogClose = () => {
   // To prevent a minor visual glitch
@@ -54,10 +56,15 @@ const handleEditSubmitted = () => {
   // Let parent know a Problem was updated so it can re-fetch the Changes
   emit("problemsUpdated");
   editView.value = false;
+  addSolutionView.value = false;
 };
 
 const cancelEdit = () => {
   editView.value = false;
+};
+
+const cancelAddSolution = () => {
+  addSolutionView.value = false;
 };
 
 const handleDelete = async () => {
@@ -104,7 +111,7 @@ const handleDelete = async () => {
         <DialogContent
           class="sm:max-w-[450px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[70dvh]"
         >
-          <div v-if="!editView">
+          <div v-if="!editView && !addSolutionView">
             <DialogHeader class="p-6 pb-1 mb-1">
               <DialogTitle class="text-center">{{
                 problem.titulo
@@ -132,11 +139,12 @@ const handleDelete = async () => {
               />
             </DialogHeader>
             <Tabs default-value="descripcion" class="w-full px-6 max-h-[35dvh]">
-              <TabsList class="grid w-full grid-cols-3">
+              <TabsList class="grid w-full" :class="problem.solucion ? 'grid-cols-4' : 'grid-cols-3'">
                 <!-- NOTE: Keep tab names short so that it doesn't overflow -->
                 <TabsTrigger value="descripcion">Descripción</TabsTrigger>
                 <TabsTrigger value="config_items">Ítems</TabsTrigger>
                 <TabsTrigger value="incidentes">Incidentes</TabsTrigger>
+                <TabsTrigger v-if="problem.solucion" value="solucion">Solución</TabsTrigger>
               </TabsList>
               <TabsContent value="descripcion" class="overflow-y-auto">
                 <p class="pt-4">
@@ -166,10 +174,17 @@ const handleDelete = async () => {
                   class="hover:bg-accent rounded-md mb-2 pt-4"
                 />
               </TabsContent>
+              <TabsContent value="solucion" class="overflow-y-auto">
+                <p class="pt-4">
+                  {{ problem.solucion }}
+                </p>
+              </TabsContent>
             </Tabs>
             <DialogFooter>
               <div class="flex gap-2 px-4 pt-4">
-                <!-- TODO: These buttons should have actions associated -->
+                <Button v-if="!problem.solucion" @click="addSolutionView = true">
+                  <Plus class="w-2 h-4" />Solución
+                </Button>
                 <Button @click="editView = true">
                   <Pencil class="w-2 h-4" />Edit
                 </Button>
@@ -181,7 +196,7 @@ const handleDelete = async () => {
             </DialogFooter>
           </div>
 
-          <div v-else class="flex flex-col flex-1 min-h-0">
+          <div v-if="editView" class="flex flex-col flex-1 min-h-0">
             <DialogHeader class="p-6 pb-0 flex-shrink-0">
               <Button
                 variant="ghost"
@@ -195,6 +210,26 @@ const handleDelete = async () => {
             </DialogHeader>
 
             <EditProblemForm
+              class="p-6 pb-0 flex-1 min-h-0 overflow-y-auto px-6"
+              :problem="problem"
+              @submitted="handleEditSubmitted"
+            />
+          </div>
+
+          <div v-if="addSolutionView" class="flex flex-col flex-1 min-h-0">
+            <DialogHeader class="p-6 pb-0 flex-shrink-0">
+              <Button
+                variant="ghost"
+                size="icon"
+                class="h-6 w-6"
+                @click="cancelAddSolution"
+              >
+                <ArrowLeft class="h-4 w-4" />
+              </Button>
+              <DialogTitle>Agregar solución</DialogTitle>
+            </DialogHeader>
+
+            <ProblemAddSolutionForm
               class="p-6 pb-0 flex-1 min-h-0 overflow-y-auto px-6"
               :problem="problem"
               @submitted="handleEditSubmitted"

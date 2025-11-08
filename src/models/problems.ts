@@ -28,6 +28,7 @@ export const problemCreateSchema = problemBaseSchema.extend({
 export const problemEditSchema = problemCreateSchema.extend({
   estado: z.enum(estados).nullable().optional(),
   responsable_id: z.string().uuid().nullable().optional(),
+  solucion: z.string().nullable().optional(),
 });
 
 export const problemSchema = problemBaseSchema.extend({
@@ -39,6 +40,7 @@ export const problemSchema = problemBaseSchema.extend({
   id: z.string().uuid(),
   config_items: z.array(configItemSchema),
   incidentes: z.array(incidentSchema),
+  solucion: z.string().nullable().optional(),
 });
 
 export type ProblemCreate = z.infer<typeof problemCreateSchema>;
