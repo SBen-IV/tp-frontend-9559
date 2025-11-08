@@ -139,11 +139,12 @@ const handleDelete = async () => {
               />
             </DialogHeader>
             <Tabs default-value="descripcion" class="w-full px-6 max-h-[35dvh]">
-              <TabsList class="grid w-full grid-cols-3">
+              <TabsList class="grid w-full" :class="problem.solucion ? 'grid-cols-4' : 'grid-cols-3'">
                 <!-- NOTE: Keep tab names short so that it doesn't overflow -->
                 <TabsTrigger value="descripcion">Descripción</TabsTrigger>
                 <TabsTrigger value="config_items">Ítems</TabsTrigger>
                 <TabsTrigger value="incidentes">Incidentes</TabsTrigger>
+                <TabsTrigger v-if="problem.solucion" value="solucion">Solución</TabsTrigger>
               </TabsList>
               <TabsContent value="descripcion" class="overflow-y-auto">
                 <p class="pt-4">
@@ -173,10 +174,15 @@ const handleDelete = async () => {
                   class="hover:bg-accent rounded-md mb-2 pt-4"
                 />
               </TabsContent>
+              <TabsContent value="solucion" class="overflow-y-auto">
+                <p class="pt-4">
+                  {{ problem.solucion }}
+                </p>
+              </TabsContent>
             </Tabs>
             <DialogFooter>
               <div class="flex gap-2 px-4 pt-4">
-                <Button @click="addSolutionView = true">
+                <Button v-if="!problem.solucion" @click="addSolutionView = true">
                   <Plus class="w-2 h-4" />Solución
                 </Button>
                 <Button @click="editView = true">

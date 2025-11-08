@@ -236,6 +236,16 @@ onMounted(() => {
       </FormItem>
     </FormField>
 
+    <FormField v-if="problem.solucion" v-slot="{ componentField }" name="solucion">
+      <FormItem>
+        <FormLabel>Solución</FormLabel>
+        <FormControl>
+          <Textarea placeholder="Describa los pasos a tomar para resolver el problema" v-bind="componentField" />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+
     <FormField v-slot="{ componentField }" name="descripcion">
       <FormItem>
         <FormLabel>Descripción</FormLabel>
