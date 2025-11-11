@@ -7,7 +7,7 @@ import {
   CardFooter,
 } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { Eye, Pencil, ArrowLeft, History } from "lucide-vue-next";
+import { Eye, Pencil, ArrowLeft, History, Calendar } from "lucide-vue-next";
 import {
   Dialog,
   DialogTrigger,
@@ -72,10 +72,11 @@ const handleDelete = async () => {
       <div class="flex">
         <CardTitle class="flex justify-between mr-2 gap-2">
           <p>{{ change.titulo }}</p>
-
+          <!--
           <p class="italic text-xs font-light">
             Fecha creación: {{ prettyDate(change.fecha_creacion) }}
           </p>
+          -->
         </CardTitle>
       </div>
       <Badge variant="default" :class="getPrioridadColor(change.prioridad)">{{
@@ -86,9 +87,11 @@ const handleDelete = async () => {
       }}</Badge>
       <Badge variant="secondary">{{ change.estado }}</Badge>
     </CardHeader>
-    <CardContent class="overflow-hidden text-ellipsis text-wrap max-h-30">
-      <p class="text-sm">
-        {{ change.descripcion }}
+    <CardContent class="space-y-1 text-xs text-foreground">
+      <p class="flex items-center gap-1">
+        <Calendar class="w-3 h-3" />
+        <span class="font-semibold">Fecha creación:</span>
+        {{ prettyDate(change.fecha_creacion) }}
       </p>
     </CardContent>
     <CardFooter>
