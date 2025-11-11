@@ -13,6 +13,7 @@ export interface ChangeMetric {
   total: number;
   byEstado: Metric[];
   byPrioridad: Metric[];
+  byImpacto: Metric[];
   tiempoPromedioCierre: number;
 }
 

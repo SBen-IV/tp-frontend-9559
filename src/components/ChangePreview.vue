@@ -7,7 +7,7 @@ import {
   CardFooter,
 } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { Eye, Trash2, Pencil, ArrowLeft, History } from "lucide-vue-next";
+import { Eye, Pencil, ArrowLeft, History } from "lucide-vue-next";
 import {
   Dialog,
   DialogTrigger,
@@ -26,17 +26,6 @@ import { ref } from "vue";
 import EditChangeForm from "./forms/EditChangeForm.vue";
 import { toast } from "vue-sonner";
 import { deleteChange } from "@/api/changes";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import DeleteAlertDialog from "./DeleteAlertDialog.vue";
 import OwnerInfo from "./OwnerInfo.vue";
 
