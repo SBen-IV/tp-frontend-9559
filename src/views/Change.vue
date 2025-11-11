@@ -29,13 +29,14 @@ import { priorities } from "@/models/commons";
 import type { ChangeMetric } from "@/models/metrics";
 import CustomPieChart from "@/components/CustomPieChart.vue";
 import { Card } from "@/components/ui/card";
-import { colorsByPrioridad } from "@/lib/utils";
+import { colorsByPrioridad, colorsByImpacto } from "@/lib/utils";
 
 const data = shallowRef<Change[]>([]);
 const metricsData = reactive<ChangeMetric>({
   total: 0,
   byEstado: [],
   byPrioridad: [],
+  byImpacto: [],
   tiempoPromedioCierre: 0,
 });
 const isLoading = ref(false);
@@ -47,6 +48,7 @@ const searchDescripcion = ref("");
 const calculateMetrics = (changes: Change[]) => {
   const byEstado: Map<string, number> = new Map();
   const byPrioridad: Map<string, number> = new Map();
+  const byImpacto: Map<string, number> = new Map();
 
   const closedChanges = changes.filter(
     (change) => change.estado === "CERRADO" && change.fecha_cierre,
@@ -74,11 +76,18 @@ const calculateMetrics = (changes: Change[]) => {
       : 1;
 
     byPrioridad.set(change.prioridad, valuePrioridad);
+
+    const valueImpacto: number | undefined = byImpacto.get(change.impacto)
+      ? byImpacto.get(change.impacto)! + 1
+      : 1;
+
+    byImpacto.set(change.impacto, valueImpacto);
   });
 
   metricsData.total = changes.length;
   metricsData.byEstado = mapToMetric(byEstado);
   metricsData.byPrioridad = mapToMetric(byPrioridad);
+  metricsData.byImpacto = mapToMetric(byImpacto);
 };
 
 const fetchItems = async () => {
@@ -181,8 +190,8 @@ onMounted(() => {
       >
     </Button>
   </div>
-  <div class="grid grid-cols-3 gap-8 flex items-center">
-    <Card class="mx-6 max-w-3/4">
+  <div class="gap-6 items-center">
+    <Card class="mx-6 mb-4">
       <div class="justify-items-center items-center">
         <div class="text-4xl font-light">Total {{ metricsData.total }}</div>
         <div class="text-xl font-light">
@@ -191,16 +200,23 @@ onMounted(() => {
         </div>
       </div>
     </Card>
-    <CustomPieChart
-      :title="'Por estados'"
-      :metrics="metricsData.byEstado"
-      :colors="colorsByCambioEstado"
-    />
-    <CustomPieChart
-      :title="'Por prioridades'"
-      :metrics="metricsData.byPrioridad"
-      :colors="colorsByPrioridad"
-    />
+    <div class="grid grid-cols-3 gap-6 flex items-center">
+      <CustomPieChart
+        :title="'Por estados'"
+        :metrics="metricsData.byEstado"
+        :colors="colorsByCambioEstado"
+      />
+      <CustomPieChart
+        :title="'Por prioridades'"
+        :metrics="metricsData.byPrioridad"
+        :colors="colorsByPrioridad"
+      />
+      <CustomPieChart
+        :title="'Por impactos'"
+        :metrics="metricsData.byImpacto"
+        :colors="colorsByImpacto"
+      />
+    </div>
   </div>
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 flex py-6">
     <div>
