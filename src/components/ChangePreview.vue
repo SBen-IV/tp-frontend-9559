@@ -72,11 +72,6 @@ const handleDelete = async () => {
       <div class="flex">
         <CardTitle class="flex justify-between mr-2 gap-2">
           <p>{{ change.titulo }}</p>
-          <!--
-          <p class="italic text-xs font-light">
-            Fecha creación: {{ prettyDate(change.fecha_creacion) }}
-          </p>
-          -->
         </CardTitle>
       </div>
       <Badge variant="default" :class="getPrioridadColor(change.prioridad)">{{
