@@ -1,3 +1,4 @@
+import { getAllUsers } from "@/api/users";
 import {
   BLUE,
   GREEN,
@@ -127,4 +128,14 @@ export const formatAverageResolutionTime = (averageMs: number): string => {
   if (minutes > 0) return `${minutes} ${minutes === 1 ? "minuto" : "minutos"}`;
 
   return `${seconds} ${seconds === 1 ? "segundo" : "segundos"}`;
+};
+
+export const fetchEmpleados = async (): Promise<User[]> => {
+  try {
+    const empleados = await getAllUsers("EMPLEADO");
+    return empleados;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
 };

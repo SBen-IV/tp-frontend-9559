@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import {
   colorsByPrioridad,
   colorsByProblemaEstado,
+  fetchEmpleados,
   formatAverageResolutionTime,
   mapToMetric,
   prettyUser,
@@ -31,7 +32,6 @@ import { priorities } from "@/models/commons";
 import type { ProblemMetric } from "@/models/metrics";
 import { Card } from "@/components/ui/card";
 import CustomPieChart from "@/components/CustomPieChart.vue";
-import { getAllUsers } from "@/api/users";
 import type { User } from "@/models/users";
 
 const sinResponsable: string = "sin-responsable";
@@ -104,15 +104,6 @@ const fetchItems = async () => {
     data.value = [];
   } finally {
     isLoading.value = false;
-  }
-};
-
-const fetchUsers = async () => {
-  try {
-    const empleados = await getAllUsers("EMPLEADO");
-    users.value = empleados;
-  } catch (error: any) {
-    users.value = [];
   }
 };
 
@@ -198,9 +189,9 @@ const handleProblemsUpdated = () => {
   fetchItems();
 };
 
-onMounted(() => {
+onMounted(async () => {
   fetchItems();
-  fetchUsers();
+  users.value = await fetchEmpleados();
 });
 </script>
 
