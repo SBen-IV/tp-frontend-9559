@@ -10,6 +10,7 @@ import {
   type Color,
 } from "@/models/colors";
 import type { Metric } from "@/models/metrics";
+import type { User } from "@/models/users";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -100,6 +101,11 @@ export const prettyDate = (date: Date): string => {
   return `${day.toString().padStart(2, "0")}-${month
     .toString()
     .padStart(2, "0")}-${year}`;
+};
+
+export const prettyUser = (user: User): string => {
+  console.log(user.email);
+  return `${user.nombre} ${user.apellido} - ${user.email}`;
 };
 
 export const mapToMetric = (data: Map<string, number>): Metric[] => {
