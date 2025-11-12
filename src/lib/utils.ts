@@ -105,7 +105,6 @@ export const prettyDate = (date: Date): string => {
 };
 
 export const prettyUser = (user: User): string => {
-  console.log(user.email);
   return `${user.nombre} ${user.apellido} - ${user.email}`;
 };
 
