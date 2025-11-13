@@ -12,32 +12,41 @@ import type { UUID } from "crypto";
 const isLoading = ref(false); 
 const employees = shallowRef<User[]>([]);
 const problems = shallowRef<Problem[]>([]);
-const solvedProblemsData = ref<SolvedMetric[]>([])
+const problemsData = ref<SolvedMetric[]>([])
+const estadosProblemChart: Record<string, keyof Omit<SolvedMetric, "nombre">> = {
+  "DETECTADO": "detectados",
+  "EN_ANALISIS": "enAnalisis",
+  "RESUELTO": "resueltos",
+  "CERRADO": "cerrados",
+};
+const problemLabels = Object.values(estadosProblemChart)
+const problemColors: Record<string, string> = {
+  cerrados: '#8b5cf6',    
+  detectados: '#ef4444',  
+  enAnalisis: '#3b82f6',  
+  resueltos: '#10b981',   
+};
 
 const calculateMetrics = (problems: Problem[]) => {
-  const stats: Record<UUID, { assigned: number; solved: number }> = {};
+  const stats: Record<UUID, { detectados: number; resueltos: number; enAnalisis: number; cerrados: number }> = {};
   
   problems.filter(problem => problem.responsable_id != null).forEach(problem => {
     const id = problem.responsable_id;
     
     if (!stats[id]) {
-      stats[id] = { assigned: 0, solved: 0 };
+      stats[id] = { detectados: 0, resueltos: 0, enAnalisis: 0, cerrados: 0 };
     }
-    
-    stats[id].assigned++;
-    
-    if (problem.estado === estados[2]) {
-      stats[id].solved++;
-    }
+
+    const estado = estadosProblemChart[problem.estado];
+    if (estado) stats[id][estado]++;
   });
 
-  solvedProblemsData.value = Object.entries(stats).map(([id, data]) => {
+  problemsData.value = Object.entries(stats).map(([id, data]) => {
     const employee = employees.value.find(employee => employee.id === id);
 
     return {
+      ...data,
       nombre: `${employee?.nombre} ${employee?.apellido}`,
-      asignados: data.assigned,
-      resueltos: data.solved
     }
   });
 } 
@@ -66,15 +75,16 @@ onMounted(async () => {
     <div>
       <h1 class="font-bold text-center">Problemas Según Responsable</h1>
       <BarChart
-      :data="solvedProblemsData"
+      :data="problemsData"
       index="nombre"
-      :categories="['asignados', 'resueltos']"
+      :categories="problemLabels"
       :y-formatter="(tick, i) => {
         return Number.isInteger(tick)
           ? tick.toString()
           : ''
       }"
-      :x-formatter="(tick) => Number.isInteger(tick) ? solvedProblemsData[tick]?.nombre ?? '' : ''"
+      :x-formatter="(tick) => Number.isInteger(tick) ? problemsData[tick]?.nombre ?? '' : ''"
+      :colors="problemLabels.map(label => problemColors[label])"
       />
     </div>
 

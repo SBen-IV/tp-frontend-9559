@@ -35,7 +35,9 @@ export interface ProblemMetric {
 }
 
 export interface SolvedMetric {
-  asignados: number;
+  enAnalisis: number;
+  detectados: number;
+  cerrados: number;
   resueltos: number;
   nombre: string;
 }
