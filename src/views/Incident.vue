@@ -46,6 +46,7 @@ const metricsData = reactive<IncidentMetric>({
   byPrioridad: [],
   byCategoria: [],
   tiempoPromedioCierre: 0,
+  cantidadSinResponsable: 0,
 });
 const isLoading = ref(false);
 const searchTitulo = ref("");
@@ -54,12 +55,12 @@ const searchPrioridad = ref("");
 const searchEstado = ref("");
 const searchResponsable = ref("");
 
-const calculateMetrics = (changes: Incident[]) => {
+const calculateMetrics = (incidents: Incident[]) => {
   const byEstado: Map<string, number> = new Map();
   const byPrioridad: Map<string, number> = new Map();
   const byCategoria: Map<string, number> = new Map();
 
-  const closedIncidents = changes.filter(
+  const closedIncidents = incidents.filter(
     (incident) => incident.estado === "CERRADO" && incident.fecha_cierre,
   );
 
@@ -73,30 +74,39 @@ const calculateMetrics = (changes: Incident[]) => {
     metricsData.tiempoPromedioCierre = totalMs / closedIncidents.length;
   }
 
-  changes.forEach((change: Incident) => {
-    const valueEstado: number | undefined = byEstado.get(change.estado)
-      ? byEstado.get(change.estado)! + 1
+  let cantidadSinResponsable: number = 0;
+
+  incidents.forEach((incident: Incident) => {
+    const valueEstado: number | undefined = byEstado.get(incident.estado)
+      ? byEstado.get(incident.estado)! + 1
       : 1;
 
-    byEstado.set(change.estado, valueEstado);
+    byEstado.set(incident.estado, valueEstado);
 
-    const valuePrioridad: number | undefined = byPrioridad.get(change.prioridad)
-      ? byPrioridad.get(change.prioridad)! + 1
+    const valuePrioridad: number | undefined = byPrioridad.get(
+      incident.prioridad,
+    )
+      ? byPrioridad.get(incident.prioridad)! + 1
       : 1;
 
-    byPrioridad.set(change.prioridad, valuePrioridad);
+    byPrioridad.set(incident.prioridad, valuePrioridad);
 
-    const valueCategoria: number | undefined = byCategoria.get(change.categoria)
-      ? byCategoria.get(change.categoria)! + 1
+    const valueCategoria: number | undefined = byCategoria.get(
+      incident.categoria,
+    )
+      ? byCategoria.get(incident.categoria)! + 1
       : 1;
 
-    byCategoria.set(change.categoria, valueCategoria);
+    byCategoria.set(incident.categoria, valueCategoria);
+
+    cantidadSinResponsable += incident.responsable_id ? 0 : 1;
   });
 
-  metricsData.total = changes.length;
+  metricsData.total = incidents.length;
   metricsData.byEstado = mapToMetric(byEstado);
   metricsData.byPrioridad = mapToMetric(byPrioridad);
   metricsData.byCategoria = mapToMetric(byCategoria);
+  metricsData.cantidadSinResponsable = cantidadSinResponsable;
 };
 
 const fetchItems = async () => {
@@ -233,6 +243,7 @@ onMounted(async () => {
     <TextMetrics
       :total="metricsData.total"
       :tiempo-promedio-cierre="metricsData.tiempoPromedioCierre"
+      :cantidad-sin-responsable="metricsData.cantidadSinResponsable"
     />
     <div class="grid grid-cols-3 gap-6 flex items-center">
       <CustomPieChart

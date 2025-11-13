@@ -25,6 +25,7 @@ export interface IncidentMetric {
   byPrioridad: Metric[];
   byCategoria: Metric[];
   tiempoPromedioCierre: number;
+  cantidadSinResponsable: number;
 }
 
 export interface ProblemMetric {
