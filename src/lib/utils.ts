@@ -1,3 +1,4 @@
+import { getAllUsers } from "@/api/users";
 import {
   BLUE,
   GREEN,
@@ -10,6 +11,7 @@ import {
   type Color,
 } from "@/models/colors";
 import type { Metric } from "@/models/metrics";
+import type { User } from "@/models/users";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -102,6 +104,11 @@ export const prettyDate = (date: Date): string => {
     .padStart(2, "0")}-${year}`;
 };
 
+export const prettyUser = (user: User): string => {
+  console.log(user.email);
+  return `${user.nombre} ${user.apellido} - ${user.email}`;
+};
+
 export const mapToMetric = (data: Map<string, number>): Metric[] => {
   return Array.from(data, ([k, v]: [string, number]): Metric => {
     return { name: k, total: v };
@@ -121,4 +128,14 @@ export const formatAverageResolutionTime = (averageMs: number): string => {
   if (minutes > 0) return `${minutes} ${minutes === 1 ? "minuto" : "minutos"}`;
 
   return `${seconds} ${seconds === 1 ? "segundo" : "segundos"}`;
+};
+
+export const fetchEmpleados = async (): Promise<User[]> => {
+  try {
+    const empleados = await getAllUsers("EMPLEADO");
+    return empleados;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
 };

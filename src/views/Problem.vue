@@ -15,8 +15,10 @@ import { Button } from "@/components/ui/button";
 import {
   colorsByPrioridad,
   colorsByProblemaEstado,
+  fetchEmpleados,
   formatAverageResolutionTime,
   mapToMetric,
+  prettyUser,
   sortByDate,
   sortByName,
 } from "@/lib/utils";
@@ -31,8 +33,12 @@ import type { ProblemMetric } from "@/models/metrics";
 import { Card } from "@/components/ui/card";
 import CustomPieChart from "@/components/CustomPieChart.vue";
 import TextMetrics from "@/components/TextMetrics.vue";
+import type { User } from "@/models/users";
+
+const sinResponsable: string = "sin-responsable";
 
 const data = shallowRef<Problem[]>([]);
+const users = shallowRef<User[]>([]);
 const metricsData = reactive<ProblemMetric>({
   total: 0,
   byEstado: [],
@@ -44,6 +50,7 @@ const isLoading = ref(false);
 const searchTitulo = ref("");
 const searchPrioridad = ref("");
 const searchEstado = ref("");
+const searchResponsable = ref("");
 
 const calculateMetrics = (problems: Problem[]) => {
   const byEstado: Map<string, number> = new Map();
@@ -123,6 +130,18 @@ const formattedEstados = computed(() =>
   })),
 );
 
+const formattedResponsables = computed(() => {
+  return users.value
+    .map((user: User) => ({
+      value: user.id,
+      label: prettyUser(user),
+    }))
+    .concat({
+      value: sinResponsable,
+      label: "Sin responsable",
+    });
+});
+
 const filteredProblemas = computed(() => {
   let filters: ((problema: Problem) => boolean)[] = [];
 
@@ -146,6 +165,16 @@ const filteredProblemas = computed(() => {
     });
   }
 
+  if (searchResponsable.value !== "") {
+    filters.push((problema: Problem) => {
+      if (searchResponsable.value === sinResponsable) {
+        return !problema.responsable_id;
+      }
+
+      return problema.responsable_id == searchResponsable.value;
+    });
+  }
+
   return data.value.filter((problema: Problem) => {
     let isProblemaFiltered = true;
     for (let i = 0; i < filters.length; i++) {
@@ -160,14 +189,16 @@ const resetSearch = () => {
   searchTitulo.value = "";
   searchPrioridad.value = "";
   searchEstado.value = "";
+  searchResponsable.value = "";
 };
 
 const handleProblemsUpdated = () => {
   fetchItems();
 };
 
-onMounted(() => {
+onMounted(async () => {
   fetchItems();
+  users.value = await fetchEmpleados();
 });
 </script>
 
@@ -245,6 +276,26 @@ onMounted(() => {
         </SelectContent>
       </Select>
     </div>
+
+    <div>
+      <b>Responsable</b>
+      <Select v-model="searchResponsable">
+        <SelectTrigger>
+          <SelectValue placeholder="Buscar por responsable..." />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectItem
+              v-for="responsable in formattedResponsables"
+              :key="responsable.value"
+              :value="responsable.value"
+              >{{ responsable.label }}</SelectItem
+            >
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </div>
+
     <div class="pt-6">
       <Button @click="resetSearch()"><BrushCleaning /> Limpiar filtro</Button>
     </div>
