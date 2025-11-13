@@ -36,7 +36,7 @@ onMounted(async () => {
 
 <template>
   <h1>Bienvenido/a</h1>
-  <div class="grid grid-cols-2 p-5">
+  <div class="grid grid-cols-2 gap-20 p-5">
     <div>
       <h1 class="font-bold text-center">Problemas Según Responsable</h1>
       <ProblemsEmployeeBarChart :employees="employees" :problems="problems"/>

@@ -23,23 +23,26 @@ const problemColors = computed(() => {
 const problemsData = computed(() => {
   const stats: Record<UUID, EmployeeMetric> = {};
   
+  props.employees.forEach(employee => {
+  const byEstado: Map<string, number> = new Map(
+    estados.map(estado => [estado, 0])
+  );
+  
+  stats[employee.id] = {
+    nombre: `${employee.nombre} ${employee.apellido}`, 
+    byEstado: mapToMetric(byEstado)
+  };
+});
+
   props.problems.filter(problem => problem.responsable_id != null).forEach(problem => {
     const employee_id = problem.responsable_id;
 
-    if (!stats[employee_id]) {
-      const employee = props.employees.find(employee => employee.id === employee_id);
-      const byEstado: Map<string, number> = new Map(
-        estados.map(estado => [estado, 0])
-      );
-
-      stats[employee_id] = {nombre: `${employee?.nombre} ${employee?.apellido}`, byEstado: mapToMetric(byEstado)};
+    if (stats[employee_id]) {
+      const statusMetric = stats[employee_id].byEstado.find(metric => metric.name === problem.estado);
+      if (statusMetric) {
+        statusMetric.total += 1;
+      }
     }
-
-    const statusMetric = stats[employee_id].byEstado.find(metric => metric.name === problem.estado);
-    
-    if (statusMetric) {
-      statusMetric.total += 1;
-    } 
   });
 
   return Object.values(stats);
