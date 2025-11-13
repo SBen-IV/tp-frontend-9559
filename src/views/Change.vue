@@ -18,7 +18,6 @@ import {
 import { changeStatus } from "@/models/changes";
 import {
   colorsByCambioEstado,
-  formatAverageResolutionTime,
   mapToMetric,
   sortByDate,
   sortByName,
@@ -28,8 +27,8 @@ import { getAllChanges } from "@/api/changes";
 import { priorities } from "@/models/commons";
 import type { ChangeMetric } from "@/models/metrics";
 import CustomPieChart from "@/components/CustomPieChart.vue";
-import { Card } from "@/components/ui/card";
 import { colorsByPrioridad, colorsByImpacto } from "@/lib/utils";
+import TextMetrics from "@/components/TextMetrics.vue";
 
 const data = shallowRef<Change[]>([]);
 const metricsData = reactive<ChangeMetric>({
@@ -191,15 +190,10 @@ onMounted(() => {
     </Button>
   </div>
   <div class="gap-6 items-center">
-    <Card class="mx-6 mb-4">
-      <div class="justify-items-center items-center">
-        <div class="text-4xl font-light">Total {{ metricsData.total }}</div>
-        <div class="text-xl font-light">
-          Tiempo promedio de cierre:
-          {{ formatAverageResolutionTime(metricsData.tiempoPromedioCierre) }}
-        </div>
-      </div>
-    </Card>
+    <TextMetrics
+      :total="metricsData.total"
+      :tiempo-promedio-cierre="metricsData.tiempoPromedioCierre"
+    />
     <div class="grid grid-cols-3 gap-6 flex items-center">
       <CustomPieChart
         :title="'Por estados'"

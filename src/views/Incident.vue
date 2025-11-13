@@ -32,8 +32,8 @@ import IncidentPreview from "@/components/IncidentPreview.vue";
 import { priorities } from "@/models/commons";
 import { incidentCategory as categorias } from "@/models/incidents";
 import CustomPieChart from "@/components/CustomPieChart.vue";
-import { Card } from "@/components/ui/card";
 import type { IncidentMetric } from "@/models/metrics";
+import TextMetrics from "@/components/TextMetrics.vue";
 import type { User } from "@/models/users";
 
 const sinResponsable: string = "sin-responsable";
@@ -230,15 +230,10 @@ onMounted(async () => {
   <!-- In this case 4 items on grid look broken (pie charts come out of card) so
  change the layout as it's not important -->
   <div class="gap-6 items-center">
-    <Card class="mx-6 mb-4">
-      <div class="justify-items-center items-center">
-        <div class="text-4xl font-light">Total {{ metricsData.total }}</div>
-        <div class="text-xl font-light">
-          Tiempo promedio de cierre:
-          {{ formatAverageResolutionTime(metricsData.tiempoPromedioCierre) }}
-        </div>
-      </div>
-    </Card>
+    <TextMetrics
+      :total="metricsData.total"
+      :tiempo-promedio-cierre="metricsData.tiempoPromedioCierre"
+    />
     <div class="grid grid-cols-3 gap-6 flex items-center">
       <CustomPieChart
         :title="'Por estados'"

@@ -16,7 +16,6 @@ import {
   colorsByPrioridad,
   colorsByProblemaEstado,
   fetchEmpleados,
-  formatAverageResolutionTime,
   mapToMetric,
   prettyUser,
   sortByDate,
@@ -30,8 +29,8 @@ import { getAllProblems } from "@/api/problems";
 import ProblemPreview from "@/components/ProblemPreview.vue";
 import { priorities } from "@/models/commons";
 import type { ProblemMetric } from "@/models/metrics";
-import { Card } from "@/components/ui/card";
 import CustomPieChart from "@/components/CustomPieChart.vue";
+import TextMetrics from "@/components/TextMetrics.vue";
 import type { User } from "@/models/users";
 
 const sinResponsable: string = "sin-responsable";
@@ -43,6 +42,7 @@ const metricsData = reactive<ProblemMetric>({
   byEstado: [],
   byPrioridad: [],
   tiempoPromedioCierre: 0,
+  cantidadSinResponsable: 0,
 });
 const isLoading = ref(false);
 const searchTitulo = ref("");
@@ -68,6 +68,8 @@ const calculateMetrics = (problems: Problem[]) => {
     metricsData.tiempoPromedioCierre = totalMs / closedProblems.length;
   }
 
+  let cantidadSinResponsable: number = 0;
+
   problems.forEach((problem: Problem) => {
     const valueEstado: number | undefined = byEstado.get(problem.estado)
       ? byEstado.get(problem.estado)! + 1
@@ -82,11 +84,14 @@ const calculateMetrics = (problems: Problem[]) => {
       : 1;
 
     byPrioridad.set(problem.prioridad, valuePrioridad);
+
+    cantidadSinResponsable += problem.responsable_id ? 0 : 1;
   });
 
   metricsData.total = problems.length;
   metricsData.byEstado = mapToMetric(byEstado);
   metricsData.byPrioridad = mapToMetric(byPrioridad);
+  metricsData.cantidadSinResponsable = cantidadSinResponsable;
 };
 
 const fetchItems = async () => {
@@ -204,16 +209,14 @@ onMounted(async () => {
       >
     </Button>
   </div>
-  <div class="grid grid-cols-3 gap-8 flex items-center">
-    <Card class="mx-6 max-w-3/4">
-      <div class="justify-items-center items-center">
-        <div class="text-4xl font-light">Total {{ metricsData.total }}</div>
-        <div class="text-xl font-light">
-          Tiempo promedio de cierre:
-          {{ formatAverageResolutionTime(metricsData.tiempoPromedioCierre) }}
-        </div>
-      </div>
-    </Card>
+
+  <TextMetrics
+    :total="metricsData.total"
+    :tiempo-promedio-cierre="metricsData.tiempoPromedioCierre"
+    :cantidad-sin-responsable="metricsData.cantidadSinResponsable"
+  />
+
+  <div class="grid grid-cols-2 gap-8 flex items-center">
     <CustomPieChart
       :title="'Por estados'"
       :metrics="metricsData.byEstado"
