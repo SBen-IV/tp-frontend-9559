@@ -19,7 +19,6 @@ import {
   colorsByPrioridad,
   colorsByIncidenteEstado,
   colorsByIncidenteCategoria,
-  formatAverageResolutionTime,
   prettyUser,
   fetchEmpleados,
 } from "@/lib/utils";
