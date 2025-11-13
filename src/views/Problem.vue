@@ -30,6 +30,7 @@ import { priorities } from "@/models/commons";
 import type { ProblemMetric } from "@/models/metrics";
 import { Card } from "@/components/ui/card";
 import CustomPieChart from "@/components/CustomPieChart.vue";
+import TextMetrics from "@/components/TextMetrics.vue";
 
 const data = shallowRef<Problem[]>([]);
 const metricsData = reactive<ProblemMetric>({
@@ -179,20 +180,14 @@ onMounted(() => {
       >
     </Button>
   </div>
-  <div class="grid grid-cols-3 gap-8 flex items-center">
-    <Card class="mx-6 max-w-3/4">
-      <div class="justify-items-center items-center">
-        <div class="text-4xl font-light">Total {{ metricsData.total }}</div>
-        <div class="text-xl font-light">
-          Tiempo promedio de cierre:
-          {{ formatAverageResolutionTime(metricsData.tiempoPromedioCierre) }}
-        </div>
-        <div class="text-xl font-light">
-          Cantidad de problemas sin responsable:
-          {{ metricsData.cantidadSinResponsable }}
-        </div>
-      </div>
-    </Card>
+
+  <TextMetrics
+    :total="metricsData.total"
+    :tiempo-promedio-cierre="metricsData.tiempoPromedioCierre"
+    :cantidad-sin-responsable="metricsData.cantidadSinResponsable"
+  />
+
+  <div class="grid grid-cols-2 gap-8 flex items-center">
     <CustomPieChart
       :title="'Por estados'"
       :metrics="metricsData.byEstado"
