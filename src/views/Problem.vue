@@ -37,6 +37,7 @@ const metricsData = reactive<ProblemMetric>({
   byEstado: [],
   byPrioridad: [],
   tiempoPromedioCierre: 0,
+  cantidadSinResponsable: 0,
 });
 const isLoading = ref(false);
 const searchTitulo = ref("");
@@ -61,6 +62,8 @@ const calculateMetrics = (problems: Problem[]) => {
     metricsData.tiempoPromedioCierre = totalMs / closedProblems.length;
   }
 
+  let cantidadSinResponsable: number = 0;
+
   problems.forEach((problem: Problem) => {
     const valueEstado: number | undefined = byEstado.get(problem.estado)
       ? byEstado.get(problem.estado)! + 1
@@ -75,11 +78,14 @@ const calculateMetrics = (problems: Problem[]) => {
       : 1;
 
     byPrioridad.set(problem.prioridad, valuePrioridad);
+
+    cantidadSinResponsable += problem.responsable_id ? 0 : 1;
   });
 
   metricsData.total = problems.length;
   metricsData.byEstado = mapToMetric(byEstado);
   metricsData.byPrioridad = mapToMetric(byPrioridad);
+  metricsData.cantidadSinResponsable = cantidadSinResponsable;
 };
 
 const fetchItems = async () => {
@@ -180,6 +186,10 @@ onMounted(() => {
         <div class="text-xl font-light">
           Tiempo promedio de cierre:
           {{ formatAverageResolutionTime(metricsData.tiempoPromedioCierre) }}
+        </div>
+        <div class="text-xl font-light">
+          Cantidad de problemas sin responsable:
+          {{ metricsData.cantidadSinResponsable }}
         </div>
       </div>
     </Card>
