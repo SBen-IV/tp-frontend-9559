@@ -235,6 +235,7 @@
     --vis-primary-color: 215 20.2% 65.1%;
     /* change to any hsl value you want */
     --vis-secondary-color: 160 81% 40%;
-    --vis-text-color: var(--muted-foreground);
+    --vis-text-color-value: 0 0% 45.1%;
+    --vis-text-color: var(--vis-text-color-value);
   }
 }

@@ -1,3 +1,5 @@
+import type { UUID } from "crypto";
+
 export interface Metric {
   name: string;
   total: number;
@@ -31,4 +33,12 @@ export interface ProblemMetric {
   byPrioridad: Metric[];
   tiempoPromedioCierre: number;
   cantidadSinResponsable: number;
+}
+
+export interface SolvedMetric {
+  enAnalisis: number;
+  detectados: number;
+  cerrados: number;
+  resueltos: number;
+  nombre: string;
 }
