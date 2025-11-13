@@ -9,6 +9,7 @@ import { toast } from "vue-sonner";
 import type { EmployeeMetric } from "@/models/metrics";
 import type { UUID } from "crypto";
 import { colorsByProblemaEstado } from "@/lib/utils";
+import ProblemsEmployeeBarChart from "@/components/ProblemsEmployeeBarChart.vue";
 
 const isLoading = ref(false); 
 const employees = shallowRef<User[]>([]);
@@ -89,18 +90,7 @@ onMounted(async () => {
   <div class="grid grid-cols-2">
     <div>
       <h1 class="font-bold text-center">Problemas Según Responsable</h1>
-      <BarChart
-      :data="problemsChartData"
-      index="nombre"
-      :categories="Object.values(estadosProblemChart)"
-      :y-formatter="(tick, i) => {
-        return Number.isInteger(tick)
-          ? tick.toString()
-          : ''
-      }"
-      :x-formatter="(tick) => Number.isInteger(tick) ? problemsData[tick]?.nombre ?? '' : ''"
-      :colors="problemColors"
-      />
+      <ProblemsEmployeeBarChart :employees="employees" :problems="problems"/>
     </div>
 
   </div>
