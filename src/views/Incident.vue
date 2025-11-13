@@ -19,7 +19,9 @@ import {
   colorsByPrioridad,
   colorsByIncidenteEstado,
   colorsByIncidenteCategoria,
-  formatAverageResolutionTime
+  formatAverageResolutionTime,
+  prettyUser,
+  fetchEmpleados,
 } from "@/lib/utils";
 import { Plus } from "lucide-vue-next";
 import { incidentStatus as estados } from "@/models/incidents";
@@ -32,39 +34,44 @@ import { incidentCategory as categorias } from "@/models/incidents";
 import CustomPieChart from "@/components/CustomPieChart.vue";
 import { Card } from "@/components/ui/card";
 import type { IncidentMetric } from "@/models/metrics";
+import type { User } from "@/models/users";
+
+const sinResponsable: string = "sin-responsable";
 
 const data = shallowRef<Incident[]>([]);
+const users = shallowRef<User[]>([]);
 const metricsData = reactive<IncidentMetric>({
   total: 0,
   byEstado: [],
   byPrioridad: [],
   byCategoria: [],
-  tiempoPromedioCierre: 0
+  tiempoPromedioCierre: 0,
 });
 const isLoading = ref(false);
 const searchTitulo = ref("");
 const searchCategoria = ref("");
 const searchPrioridad = ref("");
 const searchEstado = ref("");
+const searchResponsable = ref("");
 
 const calculateMetrics = (changes: Incident[]) => {
   const byEstado: Map<string, number> = new Map();
   const byPrioridad: Map<string, number> = new Map();
   const byCategoria: Map<string, number> = new Map();
 
-  const closedIncidents = changes.filter(incident => 
-    incident.estado === 'CERRADO' && incident.fecha_cierre
+  const closedIncidents = changes.filter(
+    (incident) => incident.estado === "CERRADO" && incident.fecha_cierre,
   );
 
   if (closedIncidents.length > 0) {
     const totalMs = closedIncidents.reduce((total, incident) => {
-      const fechaCreacion = new Date(incident.fecha_creacion)
-      const fechaCierre = new Date(incident.fecha_cierre!)
-      return total + (fechaCierre.getTime() - fechaCreacion.getTime())
-    }, 0)
+      const fechaCreacion = new Date(incident.fecha_creacion);
+      const fechaCierre = new Date(incident.fecha_cierre!);
+      return total + (fechaCierre.getTime() - fechaCreacion.getTime());
+    }, 0);
 
-    metricsData.tiempoPromedioCierre = totalMs / closedIncidents.length
-  } 
+    metricsData.tiempoPromedioCierre = totalMs / closedIncidents.length;
+  }
 
   changes.forEach((change: Incident) => {
     const valueEstado: number | undefined = byEstado.get(change.estado)
@@ -133,6 +140,18 @@ const formattedEstados = computed(() =>
   })),
 );
 
+const formattedResponsables = computed(() => {
+  return users.value
+    .map((user: User) => ({
+      value: user.id,
+      label: prettyUser(user),
+    }))
+    .concat({
+      value: sinResponsable,
+      label: "Sin responsable",
+    });
+});
+
 const filteredIncidents = computed(() => {
   let filters: ((incident: Incident) => boolean)[] = [];
 
@@ -162,6 +181,15 @@ const filteredIncidents = computed(() => {
     });
   }
 
+  if (searchResponsable.value !== "") {
+    filters.push((incident: Incident) => {
+      if (searchResponsable.value === sinResponsable) {
+        return !incident.responsable_id;
+      }
+      return incident.responsable_id == searchResponsable.value;
+    });
+  }
+
   return data.value.filter((incident: Incident) => {
     let isIncidentFiltered = true;
     for (let i = 0; i < filters.length; i++) {
@@ -177,14 +205,16 @@ const resetSearch = () => {
   searchPrioridad.value = "";
   searchEstado.value = "";
   searchCategoria.value = "";
+  searchResponsable.value = "";
 };
 
 const handleIncidentsUpdated = () => {
   fetchItems();
 };
 
-onMounted(() => {
+onMounted(async () => {
   fetchItems();
+  users.value = await fetchEmpleados();
 });
 </script>
 
@@ -203,7 +233,10 @@ onMounted(() => {
     <Card class="mx-6 mb-4">
       <div class="justify-items-center items-center">
         <div class="text-4xl font-light">Total {{ metricsData.total }}</div>
-        <div class="text-xl font-light">Tiempo promedio de cierre: {{ formatAverageResolutionTime(metricsData.tiempoPromedioCierre) }}</div>
+        <div class="text-xl font-light">
+          Tiempo promedio de cierre:
+          {{ formatAverageResolutionTime(metricsData.tiempoPromedioCierre) }}
+        </div>
       </div>
     </Card>
     <div class="grid grid-cols-3 gap-6 flex items-center">
@@ -224,8 +257,8 @@ onMounted(() => {
       />
     </div>
   </div>
-  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 flex py-6">
-    <div class="">
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6 flex py-6">
+    <div>
       <b>Titulo</b>
       <Input
         id="search"
@@ -288,6 +321,26 @@ onMounted(() => {
         </SelectContent>
       </Select>
     </div>
+
+    <div>
+      <b>Responsable</b>
+      <Select v-model="searchResponsable">
+        <SelectTrigger>
+          <SelectValue placeholder="Buscar por responsable..." />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectItem
+              v-for="responsable in formattedResponsables"
+              :key="responsable.value"
+              :value="responsable.value"
+              >{{ responsable.label }}</SelectItem
+            >
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </div>
+
     <div class="pt-6">
       <Button @click="resetSearch()"><BrushCleaning /> Limpiar filtro</Button>
     </div>
