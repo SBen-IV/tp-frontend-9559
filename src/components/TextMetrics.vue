@@ -19,9 +19,9 @@ defineProps<{
       </div>
       <div
         v-if="cantidadSinResponsable !== undefined"
+        class="text-xl"
         v-bind:class="{
-          'text-xl text-red-500': cantidadSinResponsable > 0,
-          'text-xl': cantidadSinResponsable == 0,
+          'text-red-500': cantidadSinResponsable > 0,
         }"
       >
         Cantidad sin responsable:

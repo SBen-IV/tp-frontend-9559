@@ -20,7 +20,6 @@ import {
 import { categorias, estados } from "@/models/config_items";
 import { mapToMetric, sortByDate, sortByName } from "@/lib/utils";
 import type { ConfigItemMetric } from "@/models/metrics";
-import { Card } from "@/components/ui/card";
 import {
   BLUE,
   GREEN,
@@ -32,6 +31,7 @@ import {
   type Color,
 } from "@/models/colors";
 import CustomPieChart from "@/components/CustomPieChart.vue";
+import TextMetrics from "@/components/TextMetrics.vue";
 
 const data = shallowRef<ConfigItem[]>([]);
 const metricsData = reactive<ConfigItemMetric>({
@@ -184,12 +184,8 @@ onMounted(() => {
       >
     </Button>
   </div>
+  <TextMetrics :total="metricsData.total" />
   <div class="grid grid-cols-3 gap-8 flex items-center">
-    <Card class="mx-6 max-w-3/4">
-      <div class="justify-items-center items-center">
-        <div class="text-4xl font-light">Total {{ metricsData.total }}</div>
-      </div>
-    </Card>
     <CustomPieChart
       :title="'Por estados'"
       :metrics="metricsData.byEstado"

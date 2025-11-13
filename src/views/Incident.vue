@@ -19,7 +19,6 @@ import {
   colorsByPrioridad,
   colorsByIncidenteEstado,
   colorsByIncidenteCategoria,
-  formatAverageResolutionTime
 } from "@/lib/utils";
 import { Plus } from "lucide-vue-next";
 import { incidentStatus as estados } from "@/models/incidents";
@@ -30,8 +29,8 @@ import IncidentPreview from "@/components/IncidentPreview.vue";
 import { priorities } from "@/models/commons";
 import { incidentCategory as categorias } from "@/models/incidents";
 import CustomPieChart from "@/components/CustomPieChart.vue";
-import { Card } from "@/components/ui/card";
 import type { IncidentMetric } from "@/models/metrics";
+import TextMetrics from "@/components/TextMetrics.vue";
 
 const data = shallowRef<Incident[]>([]);
 const metricsData = reactive<IncidentMetric>({
@@ -39,7 +38,7 @@ const metricsData = reactive<IncidentMetric>({
   byEstado: [],
   byPrioridad: [],
   byCategoria: [],
-  tiempoPromedioCierre: 0
+  tiempoPromedioCierre: 0,
 });
 const isLoading = ref(false);
 const searchTitulo = ref("");
@@ -52,19 +51,19 @@ const calculateMetrics = (changes: Incident[]) => {
   const byPrioridad: Map<string, number> = new Map();
   const byCategoria: Map<string, number> = new Map();
 
-  const closedIncidents = changes.filter(incident => 
-    incident.estado === 'CERRADO' && incident.fecha_cierre
+  const closedIncidents = changes.filter(
+    (incident) => incident.estado === "CERRADO" && incident.fecha_cierre,
   );
 
   if (closedIncidents.length > 0) {
     const totalMs = closedIncidents.reduce((total, incident) => {
-      const fechaCreacion = new Date(incident.fecha_creacion)
-      const fechaCierre = new Date(incident.fecha_cierre!)
-      return total + (fechaCierre.getTime() - fechaCreacion.getTime())
-    }, 0)
+      const fechaCreacion = new Date(incident.fecha_creacion);
+      const fechaCierre = new Date(incident.fecha_cierre!);
+      return total + (fechaCierre.getTime() - fechaCreacion.getTime());
+    }, 0);
 
-    metricsData.tiempoPromedioCierre = totalMs / closedIncidents.length
-  } 
+    metricsData.tiempoPromedioCierre = totalMs / closedIncidents.length;
+  }
 
   changes.forEach((change: Incident) => {
     const valueEstado: number | undefined = byEstado.get(change.estado)
@@ -200,12 +199,10 @@ onMounted(() => {
   <!-- In this case 4 items on grid look broken (pie charts come out of card) so
  change the layout as it's not important -->
   <div class="gap-6 items-center">
-    <Card class="mx-6 mb-4">
-      <div class="justify-items-center items-center">
-        <div class="text-4xl font-light">Total {{ metricsData.total }}</div>
-        <div class="text-xl font-light">Tiempo promedio de cierre: {{ formatAverageResolutionTime(metricsData.tiempoPromedioCierre) }}</div>
-      </div>
-    </Card>
+    <TextMetrics
+      :total="metricsData.total"
+      :tiempo-promedio-cierre="metricsData.tiempoPromedioCierre"
+    />
     <div class="grid grid-cols-3 gap-6 flex items-center">
       <CustomPieChart
         :title="'Por estados'"
