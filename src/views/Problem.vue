@@ -16,7 +16,6 @@ import {
   colorsByPrioridad,
   colorsByProblemaEstado,
   fetchEmpleados,
-  formatAverageResolutionTime,
   mapToMetric,
   prettyUser,
   sortByDate,
@@ -30,7 +29,6 @@ import { getAllProblems } from "@/api/problems";
 import ProblemPreview from "@/components/ProblemPreview.vue";
 import { priorities } from "@/models/commons";
 import type { ProblemMetric } from "@/models/metrics";
-import { Card } from "@/components/ui/card";
 import CustomPieChart from "@/components/CustomPieChart.vue";
 import TextMetrics from "@/components/TextMetrics.vue";
 import type { User } from "@/models/users";

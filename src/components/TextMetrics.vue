@@ -18,7 +18,7 @@ defineProps<{
         {{ formatAverageResolutionTime(tiempoPromedioCierre) }}
       </div>
       <div
-        v-if="cantidadSinResponsable"
+        v-if="cantidadSinResponsable !== undefined"
         v-bind:class="{
           'text-xl text-red-500': cantidadSinResponsable > 0,
           'text-xl': cantidadSinResponsable == 0,
