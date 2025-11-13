@@ -8,6 +8,7 @@ import { getAllProblems } from "@/api/problems";
 import { toast } from "vue-sonner";
 import type { SolvedMetric } from "@/models/metrics";
 import type { UUID } from "crypto";
+import { colorsByProblemaEstado } from "@/lib/utils";
 
 const isLoading = ref(false); 
 const employees = shallowRef<User[]>([]);
@@ -20,11 +21,11 @@ const estadosProblemChart: Record<string, keyof Omit<SolvedMetric, "nombre">> = 
   "CERRADO": "cerrados",
 };
 const problemLabels = Object.values(estadosProblemChart)
-const problemColors: Record<string, string> = {
-  cerrados: '#8b5cf6',    
-  detectados: '#ef4444',  
-  enAnalisis: '#3b82f6',  
-  resueltos: '#10b981',   
+const problemColors: Record<keyof Omit<SolvedMetric, "nombre">, string> = {
+  detectados: colorsByProblemaEstado.DETECTADO.rgb,    
+  enAnalisis: colorsByProblemaEstado.EN_ANALISIS.rgb,  
+  resueltos: colorsByProblemaEstado.RESUELTO.rgb,      
+  cerrados: colorsByProblemaEstado.CERRADO.rgb,        
 };
 
 const calculateMetrics = (problems: Problem[]) => {
@@ -49,6 +50,9 @@ const calculateMetrics = (problems: Problem[]) => {
       nombre: `${employee?.nombre} ${employee?.apellido}`,
     }
   });
+
+  console.log("color: ", problemLabels.map(label => problemColors[label]))
+  
 } 
 
 const fetchProblems = async () => {
