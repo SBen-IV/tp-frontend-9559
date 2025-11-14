@@ -57,5 +57,11 @@ onMounted(async () => {
     <div>
       <QuantityByDayMetric :data="problems" :title="'Problemas'" />
     </div>
+    <div>
+      <QuantityByHourMetric :data="incidents" :title="'Incidentes'" />
+    </div>
+    <div>
+      <QuantityByDayMetric :data="incidents" :title="'Incidentes'" />
+    </div>
   </div>
 </template>
