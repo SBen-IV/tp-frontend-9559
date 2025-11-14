@@ -9,11 +9,18 @@ import { toast } from "vue-sonner";
 import type { SolvedMetric } from "@/models/metrics";
 import type { UUID } from "crypto";
 import { colorsByProblemaEstado } from "@/lib/utils";
+import LineChart from "@/components/ui/chart-line/LineChart.vue";
+import { GREEN } from "@/models/colors";
 
 const isLoading = ref(false);
 const employees = shallowRef<User[]>([]);
 const problems = shallowRef<Problem[]>([]);
 const problemsData = ref<SolvedMetric[]>([]);
+interface NewMetric {
+  hour: number;
+  quantity: number;
+}
+const problemsByHourData = ref<NewMetric[]>([]);
 const estadosProblemChart: Record<string, keyof Omit<SolvedMetric, "nombre">> =
   {
     DETECTADO: "detectados",
@@ -62,10 +69,21 @@ const calculateMetrics = (problems: Problem[]) => {
     };
   });
 
-  console.log(
-    "color: ",
-    problemLabels.map((label) => problemColors[label]),
-  );
+  const length = 24;
+  const byHour: NewMetric[] = Array.from({ length }, (_, index): NewMetric => {
+    return {
+      hour: index,
+      quantity: 0,
+    };
+  });
+
+  problems.forEach((problem: Problem) => {
+    const hours = new Date(problem.fecha_creacion).getHours();
+
+    byHour[hours].quantity += 1;
+  });
+
+  problemsByHourData.value = byHour;
 };
 
 const fetchProblems = async () => {
@@ -107,6 +125,20 @@ onMounted(async () => {
               : ''
         "
         :colors="problemLabels.map((label) => problemColors[label])"
+      />
+    </div>
+    <div>
+      <LineChart
+        :data="problemsByHourData"
+        index="hour"
+        :categories="['quantity']"
+        :show-grid-line="true"
+        :x-formatter="
+          (tick, _) => {
+            return typeof tick === 'number' ? `${tick}:00h` : '';
+          }
+        "
+        :colors="[GREEN.rgb]"
       />
     </div>
   </div>
