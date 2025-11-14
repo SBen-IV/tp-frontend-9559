@@ -43,3 +43,8 @@ export interface SolvedMetric {
   resueltos: number;
   nombre: string;
 }
+
+export interface ByHourMetric {
+  hora: number;
+  cantidad: number;
+}
