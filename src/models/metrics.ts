@@ -38,10 +38,15 @@ export interface ProblemMetric {
 
 export interface EmployeeMetric {
   nombre: string;
-  byEstado: Metric[]
+  byEstado: Metric[];
 }
 
 export interface ByHourMetric {
   hora: number;
+  cantidad: number;
+}
+
+export interface ByDayMetric {
+  dia: string;
   cantidad: number;
 }
