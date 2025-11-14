@@ -5,6 +5,7 @@ import { GREEN } from "@/models/colors";
 import type { ByHourMetric } from "@/models/metrics";
 import type { Incident } from "@/models/incidents";
 import type { Problem } from "@/models/problems";
+import { CurveType } from "@unovis/ts";
 
 const props = defineProps<{ data: Problem[] | Incident[]; title: string }>();
 
@@ -43,5 +44,6 @@ const byHourData = computed(() => {
       }
     "
     :colors="[GREEN.rgb]"
+    :curve-type="CurveType.Step"
   />
 </template>
