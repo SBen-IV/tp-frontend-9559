@@ -36,12 +36,9 @@ export interface ProblemMetric {
   cantidadSinResponsable: number;
 }
 
-export interface SolvedMetric {
-  enAnalisis: number;
-  detectados: number;
-  cerrados: number;
-  resueltos: number;
+export interface EmployeeMetric {
   nombre: string;
+  byEstado: Metric[]
 }
 
 export interface ByHourMetric {
