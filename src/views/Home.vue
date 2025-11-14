@@ -5,16 +5,16 @@ import type { User } from "@/models/users";
 import { type Problem } from "@/models/problems";
 import { getAllProblems } from "@/api/problems";
 import { toast } from "vue-sonner";
+import QuantityByHourMetric from "@/components/QuantityByHourMetric.vue";
 import ProblemsEmployeeBarChart from "@/components/ProblemsEmployeeBarChart.vue";
 import IncidentsEmployeeBarChart from "@/components/IncidentsEmployeeBarChart.vue";
 import { getAllIncidents } from "@/api/incidents";
 import type { Incident } from "@/models/incidents";
 
-const isLoading = ref(false); 
+const isLoading = ref(false);
 const employees = shallowRef<User[]>([]);
 const problems = shallowRef<Problem[]>([]);
 const incidents = shallowRef<Incident[]>([]);
-
 
 const fetchData = async () => {
   isLoading.value = true;
@@ -39,11 +39,17 @@ onMounted(async () => {
   <div class="grid grid-cols-2 gap-20 p-5">
     <div>
       <h1 class="font-bold text-center">Problemas Según Responsable</h1>
-      <ProblemsEmployeeBarChart :employees="employees" :problems="problems"/>
+      <ProblemsEmployeeBarChart :employees="employees" :problems="problems" />
     </div>
     <div>
       <h1 class="font-bold text-center">Incidentes Según Responsable</h1>
-      <IncidentsEmployeeBarChart :employees="employees" :incidents="incidents"/>
+      <IncidentsEmployeeBarChart
+        :employees="employees"
+        :incidents="incidents"
+      />
+    </div>
+    <div>
+      <QuantityByHourMetric :data="problems" :title="'Problemas'" />
     </div>
   </div>
 </template>

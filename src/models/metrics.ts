@@ -40,3 +40,8 @@ export interface EmployeeMetric {
   nombre: string;
   byEstado: Metric[]
 }
+
+export interface ByHourMetric {
+  hora: number;
+  cantidad: number;
+}
