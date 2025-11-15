@@ -41,7 +41,7 @@ onMounted(async () => {
   <div class="grid grid-cols-2 gap-20 p-5">
     <div class="col-span-2">
       <h1 class="font-bold text-center">Últimos 30 Días</h1>
-      <LastThirtyDaysChart :incidents="incidents" />
+      <LastThirtyDaysChart :incidents="incidents" :problems="problems"/>
     </div>
     <div>
       <h1 class="font-bold text-xl text-center">Problemas Según Responsable</h1>
