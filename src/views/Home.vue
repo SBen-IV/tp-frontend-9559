@@ -39,6 +39,10 @@ onMounted(async () => {
 <template>
   <h1 class="text-4xl">Bienvenido/a</h1>
   <div class="grid grid-cols-2 gap-20 p-5">
+    <div class="col-span-2">
+      <h1 class="font-bold text-center">Últimos 30 Días</h1>
+      <LastThirtyDaysChart :incidents="incidents" />
+    </div>
     <div>
       <h1 class="font-bold text-xl text-center">Problemas Según Responsable</h1>
       <ProblemsEmployeeBarChart :employees="employees" :problems="problems" />
@@ -54,10 +58,6 @@ onMounted(async () => {
     </div>
     <div>
       <QuantityByHourMetric :data="problems" :title="'Problemas'" />
-    </div>
-    <div>
-      <h1 class="font-bold text-center">Últimos 30 Días</h1>
-      <LastThirtyDaysChart :incidents="incidents" />
     </div>
     <div>
       <QuantityByDayMetric :data="problems" :title="'Problemas'" />
