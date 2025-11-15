@@ -6,6 +6,7 @@ import { type Problem } from "@/models/problems";
 import { getAllProblems } from "@/api/problems";
 import { toast } from "vue-sonner";
 import QuantityByHourMetric from "@/components/QuantityByHourMetric.vue";
+import QuantityByDayMetric from "@/components/QuantityByDayMetric.vue";
 import ProblemsEmployeeBarChart from "@/components/ProblemsEmployeeBarChart.vue";
 import IncidentsEmployeeBarChart from "@/components/IncidentsEmployeeBarChart.vue";
 import { getAllIncidents } from "@/api/incidents";
@@ -36,14 +37,16 @@ onMounted(async () => {
 </script>
 
 <template>
-  <h1>Bienvenido/a</h1>
+  <h1 class="text-4xl">Bienvenido/a</h1>
   <div class="grid grid-cols-2 gap-20 p-5">
     <div>
-      <h1 class="font-bold text-center">Problemas Según Responsable</h1>
+      <h1 class="font-bold text-xl text-center">Problemas Según Responsable</h1>
       <ProblemsEmployeeBarChart :employees="employees" :problems="problems" />
     </div>
     <div>
-      <h1 class="font-bold text-center">Incidentes Según Responsable</h1>
+      <h1 class="font-bold text-xl text-center">
+        Incidentes Según Responsable
+      </h1>
       <IncidentsEmployeeBarChart
         :employees="employees"
         :incidents="incidents"
@@ -55,6 +58,15 @@ onMounted(async () => {
     <div>
       <h1 class="font-bold text-center">Últimos 30 Días</h1>
       <LastThirtyDaysChart :incidents="incidents" />
+    </div>
+    <div>
+      <QuantityByDayMetric :data="problems" :title="'Problemas'" />
+    </div>
+    <div>
+      <QuantityByHourMetric :data="incidents" :title="'Incidentes'" />
+    </div>
+    <div>
+      <QuantityByDayMetric :data="incidents" :title="'Incidentes'" />
     </div>
   </div>
 </template>
