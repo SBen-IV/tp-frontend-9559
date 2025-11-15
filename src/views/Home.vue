@@ -10,6 +10,7 @@ import ProblemsEmployeeBarChart from "@/components/ProblemsEmployeeBarChart.vue"
 import IncidentsEmployeeBarChart from "@/components/IncidentsEmployeeBarChart.vue";
 import { getAllIncidents } from "@/api/incidents";
 import type { Incident } from "@/models/incidents";
+import LastThirtyDaysChart from "@/components/LastThirtyDaysChart.vue";
 
 const isLoading = ref(false);
 const employees = shallowRef<User[]>([]);
@@ -50,6 +51,10 @@ onMounted(async () => {
     </div>
     <div>
       <QuantityByHourMetric :data="problems" :title="'Problemas'" />
+    </div>
+    <div>
+      <h1 class="font-bold text-center">Últimos 30 Días</h1>
+      <LastThirtyDaysChart :incidents="incidents" />
     </div>
   </div>
 </template>

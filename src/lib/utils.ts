@@ -138,3 +138,15 @@ export const fetchEmpleados = async (): Promise<User[]> => {
     return [];
   }
 };
+
+export const daysBetweenDates = (a: Date, b: Date): number => {
+  const dateA = new Date(a);
+  const dateB = new Date(b);
+
+  const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+  const utc1 = Date.UTC(dateA.getFullYear(), dateA.getMonth(), dateA.getDate());
+  const utc2 = Date.UTC(dateB.getFullYear(), dateB.getMonth(), dateB.getDate());
+
+  return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+}

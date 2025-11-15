@@ -45,3 +45,8 @@ export interface ByHourMetric {
   hora: number;
   cantidad: number;
 }
+
+export interface ByDateMetric {
+  fecha: string;
+  incidentes: number;
+}
