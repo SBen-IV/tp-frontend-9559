@@ -32,7 +32,7 @@ const byHourData = computed(() => {
 </script>
 
 <template>
-  <h1 class="font-bold text-center">{{ title }} por hora del día</h1>
+  <h1 class="font-bold text-xl text-center">{{ title }} por hora del día</h1>
   <LineChart
     :data="byHourData"
     index="hora"
