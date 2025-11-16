@@ -38,7 +38,7 @@ onMounted(async () => {
 
 <template>
   <h1 class="text-4xl">Bienvenido/a</h1>
-  <div class="grid grid-cols-2 gap-20 p-5">
+  <div class="grid grid-cols-2 gap-20 p-5 w-[1500px] mx-auto overflow-auto">
     <div class="col-span-2">
       <h1 class="font-bold text-center">Últimos 30 Días</h1>
       <LastThirtyDaysChart :incidents="incidents" :problems="problems"/>
