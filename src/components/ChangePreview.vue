@@ -21,6 +21,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "./ui/button";
 import type { Change } from "@/models/changes";
 import ItemOption from "./ItemOption.vue";
+import IncidentOption from "./IncidentOption.vue";
 import { prettyDate, getPrioridadColor, getImpactoColor } from "@/lib/utils";
 import { ref } from "vue";
 import EditChangeForm from "./forms/EditChangeForm.vue";
@@ -119,9 +120,10 @@ const handleDelete = async () => {
             </DialogHeader>
 
             <Tabs default-value="descripcion" class="w-full px-6 max-h-[45dvh]">
-              <TabsList class="grid w-full grid-cols-2">
+              <TabsList class="grid w-full grid-cols-3">
                 <TabsTrigger value="descripcion">Descripción</TabsTrigger>
-                <TabsTrigger value="config_items">Ítems afectados</TabsTrigger>
+                <TabsTrigger value="config_items">Ítems</TabsTrigger>
+                <TabsTrigger value="incidentes">Incidentes</TabsTrigger>
               </TabsList>
               <TabsContent value="descripcion" class="overflow-y-auto">
                 <p class="pt-4">
@@ -137,6 +139,17 @@ const handleDelete = async () => {
                   v-for="item in change.config_items"
                   :key="item.id"
                   :item="item"
+                  class="hover:bg-accent rounded-md mb-2 pt-4"
+                />
+              </TabsContent>
+              <TabsContent
+                value="incidentes"
+                class="overflow-y-auto grid grid-cols-2"
+              >
+                <IncidentOption
+                  v-for="incidente in change.incidentes"
+                  :key="incidente.id"
+                  :incident="incidente"
                   class="hover:bg-accent rounded-md mb-2 pt-4"
                 />
               </TabsContent>
