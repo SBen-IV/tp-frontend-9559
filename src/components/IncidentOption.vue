@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Incident } from "@/models/incidents";
-import { CodeXml, Wrench, FileText, ShieldAlert, Plug } from "lucide-vue-next";
+import { CodeXml, Wrench, ShieldAlert, Plug } from "lucide-vue-next";
 import { computed } from "vue";
 
 const props = defineProps<{ incident: Incident }>();

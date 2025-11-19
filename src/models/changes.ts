@@ -23,6 +23,7 @@ export const changeBaseSchema = z.object({
 
 export const changeCreateSchema = changeBaseSchema.extend({
   id_config_items: z.array(z.string().uuid()),
+  id_incidentes: z.array(z.string().uuid()),
 });
 
 export const changeEditSchema = changeBaseSchema.extend({
@@ -47,10 +48,10 @@ export const changeAuditSchema = auditSchema.extend({
 });
 
 // We want the changeSchema and the audit information (operacion, fecha_actualizacion, id, ...)
-// We remove unnecessary info like the change ID, creation date, and its owner 
+// We remove unnecessary info like the change ID, creation date, and its owner
 export const changeVersionSchema = changeSchema
   .omit({ id: true, fecha_creacion: true, owner_id: true })
-  .merge(auditSchema)
+  .merge(auditSchema);
 
 export type ChangeCreate = z.infer<typeof changeCreateSchema>;
 export type ChangeEdit = z.infer<typeof changeEditSchema>;
