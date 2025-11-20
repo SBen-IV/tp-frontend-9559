@@ -110,6 +110,7 @@ const fetchItems = async () => {
   } catch (error: any) {
     toast.error(error.message || "Error al cargar los ítems");
     items.value = [];
+    incidents.value = [];
     problems.value = [];
   } finally {
     isLoading.value = false;
