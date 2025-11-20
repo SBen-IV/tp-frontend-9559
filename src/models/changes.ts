@@ -33,6 +33,7 @@ export const changeEditSchema = changeBaseSchema.extend({
   estado: z.enum(changeStatus).nullable().optional(),
   id_config_items: z.array(z.string().uuid()),
   id_incidentes: z.array(z.string().uuid()),
+  id_problemas: z.array(z.string().uuid()),
 });
 
 export const changeSchema = changeBaseSchema.extend({
