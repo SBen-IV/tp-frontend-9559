@@ -29,6 +29,7 @@ import { toast } from "vue-sonner";
 import { deleteChange } from "@/api/changes";
 import DeleteAlertDialog from "./DeleteAlertDialog.vue";
 import OwnerInfo from "./OwnerInfo.vue";
+import ProblemOption from "./ProblemOption.vue";
 
 const props = defineProps<{ change: Change }>();
 
@@ -120,10 +121,11 @@ const handleDelete = async () => {
             </DialogHeader>
 
             <Tabs default-value="descripcion" class="w-full px-6 max-h-[45dvh]">
-              <TabsList class="grid w-full grid-cols-3">
+              <TabsList class="grid w-full grid-cols-4">
                 <TabsTrigger value="descripcion">Descripción</TabsTrigger>
                 <TabsTrigger value="config_items">Ítems</TabsTrigger>
                 <TabsTrigger value="incidentes">Incidentes</TabsTrigger>
+                <TabsTrigger value="problemas">Problemas</TabsTrigger>
               </TabsList>
               <TabsContent value="descripcion" class="overflow-y-auto">
                 <p class="pt-4">
@@ -150,6 +152,17 @@ const handleDelete = async () => {
                   v-for="incidente in change.incidentes"
                   :key="incidente.id"
                   :incident="incidente"
+                  class="hover:bg-accent rounded-md mb-2 pt-4"
+                />
+              </TabsContent>
+              <TabsContent
+                value="problemas"
+                class="overflow-y-auto grid grid-cols-2"
+              >
+                <ProblemOption
+                  v-for="problema in change.problemas"
+                  :key="problema.id"
+                  :problem="problema"
                   class="hover:bg-accent rounded-md mb-2 pt-4"
                 />
               </TabsContent>
