@@ -48,13 +48,19 @@ import { priorities, impactos } from "@/models/commons";
 import router from "@/router";
 import type { Incident } from "@/models/incidents";
 import { getAllIncidents } from "@/api/incidents";
+import { getAllProblems } from "@/api/problems";
+import type { Problem } from "@/models/problems";
+import ProblemOption from "../ProblemOption.vue";
 
 const items = ref<ConfigItem[]>([]);
 const incidents = ref<Incident[]>([]);
+const problems = ref<Problem[]>([]);
 const openItems = ref(false);
 const openIncidents = ref(false);
+const openProblems = ref(false);
 const searchTermItem = ref("");
 const searchTermIncident = ref("");
+const searchTermProblem = ref("");
 const isLoading = ref(false);
 
 const { values, handleSubmit, isSubmitting, setFieldValue } = useForm({
@@ -62,6 +68,7 @@ const { values, handleSubmit, isSubmitting, setFieldValue } = useForm({
   initialValues: {
     id_config_items: [],
     id_incidentes: [],
+    id_problemas: [],
   },
 });
 
@@ -99,10 +106,12 @@ const fetchItems = async () => {
   try {
     items.value = await getAllConfigItems();
     incidents.value = await getAllIncidents();
+    problems.value = await getAllProblems();
   } catch (error: any) {
     toast.error(error.message || "Error al cargar los ítems");
     items.value = [];
     incidents.value = [];
+    problems.value = [];
   } finally {
     isLoading.value = false;
   }
@@ -162,6 +171,43 @@ const addIncidentToForm = (incidentId: string) => {
 const handleIncidentSelect = (event: { detail: { value: string } }) => {
   if (typeof event.detail.value === "string") {
     addIncidentToForm(event.detail.value);
+  }
+};
+
+const filteredProblems = computed(() => {
+  const currentProblems = values.id_problemas || [];
+  const { contains } = useFilter({ sensitivity: "base" });
+
+  const availableProblems = problems.value.filter(
+    (i) => !currentProblems.includes(i.id),
+  );
+
+  return searchTermProblem.value
+    ? availableProblems.filter((problem) =>
+        contains(problem.titulo, searchTermProblem.value),
+      )
+    : availableProblems;
+});
+
+const getProblemByID = (id: string) =>
+  problems.value.find((problem) => problem.id === id);
+
+const addProblemToForm = (problemID: string) => {
+  const currentProblems = values.id_problemas || [];
+  if (!currentProblems.includes(problemID)) {
+    setFieldValue("id_problemas", [...currentProblems, problemID]);
+  }
+
+  searchTermProblem.value = "";
+
+  if (filteredProblems.value.length === 0) {
+    openProblems.value = false;
+  }
+};
+
+const handleProblemSelect = (event: { detail: { value: string } }) => {
+  if (typeof event.detail.value === "string") {
+    addProblemToForm(event.detail.value);
   }
 };
 
@@ -269,7 +315,7 @@ onMounted(() => {
               @update:model-value="componentField['onUpdate:modelValue']"
               class="px-2 gap-2 w-80"
             >
-              <div class="flex gap-2 flex-wrap items-center">
+              <div class="flex gap-2 flex-wrap items-center overflow-y-auto max-h-40">
                 <TagsInputItem
                   v-for="itemID in componentField.modelValue"
                   :key="itemID"
@@ -296,7 +342,7 @@ onMounted(() => {
 
             <ComboboxList class="w-[--reka-popper-anchor-width]">
               <ComboboxEmpty />
-              <ComboboxGroup>
+              <ComboboxGroup class="max-h-60 overflow-y-auto">
                 <ComboboxItem
                   v-for="item in filteredItems"
                   :key="item.id"
@@ -323,7 +369,7 @@ onMounted(() => {
               @update:model-value="componentField['onUpdate:modelValue']"
               class="px-2 gap-2 w-80"
             >
-              <div class="flex gap-2 flex-wrap items-center">
+              <div class="flex gap-2 flex-wrap items-center overflow-y-auto max-h-40">
                 <TagsInputItem
                   v-for="incidentID in componentField.modelValue"
                   :key="incidentID"
@@ -350,7 +396,7 @@ onMounted(() => {
 
             <ComboboxList class="w-[--reka-popper-anchor-width]">
               <ComboboxEmpty />
-              <ComboboxGroup>
+              <ComboboxGroup class="max-h-60 overflow-y-auto ">
                 <ComboboxItem
                   v-for="incident in filteredIncidents"
                   :key="incident.id"
@@ -358,6 +404,60 @@ onMounted(() => {
                   @select.prevent="handleIncidentSelect"
                 >
                   <IncidentOption :incident="incident" />
+                </ComboboxItem>
+              </ComboboxGroup>
+            </ComboboxList>
+          </ComboboxAnchor>
+        </Combobox>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+
+    <FormField v-slot="{ componentField }" name="id_problemas">
+      <FormItem>
+        <FormLabel>Problemas relacionados</FormLabel>
+        <Combobox v-model:open="openProblems" :ignore-filter="true">
+          <ComboboxAnchor as-child>
+            <TagsInput
+              :model-value="componentField.modelValue"
+              @update:model-value="componentField['onUpdate:modelValue']"
+              class="px-2 gap-2 w-80 "
+            >
+              <div class="flex gap-2 flex-wrap items-center overflow-y-auto max-h-40">
+                <TagsInputItem
+                  v-for="problemID in componentField.modelValue"
+                  :key="problemID"
+                  :value="problemID"
+                  class="h-full"
+                >
+                  <ProblemOption :problem="getProblemByID(problemID)!" />
+                  <TagsInputItemDelete />
+                </TagsInputItem>
+              </div>
+
+              <ComboboxInput
+                v-model="searchTermProblem"
+                as-child
+                @click="openProblems = true"
+              >
+                <TagsInputInput
+                  placeholder="Problemas..."
+                  class="min-w-[200px] w-full p-0 border-none focus-visible:ring-0 h-auto"
+                  @keydown.enter.prevent
+                />
+              </ComboboxInput>
+            </TagsInput>
+
+            <ComboboxList class="w-[--reka-popper-anchor-width]">
+              <ComboboxEmpty />
+              <ComboboxGroup class="max-h-60 overflow-y-auto">
+                <ComboboxItem
+                  v-for="problem in filteredProblems"
+                  :key="problem.id"
+                  :value="problem.id"
+                  @select.prevent="handleProblemSelect"
+                >
+                  <ProblemOption :problem="problem" />
                 </ComboboxItem>
               </ComboboxGroup>
             </ComboboxList>
