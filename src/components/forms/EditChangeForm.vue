@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import ItemOption from "@/components/ItemOption.vue";
 import IncidentOption from "../IncidentOption.vue";
+import ProblemOption from "../ProblemOption.vue";
 import {
   Combobox,
   ComboboxAnchor,
@@ -48,15 +49,20 @@ import type { ConfigItem } from "@/models/config_items";
 import { getAllConfigItems } from "@/api/config_items";
 import type { Incident } from "@/models/incidents";
 import { getAllIncidents } from "@/api/incidents";
+import type { Problem } from "@/models/problems";
+import { getAllProblems } from "@/api/problems";
 
 const props = defineProps<{ change: Change }>();
 
 const items = ref<ConfigItem[]>([]);
 const incidents = ref<Incident[]>([]);
+const problems = ref<Problem[]>([]);
 const openItems = ref(false);
 const openIncidents = ref(false);
+const openProblems = ref(false);
 const searchTermItem = ref("");
 const searchTermIncident = ref("");
+const searchTermProblem = ref("");
 const isLoading = ref(false);
 
 const emit = defineEmits<{
@@ -70,6 +76,7 @@ const { values, handleSubmit, isSubmitting, setFieldValue } = useForm({
     ...props.change,
     id_config_items: props.change.config_items.map((item) => item.id),
     id_incidentes: props.change.incidentes.map((incident) => incident.id),
+    id_problemas: props.change.problemas?.map((problem) => problem.id),
   },
 });
 
@@ -77,21 +84,21 @@ const formattedPriorities = computed(() =>
   priorities.map((priority) => ({
     value: priority,
     label: priority.charAt(0).toUpperCase() + priority.slice(1).toLowerCase(),
-  })),
+  }))
 );
 
 const formattedImpact = computed(() =>
   impactos.map((impacto) => ({
     value: impacto,
     label: impacto.charAt(0).toUpperCase() + impacto.slice(1).toLowerCase(),
-  })),
+  }))
 );
 
 const formattedStatus = computed(() =>
   status.map((status) => ({
     value: status,
     label: status.replace(/_/g, " "),
-  })),
+  }))
 );
 
 const filteredItems = computed(() => {
@@ -99,12 +106,12 @@ const filteredItems = computed(() => {
   const { contains } = useFilter({ sensitivity: "base" });
 
   const availableItems = items.value.filter(
-    (i) => !currentItems.includes(i.id),
+    (i) => !currentItems.includes(i.id)
   );
 
   return searchTermItem.value
     ? availableItems.filter((item) =>
-        contains(item.nombre, searchTermItem.value),
+        contains(item.nombre, searchTermItem.value)
       )
     : availableItems;
 });
@@ -158,12 +165,12 @@ const filteredIncidents = computed(() => {
   const { contains } = useFilter({ sensitivity: "base" });
 
   const availableIncidents = incidents.value.filter(
-    (i) => !currentIncidents.includes(i.id),
+    (i) => !currentIncidents.includes(i.id)
   );
 
   return searchTermIncident.value
     ? availableIncidents.filter((incident) =>
-        contains(incident.titulo, searchTermIncident.value),
+        contains(incident.titulo, searchTermIncident.value)
       )
     : availableIncidents;
 });
@@ -190,6 +197,55 @@ const handleIncidentSelect = (event: { detail: { value: string } }) => {
   }
 };
 
+const fetchProblems = async () => {
+  isLoading.value = true;
+  try {
+    problems.value = await getAllProblems();
+  } catch (error: any) {
+    toast.error(error.message || "Error al cargar los problemas");
+    problems.value = [];
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const filteredProblems = computed(() => {
+  const currentProblems = values.id_problemas || [];
+  const { contains } = useFilter({ sensitivity: "base" });
+
+  const availableProblems = problems.value.filter(
+    (i) => !currentProblems.includes(i.id)
+  );
+
+  return searchTermProblem.value
+    ? availableProblems.filter((problem) =>
+        contains(problem.titulo, searchTermProblem.value)
+      )
+    : availableProblems;
+});
+
+const getProblemByID = (id: string) =>
+  problems.value.find((problem) => problem.id === id);
+
+const addProblemToForm = (problemID: string) => {
+  const currentProblems = values.id_problemas || [];
+  if (!currentProblems.includes(problemID)) {
+    setFieldValue("id_problemas", [...currentProblems, problemID]);
+  }
+
+  searchTermProblem.value = "";
+
+  if (filteredProblems.value.length === 0) {
+    openProblems.value = false;
+  }
+};
+
+const handleProblemSelect = (event: { detail: { value: string } }) => {
+  if (typeof event.detail.value === "string") {
+    addProblemToForm(event.detail.value);
+  }
+};
+
 const onSubmit = handleSubmit(async (values) => {
   try {
     await updateChange(props.change.id, values);
@@ -203,6 +259,7 @@ const onSubmit = handleSubmit(async (values) => {
 onMounted(() => {
   fetchItems();
   fetchIncidents();
+  fetchProblems();
 });
 </script>
 
@@ -416,6 +473,65 @@ onMounted(() => {
                   @select.prevent="handleIncidentSelect"
                 >
                   <IncidentOption :incident="incident" />
+                </ComboboxItem>
+              </ComboboxGroup>
+            </ComboboxList>
+          </ComboboxAnchor>
+        </Combobox>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+
+    <FormField v-slot="{ componentField }" name="id_problemas">
+      <FormItem>
+        <FormLabel>Problemas relacionados</FormLabel>
+        <Combobox v-model:open="openProblems" :ignore-filter="true">
+          <ComboboxAnchor as-child>
+            <TagsInput
+              :model-value="componentField.modelValue"
+              @update:model-value="componentField['onUpdate:modelValue']"
+              class="px-2 gap-2 w-80"
+            >
+              <div
+                class="flex gap-2 flex-wrap items-center overflow-y-auto max-h-40"
+              >
+                <TagsInputItem
+                  v-for="problemID in componentField.modelValue"
+                  :key="problemID"
+                  :value="problemID"
+                  class="h-full"
+                >
+                  <ProblemOption
+                    v-if="getProblemByID(problemID)"
+                    :problem="getProblemByID(problemID)!"
+                  />
+                  <TagsInputItemDelete />
+                </TagsInputItem>
+              </div>
+
+              <ComboboxInput
+                v-model="searchTermProblem"
+                as-child
+                @click="openProblems = true"
+              >
+                <TagsInputInput
+                  placeholder="Problemas..."
+                  class="min-w-[200px] w-full p-0 border-none focus-visible:ring-0 h-auto"
+                  @keydown.enter.prevent
+                />
+              </ComboboxInput>
+            </TagsInput>
+
+            <ComboboxList class="w-[--reka-popper-anchor-width]">
+              <ComboboxEmpty />
+              <ComboboxGroup class="max-h-60 overflow-y-auto">
+                <ComboboxItem
+                  v-for="problem in filteredProblems"
+                  :key="problem.id"
+                  :value="problem.id"
+                  @select.prevent="handleProblemSelect"
+                >
+                  <ProblemOption :problem="problem" />
                 </ComboboxItem>
               </ComboboxGroup>
             </ComboboxList>
