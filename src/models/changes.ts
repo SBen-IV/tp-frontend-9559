@@ -2,6 +2,7 @@ import { auditSchema, priorities, impactos } from "./commons";
 import { configItemSchema } from "./config_items";
 import * as z from "zod";
 import { incidentSchema } from "./incidents";
+import { problemSchema } from "./problems";
 
 export const changeStatus = [
   "RECIBIDO",
@@ -41,6 +42,7 @@ export const changeSchema = changeBaseSchema.extend({
   owner_id: z.string().uuid(),
   config_items: z.array(configItemSchema),
   incidentes: z.array(incidentSchema),
+  problemas: z.array(problemSchema),
 });
 
 // This is what the backend returns
