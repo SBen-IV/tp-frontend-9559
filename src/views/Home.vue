@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref, shallowRef } from "vue";
-import { fetchEmpleados } from "@/lib/utils";
+import { colorsByIncidenteEstado, colorsByProblemaEstado, fetchEmpleados } from "@/lib/utils";
 import type { User } from "@/models/users";
-import { type Problem } from "@/models/problems";
+import { estados, type Problem } from "@/models/problems";
 import { getAllProblems } from "@/api/problems";
 import { toast } from "vue-sonner";
 import QuantityByHourMetric from "@/components/QuantityByHourMetric.vue";
@@ -10,8 +10,9 @@ import QuantityByDayMetric from "@/components/QuantityByDayMetric.vue";
 import ProblemsEmployeeBarChart from "@/components/ProblemsEmployeeBarChart.vue";
 import IncidentsEmployeeBarChart from "@/components/IncidentsEmployeeBarChart.vue";
 import { getAllIncidents } from "@/api/incidents";
-import type { Incident } from "@/models/incidents";
+import { incidentStatus, type Incident } from "@/models/incidents";
 import LastThirtyDaysChart from "@/components/LastThirtyDaysChart.vue";
+import EmployeeBarChart from "@/components/EmployeeBarChart.vue";
 
 const isLoading = ref(false);
 const employees = shallowRef<User[]>([]);
@@ -44,17 +45,10 @@ onMounted(async () => {
       <LastThirtyDaysChart :incidents="incidents" :problems="problems"/>
     </div>
     <div>
-      <h1 class="font-bold text-xl text-center">Problemas Según Responsable</h1>
-      <ProblemsEmployeeBarChart :employees="employees" :problems="problems" />
+      <EmployeeBarChart :employees="employees" :tickets="problems" :status="estados" :colors-by-status="colorsByProblemaEstado" :title="'Problemas Según Responsable'"/>
     </div>
     <div>
-      <h1 class="font-bold text-xl text-center">
-        Incidentes Según Responsable
-      </h1>
-      <IncidentsEmployeeBarChart
-        :employees="employees"
-        :incidents="incidents"
-      />
+      <EmployeeBarChart :employees="employees" :tickets="incidents" :status="incidentStatus" :colors-by-status="colorsByIncidenteEstado" :title="'Incidentes Según Responsable'"/>
     </div>
     <div>
       <QuantityByHourMetric :data="problems" :title="'Problemas'" />

@@ -2,6 +2,8 @@ import * as z from "zod";
 import { priorities } from "./commons";
 import { configItemSchema } from "./config_items";
 import { incidentSchema } from "./incidents";
+import type { colorsByProblemaEstado } from "@/lib/utils";
+import type { User } from "./users";
 
 export const estados = [
   "EN_ANALISIS",
@@ -43,6 +45,14 @@ export const problemSchema = problemBaseSchema.extend({
   solucion: z.string().nullable().optional(),
 });
 
+export type ProblemProps = {
+  employees: User[];
+  tickets: Problem[];
+  status: ProblemStatus;
+  colorsByStatus: typeof colorsByProblemaEstado;
+};
+
+export type ProblemStatus  = typeof estados;
 export type ProblemCreate = z.infer<typeof problemCreateSchema>;
 export type ProblemEdit = z.infer<typeof problemEditSchema>;
 export type Problem = z.infer<typeof problemSchema>;

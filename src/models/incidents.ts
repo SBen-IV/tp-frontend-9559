@@ -1,6 +1,8 @@
 import * as z from "zod";
 import { priorities } from "./commons";
 import { configItemSchema } from "./config_items";
+import type { User } from "./users";
+import type { colorsByIncidenteEstado } from "@/lib/utils";
 
 export const incidentStatus = [
   "NUEVO",
@@ -46,6 +48,14 @@ export const incidentEditSchema = incidentBaseSchema.extend({
   id_config_items: z.array(z.string().uuid()), 
 })
 
+export type IncidentProps = {
+  employees: User[];
+  tickets: Incident[];
+  status: IncidentStatus;
+  colorsByStatus: typeof colorsByIncidenteEstado;
+};
+
+export type IncidentStatus  = typeof incidentStatus;
 export type IncidentCreate = z.infer<typeof incidentCreateSchema>;
 export type Incident = z.infer<typeof incidentSchema>;
 export type IncidentEdit = z.infer<typeof incidentEditSchema>;
