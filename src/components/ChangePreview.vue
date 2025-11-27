@@ -30,6 +30,7 @@ import { deleteChange } from "@/api/changes";
 import DeleteAlertDialog from "./DeleteAlertDialog.vue";
 import OwnerInfo from "./OwnerInfo.vue";
 import ProblemOption from "./ProblemOption.vue";
+import ResponsableInfo from "./ResponsableInfo.vue";
 
 const props = defineProps<{ change: Change }>();
 
@@ -118,6 +119,10 @@ const handleDelete = async () => {
                   change.impacto
                 }}</Badge>
               </DialogDescription>
+              <ResponsableInfo
+                :key="change.responsable_id"
+                :responsable-id="change.responsable_id"
+              />
             </DialogHeader>
 
             <Tabs default-value="descripcion" class="w-full px-6 max-h-[45dvh]">
