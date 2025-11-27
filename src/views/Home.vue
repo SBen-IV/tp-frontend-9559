@@ -1,23 +1,24 @@
 <script setup lang="ts">
 import { onMounted, ref, shallowRef } from "vue";
-import { colorsByIncidenteEstado, colorsByProblemaEstado, fetchEmpleados } from "@/lib/utils";
+import { colorsByCambioEstado, colorsByIncidenteEstado, colorsByProblemaEstado, fetchEmpleados } from "@/lib/utils";
 import type { User } from "@/models/users";
 import { estados, type Problem } from "@/models/problems";
 import { getAllProblems } from "@/api/problems";
 import { toast } from "vue-sonner";
 import QuantityByHourMetric from "@/components/QuantityByHourMetric.vue";
 import QuantityByDayMetric from "@/components/QuantityByDayMetric.vue";
-import ProblemsEmployeeBarChart from "@/components/ProblemsEmployeeBarChart.vue";
-import IncidentsEmployeeBarChart from "@/components/IncidentsEmployeeBarChart.vue";
 import { getAllIncidents } from "@/api/incidents";
 import { incidentStatus, type Incident } from "@/models/incidents";
 import LastThirtyDaysChart from "@/components/LastThirtyDaysChart.vue";
 import EmployeeBarChart from "@/components/EmployeeBarChart.vue";
+import { changeStatus, type Change } from "@/models/changes";
+import { getAllChanges } from "@/api/changes";
 
 const isLoading = ref(false);
 const employees = shallowRef<User[]>([]);
 const problems = shallowRef<Problem[]>([]);
 const incidents = shallowRef<Incident[]>([]);
+const changes = shallowRef<Change[]>([]);
 
 const fetchData = async () => {
   isLoading.value = true;
@@ -25,6 +26,7 @@ const fetchData = async () => {
     employees.value = await fetchEmpleados();
     problems.value = await getAllProblems();
     incidents.value = await getAllIncidents();
+    changes.value = await getAllChanges();
   } catch (error: any) {
     toast.error(error.message || "Error al cargar los ítems");
   } finally {
@@ -49,6 +51,9 @@ onMounted(async () => {
     </div>
     <div>
       <EmployeeBarChart :employees="employees" :tickets="incidents" :status="incidentStatus" :colors-by-status="colorsByIncidenteEstado" :title="'Incidentes Según Responsable'"/>
+    </div>
+    <div>
+      <EmployeeBarChart :employees="employees" :tickets="changes" :status="changeStatus" :colors-by-status="colorsByCambioEstado" :title="'Cambios Según Responsable'"/>
     </div>
     <div>
       <QuantityByHourMetric :data="problems" :title="'Problemas'" />

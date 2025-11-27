@@ -7,8 +7,9 @@ import { mapToMetric } from '@/lib/utils';
 import type { UUID } from 'crypto';
 import BarChart from './ui/chart-bar/BarChart.vue';
 import type { ProblemProps } from '@/models/problems';
+import type { ChangeProps } from '@/models/changes';
 
-type Props = (IncidentProps | ProblemProps) & {
+type Props = (IncidentProps | ProblemProps | ChangeProps) & {
   title: string;
 };
 const props = defineProps<Props>()
