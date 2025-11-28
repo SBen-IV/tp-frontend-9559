@@ -3,6 +3,8 @@ import { configItemSchema } from "./config_items";
 import * as z from "zod";
 import { incidentSchema } from "./incidents";
 import { problemSchema } from "./problems";
+import type { User } from "./users";
+import type { colorsByCambioEstado } from "@/lib/utils";
 
 export const changeStatus = [
   "RECIBIDO",
@@ -61,6 +63,13 @@ export const changeAuditSchema = auditSchema.extend({
 export const changeVersionSchema = changeSchema
   .omit({ id: true, fecha_creacion: true, owner_id: true })
   .merge(auditSchema);
+
+export type ChangeProps = {
+  employees: User[];
+  tickets: Change[];
+  status: typeof changeStatus;
+  colorsByStatus: typeof colorsByCambioEstado;
+};
 
 export type ChangeCreate = z.infer<typeof changeCreateSchema>;
 export type ChangeEdit = z.infer<typeof changeEditSchema>;
