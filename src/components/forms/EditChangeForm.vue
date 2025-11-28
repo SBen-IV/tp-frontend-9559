@@ -51,9 +51,12 @@ import type { Incident } from "@/models/incidents";
 import { getAllIncidents } from "@/api/incidents";
 import type { Problem } from "@/models/problems";
 import { getAllProblems } from "@/api/problems";
+import type { User } from "@/models/users";
+import { getAllUsers } from "@/api/users";
 
 const props = defineProps<{ change: Change }>();
 
+const users = ref<User[]>([]);
 const items = ref<ConfigItem[]>([]);
 const incidents = ref<Incident[]>([]);
 const problems = ref<Problem[]>([]);
@@ -64,6 +67,7 @@ const searchTermItem = ref("");
 const searchTermIncident = ref("");
 const searchTermProblem = ref("");
 const isLoading = ref(false);
+const isLoadingUsers = ref(false);
 
 const emit = defineEmits<{
   // Let parent know the form was submitted
@@ -84,34 +88,46 @@ const formattedPriorities = computed(() =>
   priorities.map((priority) => ({
     value: priority,
     label: priority.charAt(0).toUpperCase() + priority.slice(1).toLowerCase(),
-  }))
+  })),
 );
 
 const formattedImpact = computed(() =>
   impactos.map((impacto) => ({
     value: impacto,
     label: impacto.charAt(0).toUpperCase() + impacto.slice(1).toLowerCase(),
-  }))
+  })),
 );
 
 const formattedStatus = computed(() =>
   status.map((status) => ({
     value: status,
     label: status.replace(/_/g, " "),
-  }))
+  })),
 );
+
+const fetchUsers = async () => {
+  isLoadingUsers.value = true;
+  try {
+    users.value = await getAllUsers("EMPLEADO");
+  } catch (error: any) {
+    toast.error(error.message || "Error al cargar los ítems");
+    users.value = [];
+  } finally {
+    isLoadingUsers.value = false;
+  }
+};
 
 const filteredItems = computed(() => {
   const currentItems = values.id_config_items || [];
   const { contains } = useFilter({ sensitivity: "base" });
 
   const availableItems = items.value.filter(
-    (i) => !currentItems.includes(i.id)
+    (i) => !currentItems.includes(i.id),
   );
 
   return searchTermItem.value
     ? availableItems.filter((item) =>
-        contains(item.nombre, searchTermItem.value)
+        contains(item.nombre, searchTermItem.value),
       )
     : availableItems;
 });
@@ -165,12 +181,12 @@ const filteredIncidents = computed(() => {
   const { contains } = useFilter({ sensitivity: "base" });
 
   const availableIncidents = incidents.value.filter(
-    (i) => !currentIncidents.includes(i.id)
+    (i) => !currentIncidents.includes(i.id),
   );
 
   return searchTermIncident.value
     ? availableIncidents.filter((incident) =>
-        contains(incident.titulo, searchTermIncident.value)
+        contains(incident.titulo, searchTermIncident.value),
       )
     : availableIncidents;
 });
@@ -214,12 +230,12 @@ const filteredProblems = computed(() => {
   const { contains } = useFilter({ sensitivity: "base" });
 
   const availableProblems = problems.value.filter(
-    (i) => !currentProblems.includes(i.id)
+    (i) => !currentProblems.includes(i.id),
   );
 
   return searchTermProblem.value
     ? availableProblems.filter((problem) =>
-        contains(problem.titulo, searchTermProblem.value)
+        contains(problem.titulo, searchTermProblem.value),
       )
     : availableProblems;
 });
@@ -259,6 +275,7 @@ const onSubmit = handleSubmit(async (values) => {
 onMounted(() => {
   fetchItems();
   fetchIncidents();
+  fetchUsers();
   fetchProblems();
 });
 </script>
@@ -359,6 +376,27 @@ onMounted(() => {
                 :value="status.value"
               >
                 {{ status.label }}
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+
+    <FormField v-slot="{ componentField }" name="responsable_id">
+      <FormItem>
+        <FormLabel>Responsable</FormLabel>
+        <Select v-bind="componentField">
+          <FormControl>
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccione el responsable" />
+            </SelectTrigger>
+          </FormControl>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem v-for="user in users" :key="user.id" :value="user.id">
+                {{ `${user.nombre} ${user.apellido} - ${user.email}` }}
               </SelectItem>
             </SelectGroup>
           </SelectContent>
