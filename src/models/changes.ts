@@ -34,6 +34,7 @@ export const changeEditSchema = changeBaseSchema.extend({
   id_config_items: z.array(z.string().uuid()),
   id_incidentes: z.array(z.string().uuid()),
   id_problemas: z.array(z.string().uuid()),
+  responsable_id: z.string().uuid().nullable().optional(),
 });
 
 export const changeSchema = changeBaseSchema.extend({
@@ -42,6 +43,7 @@ export const changeSchema = changeBaseSchema.extend({
   fecha_cierre: z.date().nullable().optional(),
   id: z.string().uuid(),
   owner_id: z.string().uuid(),
+  responsable_id: z.string().uuid(),
   config_items: z.array(configItemSchema),
   incidentes: z.array(incidentSchema),
   problemas: z.array(problemSchema),
