@@ -46,10 +46,10 @@ defineProps<{ change: Change }>();
     <Separator class="my-4" />
 
     <p class="font-medium text-muted-foreground">Empleado responsable</p>
-      <ResponsableInfo
-        :key="change.responsable_id"
-        :responsable-id="change.responsable_id"
-      />
+    <ResponsableInfo
+      :key="change.responsable_id"
+      :responsable-id="change.responsable_id"
+    />
 
     <Separator class="my-4" />
 
