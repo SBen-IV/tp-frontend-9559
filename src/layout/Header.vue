@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import ModeToggle from "@/components/ModeToggle.vue";
 import NavLink from "@/components/NavLink.vue";
 import { useAuthStore } from "@/stores/auth";
 import router from "@/router/index";
+import { useUserStore } from "@/stores/user";
 
 const authStore = useAuthStore();
+const userStore = useUserStore();
 console.log("is user logged in? ", authStore.isLoggedIn);
 
 const handleLogout = async () => {
   authStore.logout();
+  userStore.unset();
   router.push("/");
 };
 </script>
