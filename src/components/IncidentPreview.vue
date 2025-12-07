@@ -31,7 +31,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "./ui/button";
 import ItemOption from "./ItemOption.vue";
 import type { Incident } from "@/models/incidents";
-import { getPrioridadColor, prettyDate } from "@/lib/utils";
+import {
+  colorsByIncidenteCategoria,
+  getPrioridadColor,
+  prettyDate,
+  getBadgeColor,
+  colorsByIncidenteEstado,
+} from "@/lib/utils";
 import { computed, ref } from "vue";
 import EditIncidentForm from "./forms/EditIncidentForm.vue";
 import { deleteIncident } from "@/api/incidents";
@@ -101,14 +107,21 @@ const handleDelete = async () => {
           <p>{{ incident.titulo }}</p>
         </CardTitle>
       </div>
-      <Badge>
+      <Badge
+        :class="getBadgeColor(colorsByIncidenteCategoria, incident.categoria)"
+      >
         <component :is="categoryIcon" class="w-3 h-3 flex-shrink-0" />
         {{ prettyEstado(incident.categoria) }}</Badge
       >
       <Badge variant="default" :class="getPrioridadColor(incident.prioridad)">{{
         incident.prioridad
       }}</Badge>
-      <Badge variant="secondary">{{ prettyEstado(incident.estado) }}</Badge>
+      <Badge
+        variant="secondary"
+        class="text-black"
+        :class="getBadgeColor(colorsByIncidenteEstado, incident.estado)"
+        >{{ prettyEstado(incident.estado) }}</Badge
+      >
     </CardHeader>
     <CardContent class="space-y-1 text-xs text-foreground">
       <p class="flex items-center gap-1">
@@ -137,10 +150,43 @@ const handleDelete = async () => {
               }}</DialogTitle>
               <OwnerInfo class="m-auto" :owner-id="incident.owner_id" />
               <DialogDescription class="text-foreground pb-1">
+                <p>
+                  <b>Categoría:</b>
+                  <Badge
+                    variant="secondary"
+                    class="text-black"
+                    :class="
+                      getBadgeColor(
+                        colorsByIncidenteCategoria,
+                        incident.categoria,
+                      )
+                    "
+                  >
+                    <component
+                      :is="categoryIcon"
+                      class="w-3 h-3 flex-shrink-0"
+                    />
+                    {{ prettyEstado(incident.categoria) }}</Badge
+                  >
+                </p>
+                <p>
+                  <b>Prioridad:</b>
+                  <Badge
+                    variant="secondary"
+                    class="text-black"
+                    :class="getPrioridadColor(incident.prioridad)"
+                    >{{ incident.prioridad }}
+                  </Badge>
+                </p>
                 <b>Estado: </b>
-                <Badge variant="secondary">{{
-                  prettyEstado(incident.estado)
-                }}</Badge>
+                <Badge
+                  variant="secondary"
+                  class="text-black"
+                  :class="
+                    getBadgeColor(colorsByIncidenteEstado, incident.estado)
+                  "
+                  >{{ prettyEstado(incident.estado) }}</Badge
+                >
                 <p>
                   <b>Fecha creación:</b>
                   {{ prettyDate(incident.fecha_creacion) }}

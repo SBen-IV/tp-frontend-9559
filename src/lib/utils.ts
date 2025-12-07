@@ -129,6 +129,13 @@ export const prettyEstado = (estado: string): string => {
   return estado.replace("_", " ");
 };
 
+export const getBadgeColor = (
+  colors: Record<string, Color>,
+  key: string,
+): string => {
+  return colors[key].tw;
+};
+
 export const mapToMetric = (data: Map<string, number>): Metric[] => {
   return Array.from(data, ([k, v]: [string, number]): Metric => {
     return { name: k, total: v };
