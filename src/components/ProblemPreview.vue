@@ -21,7 +21,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "./ui/button";
 import ItemOption from "./ItemOption.vue";
 import type { Problem } from "@/models/problems";
-import { getPrioridadColor, prettyDate } from "@/lib/utils";
+import {
+  colorsByProblemaEstado,
+  getBadgeColor,
+  getPrioridadColor,
+  prettyDate,
+} from "@/lib/utils";
 import { ref } from "vue";
 import EditProblemForm from "@/components/forms/EditProblemForm.vue";
 import IncidentOption from "./IncidentOption.vue";
@@ -86,10 +91,12 @@ const handleDelete = async () => {
           <p>{{ problem.titulo }}</p>
         </CardTitle>
       </div>
-      <Badge variant="default" :class="getPrioridadColor(problem.prioridad)">{{
+      <Badge :class="getPrioridadColor(problem.prioridad)">{{
         problem.prioridad
       }}</Badge>
-      <Badge variant="secondary">{{ prettyEstado(problem.estado) }}</Badge>
+      <Badge :class="getBadgeColor(colorsByProblemaEstado, problem.estado)">{{
+        prettyEstado(problem.estado)
+      }}</Badge>
     </CardHeader>
     <CardContent class="space-y-1 text-xs text-foreground">
       <p class="flex items-center gap-1">
@@ -118,10 +125,16 @@ const handleDelete = async () => {
               }}</DialogTitle>
               <OwnerInfo class="m-auto" :owner-id="problem.owner_id" />
               <DialogDescription class="text-foreground">
-                <b>Estado: </b>
-                <Badge variant="secondary">{{
-                  prettyEstado(problem.estado)
+                <b>Prioridad: </b>
+                <Badge :class="getPrioridadColor(problem.prioridad)">{{
+                  problem.prioridad
                 }}</Badge>
+                <br />
+                <b>Estado: </b>
+                <Badge
+                  :class="getBadgeColor(colorsByProblemaEstado, problem.estado)"
+                  >{{ prettyEstado(problem.estado) }}</Badge
+                >
                 <br />
                 <b>Fecha creación: </b>
                 {{ prettyDate(problem.fecha_creacion) }}
@@ -139,12 +152,17 @@ const handleDelete = async () => {
               />
             </DialogHeader>
             <Tabs default-value="descripcion" class="w-full px-6 max-h-[35dvh]">
-              <TabsList class="grid w-full" :class="problem.solucion ? 'grid-cols-4' : 'grid-cols-3'">
+              <TabsList
+                class="grid w-full"
+                :class="problem.solucion ? 'grid-cols-4' : 'grid-cols-3'"
+              >
                 <!-- NOTE: Keep tab names short so that it doesn't overflow -->
                 <TabsTrigger value="descripcion">Descripción</TabsTrigger>
                 <TabsTrigger value="config_items">Ítems</TabsTrigger>
                 <TabsTrigger value="incidentes">Incidentes</TabsTrigger>
-                <TabsTrigger v-if="problem.solucion" value="solucion">Solución</TabsTrigger>
+                <TabsTrigger v-if="problem.solucion" value="solucion"
+                  >Solución</TabsTrigger
+                >
               </TabsList>
               <TabsContent value="descripcion" class="overflow-y-auto">
                 <p class="pt-4">
@@ -182,7 +200,10 @@ const handleDelete = async () => {
             </Tabs>
             <DialogFooter>
               <div class="flex gap-2 px-4 pt-4">
-                <Button v-if="!problem.solucion" @click="addSolutionView = true">
+                <Button
+                  v-if="!problem.solucion"
+                  @click="addSolutionView = true"
+                >
                   <Plus class="w-2 h-4" />Solución
                 </Button>
                 <Button @click="editView = true">
