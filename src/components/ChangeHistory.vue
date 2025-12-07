@@ -50,6 +50,12 @@ defineProps<{
           <div>
             <p class="text-muted-foreground mb-1 font-medium">Estado</p>
             <Badge variant="secondary">{{ version.estado }}</Badge>
+            <p
+              v-if="version.fecha_cierre"
+              class="text-xs text-muted-foreground mt-1"
+            >
+              Fecha cierre: {{ prettyDate(version.fecha_cierre) }}
+            </p>
           </div>
           <div>
             <p class="text-muted-foreground mb-1 font-medium">Prioridad</p>
