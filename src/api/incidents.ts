@@ -17,6 +17,12 @@ export async function getAllIncidents(): Promise<Incident[]> {
   return response.data;
 }
 
+export async function getIncidentById(incidentId: string) {
+  const response = await axiosInstance.get(`${BASE_URL}/${incidentId}`);
+
+  return response.data;
+}
+
 export async function updateIncident(
   incidentID: string,
   incident: IncidentEdit,

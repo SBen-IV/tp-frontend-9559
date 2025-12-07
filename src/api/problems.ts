@@ -13,6 +13,12 @@ export async function getAllProblems(): Promise<Problem[]> {
   return response.data;
 }
 
+export async function getProblemById(problemId: string) {
+  const response = await axiosInstance.get(`${BASE_URL}/${problemId}`);
+
+  return response.data;
+}
+
 export async function updateProblem(
   problemID: string,
   problem: ProblemEdit,
