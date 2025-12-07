@@ -31,6 +31,7 @@ import DeleteAlertDialog from "./DeleteAlertDialog.vue";
 import OwnerInfo from "./OwnerInfo.vue";
 import ProblemOption from "./ProblemOption.vue";
 import ResponsableInfo from "./ResponsableInfo.vue";
+import { Clock } from "lucide-vue-next";
 
 const props = defineProps<{ change: Change }>();
 
@@ -91,6 +92,11 @@ const handleDelete = async () => {
         <span class="font-semibold">Fecha creación:</span>
         {{ prettyDate(change.fecha_creacion) }}
       </p>
+      <p class="flex items-center gap-1">
+        <Clock class="w-3 h-3" />
+        <span class="font-semibold">Fecha cierre:</span>
+        {{ change.fecha_cierre ? prettyDate(change.fecha_cierre) : "N/A" }}
+      </p>
     </CardContent>
     <CardFooter>
       <Dialog @update:open="handleDialogClose">
@@ -113,6 +119,13 @@ const handleDelete = async () => {
                 <br />
                 <b>Fecha creación: </b>
                 {{ prettyDate(change.fecha_creacion) }}
+                <br />
+                <b>Fecha cierre: </b>
+                {{
+                  change.fecha_cierre
+                    ? prettyDate(change.fecha_cierre)
+                    : "N/A"
+                }}
                 <br />
                 <b>Impacto: </b>
                 <Badge :class="getImpactoColor(change.impacto)">{{
