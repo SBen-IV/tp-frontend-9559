@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import type { Change } from "@/models/changes";
-import { getImpactoColor, getPrioridadColor } from "@/lib/utils";
+import {
+  colorsByCambioEstado,
+  getBadgeColor,
+  getImpactoColor,
+  getPrioridadColor,
+} from "@/lib/utils";
 import { prettyDate } from "@/lib/utils";
 import Card from "./ui/card/Card.vue";
 import Badge from "./ui/badge/Badge.vue";
@@ -25,7 +30,9 @@ defineProps<{ change: Change }>();
       </div>
       <div>
         <p class="font-medium text-muted-foreground">Estado</p>
-        <Badge variant="secondary">{{ change.estado }}</Badge>
+        <Badge :class="getBadgeColor(colorsByCambioEstado, change.estado)">{{
+          change.estado
+        }}</Badge>
       </div>
       <div>
         <p class="font-medium text-muted-foreground">Prioridad</p>
