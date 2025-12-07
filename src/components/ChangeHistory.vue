@@ -54,6 +54,12 @@ defineProps<{
         <div class="grid grid-cols-3 gap-6">
           <div>
             <p class="text-muted-foreground mb-1 font-medium">Estado</p>
+            <p
+              v-if="version.fecha_cierre"
+              class="text-xs text-muted-foreground mt-1"
+            >
+              Fecha cierre: {{ prettyDate(version.fecha_cierre) }}
+            </p>
             <Badge
               variant="secondary"
               :class="getBadgeColor(colorsByCambioEstado, version.estado)"

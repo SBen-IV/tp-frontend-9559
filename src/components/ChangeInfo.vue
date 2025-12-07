@@ -23,7 +23,7 @@ defineProps<{ change: Change }>();
     <h1 class="text-4xl text-center font-bold">
       {{ change.titulo }}
     </h1>
-    <div class="grid grid-cols-5 gap-6 text-sm">
+    <div class="grid grid-cols-6 gap-6 text-sm">
       <div>
         <p class="font-medium text-muted-foreground">ID</p>
         <p>{{ change.id }}</p>
@@ -50,6 +50,14 @@ defineProps<{ change: Change }>();
         <p class="font-medium text-muted-foreground">Fecha de creación</p>
         <p>{{ prettyDate(change.fecha_creacion) }}</p>
       </div>
+      <div>
+        <p class="font-medium text-muted-foreground">Fecha de cierre</p>
+        {{
+          change.fecha_cierre
+            ? prettyDate(change.fecha_cierre)
+            : "N/A"
+        }}
+      </div>
     </div>
 
     <Separator class="my-4" />
@@ -71,7 +79,7 @@ defineProps<{ change: Change }>();
 
     <Separator class="my-4" />
 
-    <div class="grid grid-cols-3">
+    <div class="grid grid-cols-3 gap-6">
       <div>
         <p class="font-medium text-muted-foreground mb-1">
           Ítems de configuración
