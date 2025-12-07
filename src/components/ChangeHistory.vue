@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import type { ChangeVersion } from "@/models/changes";
-import { getImpactoColor, getPrioridadColor } from "@/lib/utils";
+import {
+  colorsByCambioEstado,
+  getBadgeColor,
+  getImpactoColor,
+  getPrioridadColor,
+} from "@/lib/utils";
 import Badge from "@/components/ui/badge/Badge.vue";
 import Card from "@/components/ui/card/Card.vue";
 import { prettyDate } from "@/lib/utils";
@@ -49,13 +54,17 @@ defineProps<{
         <div class="grid grid-cols-3 gap-6">
           <div>
             <p class="text-muted-foreground mb-1 font-medium">Estado</p>
-            <Badge variant="secondary">{{ version.estado }}</Badge>
             <p
               v-if="version.fecha_cierre"
               class="text-xs text-muted-foreground mt-1"
             >
               Fecha cierre: {{ prettyDate(version.fecha_cierre) }}
             </p>
+            <Badge
+              variant="secondary"
+              :class="getBadgeColor(colorsByCambioEstado, version.estado)"
+              >{{ version.estado }}</Badge
+            >
           </div>
           <div>
             <p class="text-muted-foreground mb-1 font-medium">Prioridad</p>
