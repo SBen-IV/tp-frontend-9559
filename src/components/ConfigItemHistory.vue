@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Badge from "@/components/ui/badge/Badge.vue";
 import Card from "@/components/ui/card/Card.vue";
-import { prettyDate } from "@/lib/utils";
+import { prettyDate, prettyEstado } from "@/lib/utils";
 import CardHeader from "@/components/ui/card/CardHeader.vue";
 import CardContent from "@/components/ui/card/CardContent.vue";
 import RollbackAlertDialog from "@/components/RollbackAlertDialog.vue";
@@ -55,7 +55,7 @@ const getConfigItemIcon = (configItemVersion: ConfigItemVersion) => {
         <div>
           <p class="text-muted-foreground mb-1 font-medium">Estado</p>
           <Badge variant="secondary">
-            {{ version.estado }}
+            {{ prettyEstado(version.estado) }}
           </Badge>
         </div>
 

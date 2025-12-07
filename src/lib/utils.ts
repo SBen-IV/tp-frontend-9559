@@ -108,6 +108,10 @@ export const prettyUser = (user: User): string => {
   return `${user.nombre} ${user.apellido} - ${user.email}`;
 };
 
+export const prettyEstado = (estado: string): string => {
+  return estado.replace("_", " ");
+};
+
 export const mapToMetric = (data: Map<string, number>): Metric[] => {
   return Array.from(data, ([k, v]: [string, number]): Metric => {
     return { name: k, total: v };
@@ -149,4 +153,4 @@ export const daysBetweenDates = (a: Date, b: Date): number => {
   const utc2 = Date.UTC(dateB.getFullYear(), dateB.getMonth(), dateB.getDate());
 
   return Math.floor((utc2 - utc1) / _MS_PER_DAY);
-}
+};

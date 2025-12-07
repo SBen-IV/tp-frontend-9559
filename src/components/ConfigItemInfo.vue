@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import type { ConfigItem } from '@/models/config_items';
-import { getPrioridadColor } from '@/lib/utils';
-import { prettyDate } from '@/lib/utils';
-import Card from './ui/card/Card.vue';
-import Badge from './ui/badge/Badge.vue';
-import Separator from './ui/separator/Separator.vue';
-import ItemOption from './ItemOption.vue';
-import { CodeXml, FileText, Wrench } from 'lucide-vue-next';
-import { computed } from 'vue';
+import type { ConfigItem } from "@/models/config_items";
+import { prettyDate, prettyEstado } from "@/lib/utils";
+import Card from "./ui/card/Card.vue";
+import Badge from "./ui/badge/Badge.vue";
+import Separator from "./ui/separator/Separator.vue";
+import { CodeXml, FileText, Wrench } from "lucide-vue-next";
+import { computed } from "vue";
 
 const props = defineProps<{ configItem: ConfigItem }>();
 
@@ -38,7 +36,7 @@ const itemIcon = computed(() => {
       </div>
       <div>
         <p class="font-medium text-muted-foreground">Estado</p>
-        <Badge variant="secondary">{{ configItem.estado }}</Badge>
+        <Badge variant="secondary">{{ prettyEstado(configItem.estado) }}</Badge>
       </div>
       <div>
         <p class="font-medium text-muted-foreground">Categoría</p>
