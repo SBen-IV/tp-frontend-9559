@@ -141,7 +141,11 @@ const handleDelete = async () => {
                 {{ item.version }}
                 <br />
                 <span class="font-bold">Categoría: </span>
-                <Badge>
+                <Badge
+                  :class="
+                    getBadgeColor(colorsByConfigItemCategoria, item.categoria)
+                  "
+                >
                   <component :is="itemIcon" class="w-3 h-3 flex-shrink-0" />
                   {{ item.categoria }}</Badge
                 >
@@ -150,7 +154,7 @@ const handleDelete = async () => {
                 <Badge
                   variant="secondary"
                   class="text-black"
-                  :class="getBadgeColor(item.estado)"
+                  :class="getBadgeColor(colorsByConfigItemEstado, item.estado)"
                   >{{ prettyEstado(item.estado) }}</Badge
                 >
                 <br />

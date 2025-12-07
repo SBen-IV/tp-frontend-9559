@@ -2,6 +2,7 @@
 import type { ConfigItem } from "@/models/config_items";
 import {
   colorsByConfigItemEstado,
+  colorsByConfigItemCategoria,
   prettyDate,
   prettyEstado,
 } from "@/lib/utils";
@@ -10,6 +11,7 @@ import Badge from "./ui/badge/Badge.vue";
 import Separator from "./ui/separator/Separator.vue";
 import { CodeXml, FileText, Wrench } from "lucide-vue-next";
 import { computed } from "vue";
+import type { Color } from "@/models/colors";
 
 const props = defineProps<{ configItem: ConfigItem }>();
 
@@ -23,8 +25,8 @@ const itemIcon = computed(() => {
   return categoryIcons[props.configItem.categoria];
 });
 
-const getBadgeColor = (key: string): string => {
-  return colorsByConfigItemEstado[key].tw;
+const getBadgeColor = (colors: Record<string, Color>, key: string): string => {
+  return colors[key].tw;
 };
 </script>
 
@@ -47,13 +49,17 @@ const getBadgeColor = (key: string): string => {
         <Badge
           variant="secondary"
           class="text-black"
-          :class="getBadgeColor(configItem.estado)"
+          :class="getBadgeColor(colorsByConfigItemEstado, configItem.estado)"
           >{{ prettyEstado(configItem.estado) }}</Badge
         >
       </div>
       <div>
         <p class="font-medium text-muted-foreground">Categoría</p>
-        <Badge>
+        <Badge
+          :class="
+            getBadgeColor(colorsByConfigItemCategoria, configItem.categoria)
+          "
+        >
           <component :is="itemIcon" class="w-3 h-3 flex-shrink-0" />
           {{ configItem.categoria }}</Badge
         >

@@ -2,6 +2,7 @@
 import Badge from "@/components/ui/badge/Badge.vue";
 import Card from "@/components/ui/card/Card.vue";
 import {
+  colorsByConfigItemCategoria,
   colorsByConfigItemEstado,
   prettyDate,
   prettyEstado,
@@ -11,6 +12,7 @@ import CardContent from "@/components/ui/card/CardContent.vue";
 import RollbackAlertDialog from "@/components/RollbackAlertDialog.vue";
 import type { ConfigItemVersion } from "@/models/config_items";
 import { CodeXml, FileText, Wrench } from "lucide-vue-next";
+import type { Color } from "@/models/colors";
 
 defineProps<{
   configItemVersions: ConfigItemVersion[];
@@ -27,8 +29,8 @@ const getConfigItemIcon = (configItemVersion: ConfigItemVersion) => {
   return categoryIcons[configItemVersion.categoria];
 };
 
-const getBadgeColor = (key: string): string => {
-  return colorsByConfigItemEstado[key].tw;
+const getBadgeColor = (colors: Record<string, Color>, key: string): string => {
+  return colors[key].tw;
 };
 </script>
 
@@ -65,7 +67,7 @@ const getBadgeColor = (key: string): string => {
           <Badge
             variant="secondary"
             class="text-black"
-            :class="getBadgeColor(version.estado)"
+            :class="getBadgeColor(colorsByConfigItemEstado, version.estado)"
           >
             {{ prettyEstado(version.estado) }}
           </Badge>
@@ -78,7 +80,11 @@ const getBadgeColor = (key: string): string => {
 
         <div>
           <p class="font-medium text-muted-foreground">Categoría</p>
-          <Badge>
+          <Badge
+            :class="
+              getBadgeColor(colorsByConfigItemCategoria, version.categoria)
+            "
+          >
             <component
               :is="getConfigItemIcon(version)"
               class="w-3 h-3 flex-shrink-0 inline-block mr-1"
