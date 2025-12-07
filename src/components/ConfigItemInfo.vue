@@ -5,13 +5,13 @@ import {
   colorsByConfigItemCategoria,
   prettyDate,
   prettyEstado,
+  getBadgeColor,
 } from "@/lib/utils";
 import Card from "./ui/card/Card.vue";
 import Badge from "./ui/badge/Badge.vue";
 import Separator from "./ui/separator/Separator.vue";
 import { CodeXml, FileText, Wrench } from "lucide-vue-next";
 import { computed } from "vue";
-import type { Color } from "@/models/colors";
 
 const props = defineProps<{ configItem: ConfigItem }>();
 
@@ -24,10 +24,6 @@ const categoryIcons: Record<string, any> = {
 const itemIcon = computed(() => {
   return categoryIcons[props.configItem.categoria];
 });
-
-const getBadgeColor = (colors: Record<string, Color>, key: string): string => {
-  return colors[key].tw;
-};
 </script>
 
 <template>
@@ -47,8 +43,6 @@ const getBadgeColor = (colors: Record<string, Color>, key: string): string => {
       <div>
         <p class="font-medium text-muted-foreground">Estado</p>
         <Badge
-          variant="secondary"
-          class="text-black"
           :class="getBadgeColor(colorsByConfigItemEstado, configItem.estado)"
           >{{ prettyEstado(configItem.estado) }}</Badge
         >

@@ -113,15 +113,12 @@ const handleDelete = async () => {
         <component :is="categoryIcon" class="w-3 h-3 flex-shrink-0" />
         {{ prettyEstado(incident.categoria) }}</Badge
       >
-      <Badge variant="default" :class="getPrioridadColor(incident.prioridad)">{{
+      <Badge :class="getPrioridadColor(incident.prioridad)">{{
         incident.prioridad
       }}</Badge>
-      <Badge
-        variant="secondary"
-        class="text-black"
-        :class="getBadgeColor(colorsByIncidenteEstado, incident.estado)"
-        >{{ prettyEstado(incident.estado) }}</Badge
-      >
+      <Badge :class="getBadgeColor(colorsByIncidenteEstado, incident.estado)">{{
+        prettyEstado(incident.estado)
+      }}</Badge>
     </CardHeader>
     <CardContent class="space-y-1 text-xs text-foreground">
       <p class="flex items-center gap-1">
@@ -153,8 +150,6 @@ const handleDelete = async () => {
                 <p>
                   <b>Categoría:</b>
                   <Badge
-                    variant="secondary"
-                    class="text-black"
                     :class="
                       getBadgeColor(
                         colorsByIncidenteCategoria,
@@ -172,16 +167,13 @@ const handleDelete = async () => {
                 <p>
                   <b>Prioridad:</b>
                   <Badge
-                    variant="secondary"
-                    class="text-black"
+                    variant="default"
                     :class="getPrioridadColor(incident.prioridad)"
                     >{{ incident.prioridad }}
                   </Badge>
                 </p>
                 <b>Estado: </b>
                 <Badge
-                  variant="secondary"
-                  class="text-black"
                   :class="
                     getBadgeColor(colorsByIncidenteEstado, incident.estado)
                   "
