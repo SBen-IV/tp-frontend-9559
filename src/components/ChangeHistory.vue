@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ChangeVersion } from '@/models/changes';
-import { getPrioridadColor } from "@/lib/utils";
+import { getImpactoColor, getPrioridadColor } from "@/lib/utils";
 import Badge from "@/components/ui/badge/Badge.vue";
 import Card from "@/components/ui/card/Card.vue";
 import { prettyDate } from "@/lib/utils";
@@ -8,6 +8,7 @@ import ItemOption from "@/components/ItemOption.vue";
 import CardHeader from "@/components/ui/card/CardHeader.vue";
 import CardContent from "@/components/ui/card/CardContent.vue";
 import RollbackAlertDialog from "@/components/RollbackAlertDialog.vue";
+import ResponsableInfo from './ResponsableInfo.vue';
 
 defineProps<{ changeVersions: ChangeVersion[], handleRollback: (versionID: string) => Promise<void> }>();
 </script>
@@ -38,9 +39,9 @@ defineProps<{ changeVersions: ChangeVersion[], handleRollback: (versionID: strin
       </div>
     </CardHeader>
 
-    <CardContent class="grid grid-cols-3 gap-6 text-sm">
-      <div class="col-span-2 space-y-6">
-        <div class="grid grid-cols-2 gap-6">
+    <CardContent class="grid grid-cols-4 gap-6 text-sm">
+      <div class="col-span-3 space-y-6">
+        <div class="grid grid-cols-3 gap-6">
           <div>
             <p class="text-muted-foreground mb-1 font-medium">Estado</p>
             <Badge variant="secondary">{{ version.estado }}</Badge>
@@ -51,7 +52,19 @@ defineProps<{ changeVersions: ChangeVersion[], handleRollback: (versionID: strin
               {{ version.prioridad }}
             </Badge>
           </div>
+          <div>
+            <p class="text-muted-foreground mb-1 font-medium">Impacto</p>
+            <Badge :class="getImpactoColor(version.impacto)">
+              {{ version.impacto }}
+            </Badge>
+          </div>
         </div>
+
+        <p class="font-medium text-muted-foreground">Empleado responsable</p>
+        <ResponsableInfo
+          :key="version.responsable_id"
+          :responsable-id="version.responsable_id"
+        />
 
         <p class="text-muted-foreground mb-1 font-medium">Descripción</p>
         <div class="max-h-[20dvh] overflow-y-auto">

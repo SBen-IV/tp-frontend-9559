@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import type { Change } from '@/models/changes';
-import { getPrioridadColor } from '@/lib/utils';
+import { getImpactoColor, getPrioridadColor } from '@/lib/utils';
 import { prettyDate } from '@/lib/utils';
 import Card from './ui/card/Card.vue';
 import Badge from './ui/badge/Badge.vue';
 import Separator from './ui/separator/Separator.vue';
 import ItemOption from './ItemOption.vue';
+import ResponsableInfo from './ResponsableInfo.vue';
 
 defineProps<{ change: Change }>();
 </script>
@@ -15,7 +16,7 @@ defineProps<{ change: Change }>();
     <h1 class="text-4xl text-center font-bold">
       {{ change.titulo }}
     </h1>
-    <div class="grid grid-cols-4 gap-6 text-sm">
+    <div class="grid grid-cols-5 gap-6 text-sm">
       <div>
         <p class="font-medium text-muted-foreground">ID</p>
         <p>{{ change.id }}</p>
@@ -31,10 +32,24 @@ defineProps<{ change: Change }>();
         </Badge>
       </div>
       <div>
+        <p class="font-medium text-muted-foreground">Impacto</p>
+        <Badge :class="getImpactoColor(change.impacto)">
+          {{ change.impacto }}
+        </Badge>
+      </div>
+      <div>
         <p class="font-medium text-muted-foreground">Fecha de creación</p>
         <p>{{ prettyDate(change.fecha_creacion) }}</p>
       </div>
     </div>
+
+    <Separator class="my-4" />
+
+    <p class="font-medium text-muted-foreground">Empleado responsable</p>
+    <ResponsableInfo
+      :key="change.responsable_id"
+      :responsable-id="change.responsable_id"
+    />
 
     <Separator class="my-4" />
 
