@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ChangeVersion } from '@/models/changes';
+import type { ChangeVersion } from "@/models/changes";
 import { getImpactoColor, getPrioridadColor } from "@/lib/utils";
 import Badge from "@/components/ui/badge/Badge.vue";
 import Card from "@/components/ui/card/Card.vue";
@@ -8,9 +8,14 @@ import ItemOption from "@/components/ItemOption.vue";
 import CardHeader from "@/components/ui/card/CardHeader.vue";
 import CardContent from "@/components/ui/card/CardContent.vue";
 import RollbackAlertDialog from "@/components/RollbackAlertDialog.vue";
-import ResponsableInfo from './ResponsableInfo.vue';
+import ResponsableInfo from "./ResponsableInfo.vue";
+import ProblemOption from "./ProblemOption.vue";
+import IncidentOption from "./IncidentOption.vue";
 
-defineProps<{ changeVersions: ChangeVersion[], handleRollback: (versionID: string) => Promise<void> }>();
+defineProps<{
+  changeVersions: ChangeVersion[];
+  handleRollback: (versionID: string) => Promise<void>;
+}>();
 </script>
 
 <template>
@@ -39,7 +44,7 @@ defineProps<{ changeVersions: ChangeVersion[], handleRollback: (versionID: strin
       </div>
     </CardHeader>
 
-    <CardContent class="grid grid-cols-4 gap-6 text-sm">
+    <CardContent class="grid grid-cols-3 gap-6 text-sm">
       <div class="col-span-3 space-y-6">
         <div class="grid grid-cols-3 gap-6">
           <div>
@@ -76,7 +81,10 @@ defineProps<{ changeVersions: ChangeVersion[], handleRollback: (versionID: strin
         <p class="text-muted-foreground mb-2 font-medium">
           Ítems de configuración
         </p>
-        <div v-if="version.config_items.length > 0" class="flex flex-col gap-2 max-h-60 overflow-y-auto pr-2">
+        <div
+          v-if="version.config_items.length > 0"
+          class="flex flex-col gap-2 max-h-60 overflow-y-auto pr-2"
+        >
           <ItemOption
             v-for="item in version.config_items"
             :key="item.id"
@@ -84,9 +92,38 @@ defineProps<{ changeVersions: ChangeVersion[], handleRollback: (versionID: strin
             class="hover:bg-accent rounded-md max-w-full"
           />
         </div>
-        <div v-else class="text-sm">
-          Sin ítem relacionados.
+        <div v-else class="text-sm">Sin ítem relacionados.</div>
+      </div>
+      <div class="row-span-2">
+        <p class="text-muted-foreground mb-2 font-medium">Problemas</p>
+        <div
+          v-if="version.problemas.length > 0"
+          class="flex flex-col gap-2 max-h-60 overflow-y-auto pr-2"
+        >
+          <ProblemOption
+            v-for="problem in version.problemas"
+            :key="problem.id"
+            :problem="problem"
+            class="hover:bg-accent rounded-md max-w-full"
+          />
         </div>
+        <div v-else class="text-sm">Sin problemas relacionados.</div>
+      </div>
+
+      <div class="row-span-2">
+        <p class="text-muted-foreground mb-2 font-medium">Incidentes</p>
+        <div
+          v-if="version.incidentes.length > 0"
+          class="flex flex-col gap-2 max-h-60 overflow-y-auto pr-2"
+        >
+          <IncidentOption
+            v-for="incident in version.incidentes"
+            :key="incident.id"
+            :incident="incident"
+            class="hover:bg-accent rounded-md max-w-full"
+          />
+        </div>
+        <div v-else class="text-sm">Sin incidentes relacionados.</div>
       </div>
     </CardContent>
   </Card>

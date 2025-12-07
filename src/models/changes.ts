@@ -54,8 +54,12 @@ export const changeSchema = changeBaseSchema.extend({
 // This is what the backend returns
 export const changeAuditSchema = auditSchema.extend({
   estado_nuevo: changeSchema
-    .omit({ config_items: true })
-    .extend({ id_config_items: z.array(z.string().uuid()) }),
+    .omit({ config_items: true, incidentes: true, problemas: true })
+    .extend({
+      id_config_items: z.array(z.string().uuid()),
+      id_incidentes: z.array(z.string().uuid()),
+      id_problemas: z.array(z.string().uuid()),
+    }),
 });
 
 // We want the changeSchema and the audit information (operacion, fecha_actualizacion, id, ...)

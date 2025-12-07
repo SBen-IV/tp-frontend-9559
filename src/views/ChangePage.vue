@@ -9,6 +9,8 @@ import { toast } from "vue-sonner";
 import { rollbackChange } from "@/api/changes";
 import ChangeHistory from "@/components/ChangeHistory.vue";
 import ChangeInfo from "@/components/ChangeInfo.vue";
+import { getAllIncidents, getIncidentById } from "@/api/incidents";
+import { getProblemById } from "@/api/problems";
 
 const route = useRoute();
 
@@ -34,24 +36,39 @@ watch(
     const versions = await Promise.all(
       audits.map(async (audit) => {
         const configItems = await Promise.all(
-          audit?.estado_nuevo?.id_config_items?.map(id => getConfigItemById(id)) || []
+          audit?.estado_nuevo?.id_config_items?.map((id) =>
+            getConfigItemById(id),
+          ) || [],
+        );
+
+        const incidentes = await Promise.all(
+          audit?.estado_nuevo?.id_incidentes?.map((id) =>
+            getIncidentById(id),
+          ) || [],
+        );
+
+        const problemas = await Promise.all(
+          audit?.estado_nuevo?.id_problemas?.map((id) => getProblemById(id)) ||
+            [],
         );
 
         const { estado_nuevo, ...auditWithoutEstadoNuevo } = audit;
 
         // We remove nested structure from the audit and we add the config_items
         const changeVersion: ChangeVersion = {
-          ...audit.estado_nuevo,  // the Change version
-          ...auditWithoutEstadoNuevo, // fecha_actualizacion, (audit) ID, ... 
+          ...audit.estado_nuevo, // the Change version
+          ...auditWithoutEstadoNuevo, // fecha_actualizacion, (audit) ID, ...
           config_items: configItems,
+          incidentes: incidentes,
+          problemas: problemas,
         };
 
         return changeVersion;
-      })
+      }),
     );
 
     changeVersions.value = versions;
-  }
+  },
 );
 
 const fetchChange = async () => {
