@@ -34,17 +34,6 @@ import type { Incident } from "@/models/incidents";
 import { getPrioridadColor, prettyDate } from "@/lib/utils";
 import { computed, ref } from "vue";
 import EditIncidentForm from "./forms/EditIncidentForm.vue";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { deleteIncident } from "@/api/incidents";
 import { toast } from "vue-sonner";
 import DeleteAlertDialog from "./DeleteAlertDialog.vue";

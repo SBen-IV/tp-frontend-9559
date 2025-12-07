@@ -3,6 +3,7 @@ import {
   BLUE,
   GREEN,
   LIGHT_BLUE,
+  LIGHT_GREEN,
   ORANGE,
   PINK,
   RED,
@@ -91,6 +92,16 @@ export const colorsByProblemaEstado: Record<string, Color> = {
   DETECTADO: VIOLET,
   RESUELTO: BLUE,
   CERRADO: LIGHT_BLUE,
+};
+
+export const colorsByConfigItemEstado: Record<string, Color> = {
+  PLANEADO: PINK,
+  ENCARGADO: VIOLET,
+  EN_CREACION: BLUE,
+  EN_PRUEBA: LIGHT_BLUE,
+  EN_ALMACEN: GREEN,
+  EN_PRODUCCION: LIGHT_GREEN,
+  EN_MANTENIMIENTO: YELLOW,
 };
 
 export const prettyDate = (date: Date): string => {

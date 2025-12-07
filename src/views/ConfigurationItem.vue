@@ -18,7 +18,12 @@ import {
   SelectContent,
 } from "@/components/ui/select";
 import { categorias, estados } from "@/models/config_items";
-import { mapToMetric, sortByDate, sortByName } from "@/lib/utils";
+import {
+  colorsByConfigItemEstado,
+  mapToMetric,
+  sortByDate,
+  sortByName,
+} from "@/lib/utils";
 import type { ConfigItemMetric } from "@/models/metrics";
 import {
   BLUE,
@@ -49,16 +54,6 @@ const colorsByCategoria: Record<string, Color> = {
   SOFTWARE: PINK,
   HARDWARE: VIOLET,
   DOCUMENTACION: BLUE,
-};
-
-const colorsByEstado: Record<string, Color> = {
-  PLANEADO: PINK,
-  ENCARGADO: VIOLET,
-  EN_CREACION: BLUE,
-  EN_PRUEBA: LIGHT_BLUE,
-  EN_ALMACEN: GREEN,
-  EN_PRODUCCION: LIGHT_GREEN,
-  EN_MANTENIMIENTO: YELLOW,
 };
 
 const calculateMetrics = (items: ConfigItem[]) => {
@@ -189,7 +184,7 @@ onMounted(() => {
     <CustomPieChart
       :title="'Por estados'"
       :metrics="metricsData.byEstado"
-      :colors="colorsByEstado"
+      :colors="colorsByConfigItemEstado"
     />
     <CustomPieChart
       :title="'Por categorías'"
