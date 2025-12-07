@@ -3,6 +3,7 @@ import type { UserLogin } from "../models/users";
 import { useAuthStore } from "@/stores/auth";
 import axiosInstance from "./index";
 import type { AxiosRequestConfig } from "axios";
+import { useUserStore } from "@/stores/user";
 
 const BASE_URL: string = "/api/v1/users";
 
@@ -18,15 +19,19 @@ export async function loginUser(user: UserLogin) {
   formData.append("password", user.contraseña);
   console.log("formData: ", formData);
 
-  const response = await axiosInstance.post(
+  const responseToken = await axiosInstance.post(
     "/api/v1/login/access-token",
     formData,
   );
-  const token = response.data.access_token;
-
-  console.log(response);
+  const token = responseToken.data.access_token;
 
   authStore.login(token);
+
+  const userStore = useUserStore();
+
+  const responseUser = await axiosInstance.get(`${BASE_URL}/me`);
+
+  userStore.set(responseUser.data);
 
   return token;
 }

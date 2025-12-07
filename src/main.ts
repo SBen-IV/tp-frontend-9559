@@ -13,6 +13,5 @@ globalCookiesConfig({
   sameSite: "None",
 });
 
-const pinia = createPinia()
+const pinia = createPinia();
 createApp(App).use(router).use(pinia).mount("#app");
-

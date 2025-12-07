@@ -6,8 +6,6 @@ import { Bot, Command, Bug, Cog, RefreshCcw, LogOut } from "lucide-vue-next";
 import NavMain from "@/components/NavMain.vue";
 import router from "@/router/index";
 
-import NavLink from "@/components/NavLink.vue";
-import { RouterLink } from "vue-router";
 import { Button } from "./ui/button";
 import {
   Sidebar,
@@ -21,6 +19,9 @@ import {
 } from "@/components/ui/sidebar";
 import { useAuthStore } from "@/stores/auth";
 import { useSidebar } from "@/components/ui/sidebar";
+import { useUserStore } from "@/stores/user";
+
+import UserInfo from "./UserInfo.vue";
 
 const props = withDefaults(defineProps<SidebarProps>(), {
   collapsible: "icon",
@@ -42,7 +43,6 @@ const data = {
     {
       title: "Incidencias",
       url: "/incidents",
-      // TODO: Choose a better icon?
       icon: Bot,
     },
     {
@@ -59,8 +59,11 @@ const data = {
 };
 
 const authStore = useAuthStore();
+const userStore = useUserStore();
+
 const handleLogout = async () => {
   authStore.logout();
+  userStore.unset();
   router.push("/login");
 };
 
@@ -97,12 +100,15 @@ const { open } = useSidebar();
       <Button v-if="!authStore.isLoggedIn">
         <RouterLink to="/register">Registrarse</RouterLink>
       </Button> -->
+      <div v-if="userStore.getData">
+        <UserInfo :user="userStore.getData" :is-open="open" />
+      </div>
       <Button v-if="authStore.isLoggedIn" @click="handleLogout">
         <!-- Manually handle collapsible sidebar -->
         <LogOut /> {{ open ? "Cerrar sesión" : "" }}</Button
       >
       <ModeToggle />
-      <!-- <NavUser :user="data.user" /> -->
+      <!-- <NavUser :user="userStore.getData" />-->
     </SidebarFooter>
     <SidebarRail />
   </Sidebar>
