@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { categorias, estados } from "@/models/config_items";
 import {
+  colorsByConfigItemCategoria,
   colorsByConfigItemEstado,
   mapToMetric,
   sortByDate,
@@ -49,12 +50,6 @@ const searchNombre = ref("");
 const searchVersion = ref("");
 const searchCategoria = ref("");
 const searchEstado = ref("");
-
-const colorsByCategoria: Record<string, Color> = {
-  SOFTWARE: PINK,
-  HARDWARE: VIOLET,
-  DOCUMENTACION: BLUE,
-};
 
 const calculateMetrics = (items: ConfigItem[]) => {
   const byEstado: Map<string, number> = new Map();
@@ -189,7 +184,7 @@ onMounted(() => {
     <CustomPieChart
       :title="'Por categorías'"
       :metrics="metricsData.byCategoria"
-      :colors="colorsByCategoria"
+      :colors="colorsByConfigItemCategoria"
     />
   </div>
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 flex py-6">

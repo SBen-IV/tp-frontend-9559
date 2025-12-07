@@ -104,6 +104,12 @@ export const colorsByConfigItemEstado: Record<string, Color> = {
   EN_MANTENIMIENTO: YELLOW,
 };
 
+export const colorsByConfigItemCategoria: Record<string, Color> = {
+  SOFTWARE: PINK,
+  HARDWARE: VIOLET,
+  DOCUMENTACION: BLUE,
+};
+
 export const prettyDate = (date: Date): string => {
   // For some reason `date` is not a `Date`
   const d = new Date(date);

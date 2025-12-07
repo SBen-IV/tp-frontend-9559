@@ -31,6 +31,7 @@ import {
 } from "./ui/dialog";
 import { Button } from "./ui/button";
 import {
+  colorsByConfigItemCategoria,
   colorsByConfigItemEstado,
   prettyDate,
   prettyEstado,
@@ -39,6 +40,7 @@ import EditConfigItemForm from "./forms/EditConfigItemForm.vue";
 import { deleteConfigItem } from "@/api/config_items";
 import { toast } from "vue-sonner";
 import OwnerInfo from "./OwnerInfo.vue";
+import type { Color } from "@/models/colors";
 
 const props = defineProps<{ item: ConfigItem }>();
 
@@ -48,8 +50,8 @@ const categoryIcons: Record<string, any> = {
   DOCUMENTACION: FileText,
 };
 
-const getBadgeColor = (key: string): string => {
-  return colorsByConfigItemEstado[key].tw;
+const getBadgeColor = (colors: Record<string, Color>, key: string): string => {
+  return colors[key].tw;
 };
 
 const itemIcon = computed(() => {
@@ -98,14 +100,16 @@ const handleDelete = async () => {
         <CardTitle class="mr-2">{{ item.nombre }}</CardTitle>
         <CardDescription>{{ item.version }}</CardDescription>
       </div>
-      <Badge>
+      <Badge
+        :class="getBadgeColor(colorsByConfigItemCategoria, item.categoria)"
+      >
         <component :is="itemIcon" class="w-3 h-3 flex-shrink-0" />
         {{ item.categoria }}</Badge
       >
       <Badge
         variant="secondary"
         class="text-black"
-        :class="getBadgeColor(item.estado)"
+        :class="getBadgeColor(colorsByConfigItemEstado, item.estado)"
         >{{ prettyEstado(item.estado) }}</Badge
       >
     </CardHeader>
