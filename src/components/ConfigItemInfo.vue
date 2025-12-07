@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { ConfigItem } from "@/models/config_items";
-import { prettyDate, prettyEstado } from "@/lib/utils";
+import {
+  colorsByConfigItemEstado,
+  prettyDate,
+  prettyEstado,
+} from "@/lib/utils";
 import Card from "./ui/card/Card.vue";
 import Badge from "./ui/badge/Badge.vue";
 import Separator from "./ui/separator/Separator.vue";
@@ -18,6 +22,10 @@ const categoryIcons: Record<string, any> = {
 const itemIcon = computed(() => {
   return categoryIcons[props.configItem.categoria];
 });
+
+const getBadgeColor = (key: string): string => {
+  return colorsByConfigItemEstado[key].tw;
+};
 </script>
 
 <template>
@@ -36,7 +44,12 @@ const itemIcon = computed(() => {
       </div>
       <div>
         <p class="font-medium text-muted-foreground">Estado</p>
-        <Badge variant="secondary">{{ prettyEstado(configItem.estado) }}</Badge>
+        <Badge
+          variant="secondary"
+          class="text-black"
+          :class="getBadgeColor(configItem.estado)"
+          >{{ prettyEstado(configItem.estado) }}</Badge
+        >
       </div>
       <div>
         <p class="font-medium text-muted-foreground">Categoría</p>

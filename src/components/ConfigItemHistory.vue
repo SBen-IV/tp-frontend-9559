@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import Badge from "@/components/ui/badge/Badge.vue";
 import Card from "@/components/ui/card/Card.vue";
-import { prettyDate, prettyEstado } from "@/lib/utils";
+import {
+  colorsByConfigItemEstado,
+  prettyDate,
+  prettyEstado,
+} from "@/lib/utils";
 import CardHeader from "@/components/ui/card/CardHeader.vue";
 import CardContent from "@/components/ui/card/CardContent.vue";
 import RollbackAlertDialog from "@/components/RollbackAlertDialog.vue";
@@ -21,6 +25,10 @@ const categoryIcons: Record<string, any> = {
 
 const getConfigItemIcon = (configItemVersion: ConfigItemVersion) => {
   return categoryIcons[configItemVersion.categoria];
+};
+
+const getBadgeColor = (key: string): string => {
+  return colorsByConfigItemEstado[key].tw;
 };
 </script>
 
@@ -54,7 +62,11 @@ const getConfigItemIcon = (configItemVersion: ConfigItemVersion) => {
       <div class="grid grid-cols-3 gap-6">
         <div>
           <p class="text-muted-foreground mb-1 font-medium">Estado</p>
-          <Badge variant="secondary">
+          <Badge
+            variant="secondary"
+            class="text-black"
+            :class="getBadgeColor(version.estado)"
+          >
             {{ prettyEstado(version.estado) }}
           </Badge>
         </div>
