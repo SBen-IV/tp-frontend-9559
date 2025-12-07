@@ -11,6 +11,7 @@ import {
 import { Badge } from "./ui/badge";
 import {
   CodeXml,
+  Calendar,
   FileText,
   Wrench,
   Eye,
@@ -29,7 +30,13 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import { Button } from "./ui/button";
-import { prettyDate } from "@/lib/utils";
+import {
+  colorsByConfigItemCategoria,
+  colorsByConfigItemEstado,
+  prettyDate,
+  prettyEstado,
+  getBadgeColor,
+} from "@/lib/utils";
 import EditConfigItemForm from "./forms/EditConfigItemForm.vue";
 import { deleteConfigItem } from "@/api/config_items";
 import { toast } from "vue-sonner";
@@ -89,15 +96,23 @@ const handleDelete = async () => {
         <CardTitle class="mr-2">{{ item.nombre }}</CardTitle>
         <CardDescription>{{ item.version }}</CardDescription>
       </div>
-      <Badge>
+      <Badge
+        :class="getBadgeColor(colorsByConfigItemCategoria, item.categoria)"
+      >
         <component :is="itemIcon" class="w-3 h-3 flex-shrink-0" />
         {{ item.categoria }}</Badge
       >
-      <Badge variant="secondary">{{ item.estado }}</Badge>
+      <Badge :class="getBadgeColor(colorsByConfigItemEstado, item.estado)">{{
+        prettyEstado(item.estado)
+      }}</Badge>
     </CardHeader>
-    <CardContent class="overflow-hidden text-ellipsis text-wrap max-h-30">
-      <p class="italic text-xs">
-        Fecha creación: {{ prettyDate(item.fecha_creacion) }}
+    <CardContent
+      class="text-xs overflow-hidden text-ellipsis text-wrap max-h-30"
+    >
+      <p class="flex items-center gap-1">
+        <Calendar class="w-3 h-3" />
+        <span class="font-semibold">Fecha creación:</span>
+        {{ prettyDate(item.fecha_creacion) }}
       </p>
       <Dialog @update:open="handleDialogClose">
         <DialogTrigger as-child>
@@ -119,13 +134,20 @@ const handleDelete = async () => {
                 {{ item.version }}
                 <br />
                 <span class="font-bold">Categoría: </span>
-                <Badge>
+                <Badge
+                  :class="
+                    getBadgeColor(colorsByConfigItemCategoria, item.categoria)
+                  "
+                >
                   <component :is="itemIcon" class="w-3 h-3 flex-shrink-0" />
                   {{ item.categoria }}</Badge
                 >
                 <br />
                 <span class="font-bold">Estado: </span>
-                <Badge variant="secondary">{{ item.estado }}</Badge>
+                <Badge
+                  :class="getBadgeColor(colorsByConfigItemEstado, item.estado)"
+                  >{{ prettyEstado(item.estado) }}</Badge
+                >
                 <br />
                 <span class="font-bold">Fecha creación: </span>
                 {{ prettyDate(item.fecha_creacion) }}

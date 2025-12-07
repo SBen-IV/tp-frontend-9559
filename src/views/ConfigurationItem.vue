@@ -18,7 +18,13 @@ import {
   SelectContent,
 } from "@/components/ui/select";
 import { categorias, estados } from "@/models/config_items";
-import { mapToMetric, sortByDate, sortByName } from "@/lib/utils";
+import {
+  colorsByConfigItemCategoria,
+  colorsByConfigItemEstado,
+  mapToMetric,
+  sortByDate,
+  sortByName,
+} from "@/lib/utils";
 import type { ConfigItemMetric } from "@/models/metrics";
 import {
   BLUE,
@@ -44,22 +50,6 @@ const searchNombre = ref("");
 const searchVersion = ref("");
 const searchCategoria = ref("");
 const searchEstado = ref("");
-
-const colorsByCategoria: Record<string, Color> = {
-  SOFTWARE: PINK,
-  HARDWARE: VIOLET,
-  DOCUMENTACION: BLUE,
-};
-
-const colorsByEstado: Record<string, Color> = {
-  PLANEADO: PINK,
-  ENCARGADO: VIOLET,
-  EN_CREACION: BLUE,
-  EN_PRUEBA: LIGHT_BLUE,
-  EN_ALMACEN: GREEN,
-  EN_PRODUCCION: LIGHT_GREEN,
-  EN_MANTENIMIENTO: YELLOW,
-};
 
 const calculateMetrics = (items: ConfigItem[]) => {
   const byEstado: Map<string, number> = new Map();
@@ -189,12 +179,12 @@ onMounted(() => {
     <CustomPieChart
       :title="'Por estados'"
       :metrics="metricsData.byEstado"
-      :colors="colorsByEstado"
+      :colors="colorsByConfigItemEstado"
     />
     <CustomPieChart
       :title="'Por categorías'"
       :metrics="metricsData.byCategoria"
-      :colors="colorsByCategoria"
+      :colors="colorsByConfigItemCategoria"
     />
   </div>
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 flex py-6">

@@ -3,6 +3,7 @@ import {
   BLUE,
   GREEN,
   LIGHT_BLUE,
+  LIGHT_GREEN,
   ORANGE,
   PINK,
   RED,
@@ -93,6 +94,22 @@ export const colorsByProblemaEstado: Record<string, Color> = {
   CERRADO: LIGHT_BLUE,
 };
 
+export const colorsByConfigItemEstado: Record<string, Color> = {
+  PLANEADO: PINK,
+  ENCARGADO: VIOLET,
+  EN_CREACION: BLUE,
+  EN_PRUEBA: LIGHT_BLUE,
+  EN_ALMACEN: GREEN,
+  EN_PRODUCCION: LIGHT_GREEN,
+  EN_MANTENIMIENTO: YELLOW,
+};
+
+export const colorsByConfigItemCategoria: Record<string, Color> = {
+  SOFTWARE: PINK,
+  HARDWARE: VIOLET,
+  DOCUMENTACION: BLUE,
+};
+
 export const prettyDate = (date: Date): string => {
   // For some reason `date` is not a `Date`
   const d = new Date(date);
@@ -106,6 +123,17 @@ export const prettyDate = (date: Date): string => {
 
 export const prettyUser = (user: User): string => {
   return `${user.nombre} ${user.apellido} - ${user.email}`;
+};
+
+export const prettyEstado = (estado: string): string => {
+  return estado.replace("_", " ");
+};
+
+export const getBadgeColor = (
+  colors: Record<string, Color>,
+  key: string,
+): string => {
+  return colors[key].tw;
 };
 
 export const mapToMetric = (data: Map<string, number>): Metric[] => {
@@ -149,4 +177,4 @@ export const daysBetweenDates = (a: Date, b: Date): number => {
   const utc2 = Date.UTC(dateB.getFullYear(), dateB.getMonth(), dateB.getDate());
 
   return Math.floor((utc2 - utc1) / _MS_PER_DAY);
-}
+};

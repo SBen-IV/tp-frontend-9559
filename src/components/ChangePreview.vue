@@ -22,7 +22,14 @@ import { Button } from "./ui/button";
 import type { Change } from "@/models/changes";
 import ItemOption from "./ItemOption.vue";
 import IncidentOption from "./IncidentOption.vue";
-import { prettyDate, getPrioridadColor, getImpactoColor } from "@/lib/utils";
+import {
+  prettyDate,
+  getPrioridadColor,
+  getImpactoColor,
+  getBadgeColor,
+  colorsByCambioEstado,
+  prettyEstado,
+} from "@/lib/utils";
 import { ref } from "vue";
 import EditChangeForm from "./forms/EditChangeForm.vue";
 import { toast } from "vue-sonner";
@@ -77,13 +84,15 @@ const handleDelete = async () => {
           <p>{{ change.titulo }}</p>
         </CardTitle>
       </div>
-      <Badge variant="default" :class="getPrioridadColor(change.prioridad)">{{
+      <Badge :class="getPrioridadColor(change.prioridad)">{{
         change.prioridad
       }}</Badge>
-      <Badge variant="default" :class="getImpactoColor(change.impacto)">{{
+      <Badge :class="getImpactoColor(change.impacto)">{{
         change.impacto
       }}</Badge>
-      <Badge variant="secondary">{{ change.estado }}</Badge>
+      <Badge :class="getBadgeColor(colorsByCambioEstado, change.estado)">{{
+        prettyEstado(change.estado)
+      }}</Badge>
     </CardHeader>
     <CardContent class="space-y-1 text-xs text-foreground">
       <p class="flex items-center gap-1">
@@ -108,16 +117,25 @@ const handleDelete = async () => {
               </DialogTitle>
               <OwnerInfo class="m-auto" :owner-id="change.owner_id" />
               <DialogDescription class="text-foreground">
-                <b>Estado: </b>
-                <Badge variant="secondary">{{ change.estado }}</Badge>
-                <br />
-                <b>Fecha creación: </b>
-                {{ prettyDate(change.fecha_creacion) }}
+                <b>Prioridad: </b>
+                <Badge :class="getPrioridadColor(change.prioridad)">{{
+                  change.prioridad
+                }}</Badge>
                 <br />
                 <b>Impacto: </b>
                 <Badge :class="getImpactoColor(change.impacto)">{{
                   change.impacto
                 }}</Badge>
+                <br />
+                <b>Estado: </b>
+                <Badge
+                  :class="getBadgeColor(colorsByCambioEstado, change.estado)"
+                  >{{ change.estado }}</Badge
+                >
+                <br />
+                <b>Fecha creación: </b>
+                {{ prettyDate(change.fecha_creacion) }}
+                <br />
               </DialogDescription>
               <ResponsableInfo
                 :key="change.responsable_id"
