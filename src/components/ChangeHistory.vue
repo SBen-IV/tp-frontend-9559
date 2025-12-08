@@ -61,7 +61,6 @@ defineProps<{
               Fecha cierre: {{ prettyDate(version.fecha_cierre) }}
             </p>
             <Badge
-              variant="secondary"
               :class="getBadgeColor(colorsByCambioEstado, version.estado)"
               >{{ version.estado }}</Badge
             >
